@@ -1,10 +1,10 @@
 package routers
 
 import (
-	"echo-server-core/core"
-	"echo-server-core/vben/gorm/model"
-	"echo-server-core/vben/helper"
-	"echo-server-core/vben/vo"
+	"github.com/XiaoSGentle/echo-server-core/core"
+	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
+	"github.com/XiaoSGentle/echo-server-core/vben/helper"
+	"github.com/XiaoSGentle/echo-server-core/vben/vo"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )

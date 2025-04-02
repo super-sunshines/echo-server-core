@@ -1,8 +1,6 @@
 package bo
 
-import (
-	"echo-server-core/core"
-)
+import "github.com/XiaoSGentle/echo-server-core/core"
 
 type SysRolePageBo struct {
 	core.PageParam

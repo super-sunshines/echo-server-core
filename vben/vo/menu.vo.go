@@ -1,9 +1,9 @@
 package vo
 
 import (
-	"echo-server-core/core"
-	_const "echo-server-core/vben/const"
-	"echo-server-core/vben/gorm/model"
+	"github.com/XiaoSGentle/echo-server-core/core"
+	_const "github.com/XiaoSGentle/echo-server-core/vben/const"
+	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
 	"github.com/duke-git/lancet/v2/slice"
 	"sort"
 )

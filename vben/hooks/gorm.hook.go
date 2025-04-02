@@ -2,9 +2,10 @@ package hooks
 
 import (
 	context2 "context"
-	"echo-server-core/core"
-	"echo-server-core/vben/gorm/model"
-	"echo-server-core/vben/services"
+	"github.com/XiaoSGentle/echo-server-core/core"
+	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
+	"github.com/XiaoSGentle/echo-server-core/vben/services"
+
 	"gorm.io/gorm"
 )
 

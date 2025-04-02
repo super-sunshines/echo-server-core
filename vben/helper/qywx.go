@@ -1,8 +1,8 @@
 package helper
 
 import (
-	"echo-server-core/core"
 	"fmt"
+	"github.com/XiaoSGentle/echo-server-core/core"
 	"github.com/xen0n/go-workwx/v2"
 	"net/url"
 )

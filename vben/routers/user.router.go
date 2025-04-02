@@ -1,12 +1,12 @@
 package routers
 
 import (
-	"echo-server-core/core"
-	"echo-server-core/vben/bo"
-	_const "echo-server-core/vben/const"
-	"echo-server-core/vben/gorm/model"
-	"echo-server-core/vben/services"
-	"echo-server-core/vben/vo"
+	"github.com/XiaoSGentle/echo-server-core/core"
+	"github.com/XiaoSGentle/echo-server-core/vben/bo"
+	_const "github.com/XiaoSGentle/echo-server-core/vben/const"
+	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
+	"github.com/XiaoSGentle/echo-server-core/vben/services"
+	"github.com/XiaoSGentle/echo-server-core/vben/vo"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"

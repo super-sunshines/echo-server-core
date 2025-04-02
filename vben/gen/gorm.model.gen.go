@@ -1,8 +1,8 @@
 package main
 
 import (
-	"echo-server-core/core"
 	"fmt"
+	"github.com/XiaoSGentle/echo-server-core/core"
 	"gorm.io/driver/mysql"
 	"gorm.io/gen"
 	"gorm.io/gen/field"

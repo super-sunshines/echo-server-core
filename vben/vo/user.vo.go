@@ -1,7 +1,7 @@
 package vo
 
 import (
-	"echo-server-core/core"
+	"github.com/XiaoSGentle/echo-server-core/core"
 	"time"
 )
 

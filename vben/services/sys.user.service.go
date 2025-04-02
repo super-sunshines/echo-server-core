@@ -1,11 +1,11 @@
 package services
 
 import (
-	"echo-server-core/core"
-	"echo-server-core/vben/gorm/model"
-	"echo-server-core/vben/gorm/query"
-	"echo-server-core/vben/vo"
 	"fmt"
+	"github.com/XiaoSGentle/echo-server-core/core"
+	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
+	"github.com/XiaoSGentle/echo-server-core/vben/gorm/query"
+	"github.com/XiaoSGentle/echo-server-core/vben/vo"
 	"github.com/duke-git/lancet/v2/slice"
 )
 
