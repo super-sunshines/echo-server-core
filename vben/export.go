@@ -1,8 +1,8 @@
 package vben
 
 import (
-	"echo-server-core/core"
-	"echo-server-core/vben/routers"
+	"github.com/XiaoSGentle/echo-server-core/core"
+	"github.com/XiaoSGentle/echo-server-core/vben/routers"
 )
 
 var Routers = []*core.RouterGroup{

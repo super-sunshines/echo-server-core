@@ -497,3 +497,34 @@ func (i *IntBool) Scan(src interface{}) error {
 	*i = v == int64(1) // 1 -> true, otherwise false
 	return nil
 }
+
+type Time struct {
+	time.Time
+}
+
+func (mt Time) MarshalJSON() ([]byte, error) {
+	return json.Marshal(mt.Format("2006-01-02 15:04:05"))
+}
+
+func (mt *Time) UnmarshalJSON(data []byte) error {
+	s := string(data)
+	t, err := time.Parse(`"`+"2006-01-02 15:04:05"+`"`, s)
+	if err != nil {
+		return err
+	}
+	mt.Time = t
+	return nil
+}
+
+func (mt Time) Value() (driver.Value, error) {
+	return mt.Time, nil
+}
+
+func (mt *Time) Scan(value interface{}) error {
+	t, ok := value.(time.Time)
+	if !ok {
+		return errors.New("type assertion to time.Time failed")
+	}
+	mt.Time = t
+	return nil
+}

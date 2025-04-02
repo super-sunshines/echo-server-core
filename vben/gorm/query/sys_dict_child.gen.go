@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"vben/gorm/model"
+	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
 )
 
 func newSysDictChild(db *gorm.DB, opts ...gen.DOOption) sysDictChild {
@@ -38,9 +38,9 @@ func newSysDictChild(db *gorm.DB, opts ...gen.DOOption) sysDictChild {
 	_sysDictChild.ItemClass = field.NewString(tableName, "item_class")
 	_sysDictChild.CreateDept = field.NewInt64(tableName, "create_dept")
 	_sysDictChild.CreateBy = field.NewInt64(tableName, "create_by")
-	_sysDictChild.CreateTime = field.NewTime(tableName, "create_time")
+	_sysDictChild.CreateTime = field.NewField(tableName, "create_time")
 	_sysDictChild.UpdateBy = field.NewInt64(tableName, "update_by")
-	_sysDictChild.UpdateTime = field.NewTime(tableName, "update_time")
+	_sysDictChild.UpdateTime = field.NewField(tableName, "update_time")
 	_sysDictChild.DeleteTime = field.NewField(tableName, "delete_time")
 
 	_sysDictChild.fillFieldMap()
@@ -63,9 +63,9 @@ type sysDictChild struct {
 	ItemClass  field.String
 	CreateDept field.Int64
 	CreateBy   field.Int64
-	CreateTime field.Time
+	CreateTime field.Field
 	UpdateBy   field.Int64
-	UpdateTime field.Time
+	UpdateTime field.Field
 	DeleteTime field.Field
 
 	fieldMap map[string]field.Expr
@@ -94,9 +94,9 @@ func (s *sysDictChild) updateTableName(table string) *sysDictChild {
 	s.ItemClass = field.NewString(table, "item_class")
 	s.CreateDept = field.NewInt64(table, "create_dept")
 	s.CreateBy = field.NewInt64(table, "create_by")
-	s.CreateTime = field.NewTime(table, "create_time")
+	s.CreateTime = field.NewField(table, "create_time")
 	s.UpdateBy = field.NewInt64(table, "update_by")
-	s.UpdateTime = field.NewTime(table, "update_time")
+	s.UpdateTime = field.NewField(table, "update_time")
 	s.DeleteTime = field.NewField(table, "delete_time")
 
 	s.fillFieldMap()

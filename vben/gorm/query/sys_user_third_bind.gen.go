@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"vben/gorm/model"
+	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
 )
 
 func newSysUserThirdBind(db *gorm.DB, opts ...gen.DOOption) sysUserThirdBind {
@@ -34,9 +34,9 @@ func newSysUserThirdBind(db *gorm.DB, opts ...gen.DOOption) sysUserThirdBind {
 	_sysUserThirdBind.AccessToken = field.NewString(tableName, "access_token")
 	_sysUserThirdBind.CreateDept = field.NewInt64(tableName, "create_dept")
 	_sysUserThirdBind.CreateBy = field.NewInt64(tableName, "create_by")
-	_sysUserThirdBind.CreateTime = field.NewTime(tableName, "create_time")
+	_sysUserThirdBind.CreateTime = field.NewField(tableName, "create_time")
 	_sysUserThirdBind.UpdateBy = field.NewInt64(tableName, "update_by")
-	_sysUserThirdBind.UpdateTime = field.NewTime(tableName, "update_time")
+	_sysUserThirdBind.UpdateTime = field.NewField(tableName, "update_time")
 	_sysUserThirdBind.DeleteTime = field.NewField(tableName, "delete_time")
 
 	_sysUserThirdBind.fillFieldMap()
@@ -55,9 +55,9 @@ type sysUserThirdBind struct {
 	AccessToken field.String // 三方Token
 	CreateDept  field.Int64  // 创建部门
 	CreateBy    field.Int64  // 创建者
-	CreateTime  field.Time   // 创建时间
+	CreateTime  field.Field  // 创建时间
 	UpdateBy    field.Int64  // 更新者
-	UpdateTime  field.Time   // 更新时间
+	UpdateTime  field.Field  // 更新时间
 	DeleteTime  field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
@@ -82,9 +82,9 @@ func (s *sysUserThirdBind) updateTableName(table string) *sysUserThirdBind {
 	s.AccessToken = field.NewString(table, "access_token")
 	s.CreateDept = field.NewInt64(table, "create_dept")
 	s.CreateBy = field.NewInt64(table, "create_by")
-	s.CreateTime = field.NewTime(table, "create_time")
+	s.CreateTime = field.NewField(table, "create_time")
 	s.UpdateBy = field.NewInt64(table, "update_by")
-	s.UpdateTime = field.NewTime(table, "update_time")
+	s.UpdateTime = field.NewField(table, "update_time")
 	s.DeleteTime = field.NewField(table, "delete_time")
 
 	s.fillFieldMap()

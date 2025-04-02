@@ -1,6 +1,6 @@
 package bo
 
-import "echo-server-core/core"
+import "github.com/XiaoSGentle/echo-server-core/core"
 
 type SysMenuBo struct {
 	ID        int64  `json:"id"`        // id

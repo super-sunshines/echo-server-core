@@ -57,6 +57,8 @@ var allModelTagGenConfig = []gen.ModelOpt{
 		return tag
 	}),
 	gen.FieldType("delete_time", "gorm.DeletedAt"),
+	gen.FieldType("create_time", "core.Time"),
+	gen.FieldType("update_time", "core.Time"),
 }
 
 func main() {
@@ -71,7 +73,7 @@ func main() {
 	}
 	// 生成实例
 	g := gen.NewGenerator(gen.Config{
-		OutPath:           "./gorm/query",
+		OutPath:           "./vben/gorm/query",
 		FieldNullable:     false,
 		FieldCoverable:    false,
 		FieldSignable:     false,
@@ -91,7 +93,7 @@ func main() {
 		"mediumint": func(detailType gorm.ColumnType) (dataType string) { return "int64" },
 		"bigint":    func(detailType gorm.ColumnType) (dataType string) { return "int64" },
 		"int":       func(detailType gorm.ColumnType) (dataType string) { return "int64" },
-		"datetime":  func(detailType gorm.ColumnType) (dataType string) { return "time.Time" },
+		"datetime":  func(detailType gorm.ColumnType) (dataType string) { return "core.Time" },
 	}
 	// 要先于`ApplyBasic`执行
 	g.WithDataTypeMap(dataMap)

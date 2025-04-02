@@ -640,6 +640,13 @@
             </set>
           </value>
         </entry>
+        <entry key="Time">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/core/gorm.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="TokenInfo">
           <value>
             <set>
@@ -901,7 +908,7 @@
         <entry key="file://$PROJECT_DIR$/core/gorm.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743564016462" />
+              <option name="lastModified" value="1743576311815" />
               <option name="schema">
                 <list>
                   <option value="InitGormOptions" />
@@ -909,6 +916,7 @@
                   <option value="InjectServiceConfig" />
                   <option value="PreGorm" />
                   <option value="Gorm" />
+                  <option value="Time" />
                 </list>
               </option>
             </ScannedPath>
@@ -1025,7 +1033,7 @@
         <entry key="file://$PROJECT_DIR$/main.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743567088417" />
+              <option name="lastModified" value="1743579948782" />
             </ScannedPath>
           </value>
         </entry>
@@ -1057,7 +1065,7 @@
         <entry key="file://$PROJECT_DIR$/vben/bo/dict.bo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743564016469" />
+              <option name="lastModified" value="1743580044019" />
               <option name="schema">
                 <list>
                   <option value="SysDictBo" />
@@ -1072,7 +1080,7 @@
         <entry key="file://$PROJECT_DIR$/vben/bo/menu.bo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743564016470" />
+              <option name="lastModified" value="1743580051465" />
               <option name="schema">
                 <list>
                   <option value="SysMenuBo" />
@@ -1126,7 +1134,7 @@
         <entry key="file://$PROJECT_DIR$/vben/bo/user.bo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743564016472" />
+              <option name="lastModified" value="1743580060515" />
               <option name="schema">
                 <list>
                   <option value="UserInfoBo" />
@@ -1147,14 +1155,14 @@
         <entry key="file://$PROJECT_DIR$/vben/export.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743564016473" />
+              <option name="lastModified" value="1743575741098" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/vben/gen/gorm.model.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743568818830" />
+              <option name="lastModified" value="1743579920190" />
             </ScannedPath>
           </value>
         </entry>
@@ -1296,7 +1304,7 @@
         <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_dict.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743564016479" />
+              <option name="lastModified" value="1743579906630" />
               <option name="schema">
                 <list>
                   <option value="sysDict" />
@@ -1348,7 +1356,7 @@
         <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_role.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743564016482" />
+              <option name="lastModified" value="1743579906584" />
               <option name="schema">
                 <list>
                   <option value="sysRole" />
@@ -1361,7 +1369,7 @@
         <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_user.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743564016482" />
+              <option name="lastModified" value="1743579906609" />
               <option name="schema">
                 <list>
                   <option value="sysUser" />
@@ -1505,7 +1513,7 @@
         <entry key="file://$PROJECT_DIR$/vben/routers/tencent.cloud.router.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743564016489" />
+              <option name="lastModified" value="1743579962338" />
               <option name="schema">
                 <list>
                   <option value="TencentCloudRouter" />
@@ -1671,6 +1679,13 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://E:/Project/RC01-RM-BCI/RC01-RM-BCI-Web/echo-server/gen/gorm.model.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743579787476" />
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://E:/echo-vben-admin/server/gen/gorm.model.gen.go">
           <value>
             <ScannedPath>
@@ -1783,6 +1798,7 @@
         <entry key="tencent_cloud_cos_tmp_key" value="TencentCloudCosTmpKey" />
         <entry key="tencent_cloud_router" value="TencentCloudRouter" />
         <entry key="tencent_config" value="TencentConfig" />
+        <entry key="time" value="Time" />
         <entry key="token_info" value="TokenInfo" />
         <entry key="token_manager" value="TokenManager" />
         <entry key="user_info_bo" value="UserInfoBo" />

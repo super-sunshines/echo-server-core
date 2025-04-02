@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"echo-server-core/core"
-	"echo-server-core/vben/services"
+	"github.com/XiaoSGentle/echo-server-core/core"
+	"github.com/XiaoSGentle/echo-server-core/vben/services"
 	"github.com/labstack/echo/v4"
 )
 

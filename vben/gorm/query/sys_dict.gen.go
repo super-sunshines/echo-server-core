@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"vben/gorm/model"
+	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
 )
 
 func newSysDict(db *gorm.DB, opts ...gen.DOOption) sysDict {
@@ -36,9 +36,9 @@ func newSysDict(db *gorm.DB, opts ...gen.DOOption) sysDict {
 	_sysDict.Status = field.NewInt64(tableName, "status")
 	_sysDict.CreateDept = field.NewInt64(tableName, "create_dept")
 	_sysDict.CreateBy = field.NewInt64(tableName, "create_by")
-	_sysDict.CreateTime = field.NewTime(tableName, "create_time")
+	_sysDict.CreateTime = field.NewField(tableName, "create_time")
 	_sysDict.UpdateBy = field.NewInt64(tableName, "update_by")
-	_sysDict.UpdateTime = field.NewTime(tableName, "update_time")
+	_sysDict.UpdateTime = field.NewField(tableName, "update_time")
 	_sysDict.DeleteTime = field.NewField(tableName, "delete_time")
 
 	_sysDict.fillFieldMap()
@@ -59,9 +59,9 @@ type sysDict struct {
 	Status     field.Int64
 	CreateDept field.Int64
 	CreateBy   field.Int64
-	CreateTime field.Time
+	CreateTime field.Field
 	UpdateBy   field.Int64
-	UpdateTime field.Time
+	UpdateTime field.Field
 	DeleteTime field.Field
 
 	fieldMap map[string]field.Expr
@@ -88,9 +88,9 @@ func (s *sysDict) updateTableName(table string) *sysDict {
 	s.Status = field.NewInt64(table, "status")
 	s.CreateDept = field.NewInt64(table, "create_dept")
 	s.CreateBy = field.NewInt64(table, "create_by")
-	s.CreateTime = field.NewTime(table, "create_time")
+	s.CreateTime = field.NewField(table, "create_time")
 	s.UpdateBy = field.NewInt64(table, "update_by")
-	s.UpdateTime = field.NewTime(table, "update_time")
+	s.UpdateTime = field.NewField(table, "update_time")
 	s.DeleteTime = field.NewField(table, "delete_time")
 
 	s.fillFieldMap()

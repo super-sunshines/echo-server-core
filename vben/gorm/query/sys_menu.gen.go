@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"vben/gorm/model"
+	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
 )
 
 func newSysMenu(db *gorm.DB, opts ...gen.DOOption) sysMenu {
@@ -38,9 +38,9 @@ func newSysMenu(db *gorm.DB, opts ...gen.DOOption) sysMenu {
 	_sysMenu.Component = field.NewString(tableName, "component")
 	_sysMenu.CreateDept = field.NewInt64(tableName, "create_dept")
 	_sysMenu.CreateBy = field.NewInt64(tableName, "create_by")
-	_sysMenu.CreateTime = field.NewTime(tableName, "create_time")
+	_sysMenu.CreateTime = field.NewField(tableName, "create_time")
 	_sysMenu.UpdateBy = field.NewInt64(tableName, "update_by")
-	_sysMenu.UpdateTime = field.NewTime(tableName, "update_time")
+	_sysMenu.UpdateTime = field.NewField(tableName, "update_time")
 	_sysMenu.DeleteTime = field.NewField(tableName, "delete_time")
 
 	_sysMenu.fillFieldMap()
@@ -63,9 +63,9 @@ type sysMenu struct {
 	Component      field.String // 组件地址
 	CreateDept     field.Int64  // 创建部门
 	CreateBy       field.Int64  // 创建者
-	CreateTime     field.Time   // 创建时间
+	CreateTime     field.Field  // 创建时间
 	UpdateBy       field.Int64  // 更新者
-	UpdateTime     field.Time   // 更新时间
+	UpdateTime     field.Field  // 更新时间
 	DeleteTime     field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
@@ -94,9 +94,9 @@ func (s *sysMenu) updateTableName(table string) *sysMenu {
 	s.Component = field.NewString(table, "component")
 	s.CreateDept = field.NewInt64(table, "create_dept")
 	s.CreateBy = field.NewInt64(table, "create_by")
-	s.CreateTime = field.NewTime(table, "create_time")
+	s.CreateTime = field.NewField(table, "create_time")
 	s.UpdateBy = field.NewInt64(table, "update_by")
-	s.UpdateTime = field.NewTime(table, "update_time")
+	s.UpdateTime = field.NewField(table, "update_time")
 	s.DeleteTime = field.NewField(table, "delete_time")
 
 	s.fillFieldMap()

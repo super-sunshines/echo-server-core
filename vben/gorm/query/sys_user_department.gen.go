@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"vben/gorm/model"
+	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
 )
 
 func newSysUserDepartment(db *gorm.DB, opts ...gen.DOOption) sysUserDepartment {
@@ -33,9 +33,9 @@ func newSysUserDepartment(db *gorm.DB, opts ...gen.DOOption) sysUserDepartment {
 	_sysUserDepartment.Role = field.NewString(tableName, "role")
 	_sysUserDepartment.CreateDept = field.NewInt64(tableName, "create_dept")
 	_sysUserDepartment.CreateBy = field.NewInt64(tableName, "create_by")
-	_sysUserDepartment.CreateTime = field.NewTime(tableName, "create_time")
+	_sysUserDepartment.CreateTime = field.NewField(tableName, "create_time")
 	_sysUserDepartment.UpdateBy = field.NewInt64(tableName, "update_by")
-	_sysUserDepartment.UpdateTime = field.NewTime(tableName, "update_time")
+	_sysUserDepartment.UpdateTime = field.NewField(tableName, "update_time")
 	_sysUserDepartment.DeleteTime = field.NewField(tableName, "delete_time")
 
 	_sysUserDepartment.fillFieldMap()
@@ -54,9 +54,9 @@ type sysUserDepartment struct {
 	Role         field.String // 部门中角色(未使用)
 	CreateDept   field.Int64  // 创建部门
 	CreateBy     field.Int64  // 创建者
-	CreateTime   field.Time   // 创建时间
+	CreateTime   field.Field  // 创建时间
 	UpdateBy     field.Int64  // 更新者
-	UpdateTime   field.Time   // 更新时间
+	UpdateTime   field.Field  // 更新时间
 	DeleteTime   field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
@@ -80,9 +80,9 @@ func (s *sysUserDepartment) updateTableName(table string) *sysUserDepartment {
 	s.Role = field.NewString(table, "role")
 	s.CreateDept = field.NewInt64(table, "create_dept")
 	s.CreateBy = field.NewInt64(table, "create_by")
-	s.CreateTime = field.NewTime(table, "create_time")
+	s.CreateTime = field.NewField(table, "create_time")
 	s.UpdateBy = field.NewInt64(table, "update_by")
-	s.UpdateTime = field.NewTime(table, "update_time")
+	s.UpdateTime = field.NewField(table, "update_time")
 	s.DeleteTime = field.NewField(table, "delete_time")
 
 	s.fillFieldMap()

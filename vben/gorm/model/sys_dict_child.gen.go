@@ -5,8 +5,7 @@
 package model
 
 import (
-	"time"
-
+	"github.com/XiaoSGentle/echo-server-core/core"
 	"gorm.io/gorm"
 )
 
@@ -25,9 +24,9 @@ type SysDictChild struct {
 	ItemClass  string         `gorm:"column:item_class;type:varchar(255)" json:"itemClass"`
 	CreateDept int64          `gorm:"column:create_dept;type:int(11)" json:"createDept"`
 	CreateBy   int64          `gorm:"column:create_by;type:int(11)" json:"createBy"`
-	CreateTime time.Time      `gorm:"column:create_time;autoCreateTime;type:datetime" json:"createTime"`
+	CreateTime core.Time      `gorm:"column:create_time;autoCreateTime;type:datetime" json:"createTime"`
 	UpdateBy   int64          `gorm:"column:update_by;type:int(11)" json:"updateBy"`
-	UpdateTime time.Time      `gorm:"column:update_time;autoUpdateTime;type:datetime" json:"updateTime"`
+	UpdateTime core.Time      `gorm:"column:update_time;autoUpdateTime;type:datetime" json:"updateTime"`
 	DeleteTime gorm.DeletedAt `gorm:"column:delete_time;type:varchar(255)" json:"deleteTime"`
 }
 

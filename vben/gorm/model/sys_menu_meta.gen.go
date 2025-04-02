@@ -5,9 +5,7 @@
 package model
 
 import (
-	"echo-server-core/core"
-	"time"
-
+	"github.com/XiaoSGentle/echo-server-core/core"
 	"gorm.io/gorm"
 )
 
@@ -35,9 +33,9 @@ type SysMenuMetum struct {
 	NoBasicLayout      core.IntBool       `gorm:"column:no_basic_layout;type:int(1);comment:基础布局" json:"noBasicLayout"`             // 基础布局
 	CreateDept         int64              `gorm:"column:create_dept;type:int(11);comment:创建部门" json:"createDept"`                   // 创建部门
 	CreateBy           int64              `gorm:"column:create_by;type:int(11);comment:创建者" json:"createBy"`                        // 创建者
-	CreateTime         time.Time          `gorm:"column:create_time;autoCreateTime;type:datetime;comment:创建时间" json:"createTime"`   // 创建时间
+	CreateTime         core.Time          `gorm:"column:create_time;autoCreateTime;type:datetime;comment:创建时间" json:"createTime"`   // 创建时间
 	UpdateBy           int64              `gorm:"column:update_by;type:int(11);comment:更新者" json:"updateBy"`                        // 更新者
-	UpdateTime         time.Time          `gorm:"column:update_time;autoUpdateTime;type:datetime;comment:更新时间" json:"updateTime"`   // 更新时间
+	UpdateTime         core.Time          `gorm:"column:update_time;autoUpdateTime;type:datetime;comment:更新时间" json:"updateTime"`   // 更新时间
 	DeleteTime         gorm.DeletedAt     `gorm:"column:delete_time;type:datetime;comment:删除时间" json:"deleteTime"`                  // 删除时间
 }
 
