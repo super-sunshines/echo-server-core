@@ -31,6 +31,13 @@
             </set>
           </value>
         </entry>
+        <entry key="BindRealNameBo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/bo/qywx.bo.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="Claims">
           <value>
             <set>
@@ -136,6 +143,27 @@
             </set>
           </value>
         </entry>
+        <entry key="LoginBo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/bo/auth.bo.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="LoginUserInfoVo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/vo/auth.vo.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="LoginVo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/vo/auth.vo.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="MenuRouter">
           <value>
             <set>
@@ -147,6 +175,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/core/config.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="OauthLoginVo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/vo/auth.vo.go" />
             </set>
           </value>
         </entry>
@@ -178,6 +213,13 @@
             </set>
           </value>
         </entry>
+        <entry key="PermissionBo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/bo/permission.bo.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="PreGorm">
           <value>
             <set>
@@ -185,10 +227,24 @@
             </set>
           </value>
         </entry>
+        <entry key="Query">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/gen.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="QueryIds">
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/core/type.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="QueryTx">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/gen.go" />
             </set>
           </value>
         </entry>
@@ -269,10 +325,31 @@
             </set>
           </value>
         </entry>
+        <entry key="SignatureVo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/vo/qywx.vo.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="SimpleTreeBo">
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/vben/bo/menu.bo.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SysCodeList">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/vo/dict.vo.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SysDepartment">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/model/sys_department.gen.go" />
             </set>
           </value>
         </entry>
@@ -304,10 +381,38 @@
             </set>
           </value>
         </entry>
+        <entry key="SysDepartmentTreeVo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/vo/department.vo.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SysDepartmentVo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/vo/department.vo.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SysDict">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/model/sys_dict.gen.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="SysDictBo">
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/vben/bo/dict.bo.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SysDictChild">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/model/sys_dict_child.gen.go" />
             </set>
           </value>
         </entry>
@@ -325,6 +430,13 @@
             </set>
           </value>
         </entry>
+        <entry key="SysDictChildVo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/vo/dict.vo.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="SysDictPageBo">
           <value>
             <set>
@@ -336,6 +448,20 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/vben/routers/dict.route.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SysDictVo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/vo/dict.vo.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SysMenu">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/model/sys_menu.gen.go" />
             </set>
           </value>
         </entry>
@@ -444,6 +570,13 @@
             </set>
           </value>
         </entry>
+        <entry key="SysUserDepartment">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/model/sys_user_department.gen.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="SysUserPageBo">
           <value>
             <set>
@@ -462,6 +595,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/vben/services/sys.user.service.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="SysUserThirdBind">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/model/sys_user_third_bind.gen.go" />
             </set>
           </value>
         </entry>
@@ -563,6 +703,139 @@
             </set>
           </value>
         </entry>
+        <entry key="queryCtx">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysDepartment">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_department.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysDepartmentDo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_department.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysDict">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_dict.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysDictChild">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_dict_child.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysDictChildDo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_dict_child.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysDictDo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_dict.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysMenu">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_menu.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysMenuDo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_menu.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysMenuMetum">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_menu_meta.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysMenuMetumDo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_menu_meta.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysRole">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_role.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysRoleDo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_role.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysUser">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_user.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysUserDepartment">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_user_department.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysUserDepartmentDo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_user_department.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysUserDo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_user.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysUserThirdBind">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_user_third_bind.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="sysUserThirdBindDo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/vben/gorm/query/sys_user_third_bind.gen.go" />
+            </set>
+          </value>
+        </entry>
       </map>
     </option>
     <option name="scannedPathMapping">
@@ -570,7 +843,7 @@
         <entry key="file://$PROJECT_DIR$/core/config.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742271025225" />
+              <option name="lastModified" value="1743564016460" />
               <option name="schema">
                 <list>
                   <option value="NewConfigParam" />
@@ -582,14 +855,14 @@
         <entry key="file://$PROJECT_DIR$/core/const.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742443357630" />
+              <option name="lastModified" value="1743564016460" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/core/context.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742615273499" />
+              <option name="lastModified" value="1743564016461" />
               <option name="schema">
                 <list>
                   <option value="XContext" />
@@ -603,7 +876,7 @@
         <entry key="file://$PROJECT_DIR$/core/echo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742377801639" />
+              <option name="lastModified" value="1743564016461" />
               <option name="schema">
                 <list>
                   <option value="ServerRunOption" />
@@ -616,7 +889,7 @@
         <entry key="file://$PROJECT_DIR$/core/error.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742176452285" />
+              <option name="lastModified" value="1743564016462" />
               <option name="schema">
                 <list>
                   <option value="CodeError" />
@@ -628,7 +901,7 @@
         <entry key="file://$PROJECT_DIR$/core/gorm.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742615273500" />
+              <option name="lastModified" value="1743564016462" />
               <option name="schema">
                 <list>
                   <option value="InitGormOptions" />
@@ -644,7 +917,7 @@
         <entry key="file://$PROJECT_DIR$/core/logger.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742176452288" />
+              <option name="lastModified" value="1743564016463" />
               <option name="schema">
                 <list>
                   <option value="Logger" />
@@ -657,7 +930,7 @@
         <entry key="file://$PROJECT_DIR$/core/permission.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742377446130" />
+              <option name="lastModified" value="1743564016463" />
               <option name="schema">
                 <list>
                   <option value="RolePermission" />
@@ -669,7 +942,7 @@
         <entry key="file://$PROJECT_DIR$/core/redis.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742380393809" />
+              <option name="lastModified" value="1743564016464" />
               <option name="schema">
                 <list>
                   <option value="RedisCache" />
@@ -681,7 +954,7 @@
         <entry key="file://$PROJECT_DIR$/core/router.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742176452289" />
+              <option name="lastModified" value="1743564016464" />
               <option name="schema">
                 <list>
                   <option value="DigContainer" />
@@ -694,7 +967,7 @@
         <entry key="file://$PROJECT_DIR$/core/token.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742615273501" />
+              <option name="lastModified" value="1743564016465" />
               <option name="schema">
                 <list>
                   <option value="TokenManager" />
@@ -709,14 +982,14 @@
         <entry key="file://$PROJECT_DIR$/core/tool.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742615273502" />
+              <option name="lastModified" value="1743564016465" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/core/type.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742615273503" />
+              <option name="lastModified" value="1743564016466" />
               <option name="schema">
                 <list>
                   <option value="Config" />
@@ -740,7 +1013,7 @@
         <entry key="file://$PROJECT_DIR$/core/validate.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1742176452291" />
+              <option name="lastModified" value="1743564016466" />
               <option name="schema">
                 <list>
                   <option value="Validator" />
@@ -749,10 +1022,22 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/vben/bo/auth.bo.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016467" />
+              <option name="schema">
+                <list>
+                  <option value="LoginBo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/vben/bo/department.bo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562567625" />
+              <option name="lastModified" value="1743564016469" />
               <option name="schema">
                 <list>
                   <option value="SysDepartmentPageBo" />
@@ -765,7 +1050,7 @@
         <entry key="file://$PROJECT_DIR$/vben/bo/dict.bo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562560628" />
+              <option name="lastModified" value="1743564016469" />
               <option name="schema">
                 <list>
                   <option value="SysDictBo" />
@@ -780,7 +1065,7 @@
         <entry key="file://$PROJECT_DIR$/vben/bo/menu.bo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562569350" />
+              <option name="lastModified" value="1743564016470" />
               <option name="schema">
                 <list>
                   <option value="SysMenuBo" />
@@ -794,10 +1079,34 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/vben/bo/permission.bo.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016470" />
+              <option name="schema">
+                <list>
+                  <option value="PermissionBo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/bo/qywx.bo.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016471" />
+              <option name="schema">
+                <list>
+                  <option value="BindRealNameBo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/vben/bo/role.bo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562555663" />
+              <option name="lastModified" value="1743564016471" />
               <option name="schema">
                 <list>
                   <option value="SysRolePageBo" />
@@ -810,7 +1119,7 @@
         <entry key="file://$PROJECT_DIR$/vben/bo/user.bo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562547192" />
+              <option name="lastModified" value="1743564016472" />
               <option name="schema">
                 <list>
                   <option value="UserInfoBo" />
@@ -821,24 +1130,79 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/vben/const/menu.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016472" />
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/vben/export.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562890691" />
+              <option name="lastModified" value="1743564016473" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/vben/gen/gorm.model.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562612019" />
+              <option name="lastModified" value="1743564016473" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/model/sys_department.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016474" />
+              <option name="schema">
+                <list>
+                  <option value="SysDepartment" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/model/sys_dict.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016474" />
+              <option name="schema">
+                <list>
+                  <option value="SysDict" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/model/sys_dict_child.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016475" />
+              <option name="schema">
+                <list>
+                  <option value="SysDictChild" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/model/sys_menu.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016475" />
+              <option name="schema">
+                <list>
+                  <option value="SysMenu" />
+                </list>
+              </option>
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/vben/gorm/model/sys_menu_meta.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562623660" />
+              <option name="lastModified" value="1743564016476" />
               <option name="schema">
                 <list>
                   <option value="SysMenuMetum" />
@@ -850,7 +1214,7 @@
         <entry key="file://$PROJECT_DIR$/vben/gorm/model/sys_role.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562626014" />
+              <option name="lastModified" value="1743564016476" />
               <option name="schema">
                 <list>
                   <option value="SysRole" />
@@ -862,7 +1226,7 @@
         <entry key="file://$PROJECT_DIR$/vben/gorm/model/sys_user.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562633521" />
+              <option name="lastModified" value="1743564016477" />
               <option name="schema">
                 <list>
                   <option value="SysUser" />
@@ -871,24 +1235,179 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/model/sys_user_department.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016477" />
+              <option name="schema">
+                <list>
+                  <option value="SysUserDepartment" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/model/sys_user_third_bind.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016478" />
+              <option name="schema">
+                <list>
+                  <option value="SysUserThirdBind" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/query/gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016478" />
+              <option name="schema">
+                <list>
+                  <option value="Query" />
+                  <option value="queryCtx" />
+                  <option value="QueryTx" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_department.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016479" />
+              <option name="schema">
+                <list>
+                  <option value="sysDepartment" />
+                  <option value="sysDepartmentDo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_dict.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016479" />
+              <option name="schema">
+                <list>
+                  <option value="sysDict" />
+                  <option value="sysDictDo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_dict_child.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016480" />
+              <option name="schema">
+                <list>
+                  <option value="sysDictChild" />
+                  <option value="sysDictChildDo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_menu.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016481" />
+              <option name="schema">
+                <list>
+                  <option value="sysMenu" />
+                  <option value="sysMenuDo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_menu_meta.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016481" />
+              <option name="schema">
+                <list>
+                  <option value="sysMenuMetum" />
+                  <option value="sysMenuMetumDo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_role.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016482" />
+              <option name="schema">
+                <list>
+                  <option value="sysRole" />
+                  <option value="sysRoleDo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_user.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016482" />
+              <option name="schema">
+                <list>
+                  <option value="sysUser" />
+                  <option value="sysUserDo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_user_department.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016483" />
+              <option name="schema">
+                <list>
+                  <option value="sysUserDepartment" />
+                  <option value="sysUserDepartmentDo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/gorm/query/sys_user_third_bind.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016483" />
+              <option name="schema">
+                <list>
+                  <option value="sysUserThirdBind" />
+                  <option value="sysUserThirdBindDo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/vben/helper/jwt.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562649969" />
+              <option name="lastModified" value="1743564016484" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/vben/helper/qywx.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562655854" />
+              <option name="lastModified" value="1743564016484" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/vben/hooks/gorm.hook.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562657189" />
+              <option name="lastModified" value="1743564016485" />
               <option name="schema">
                 <list>
                   <option value="DBExecutionStrategy" />
@@ -900,14 +1419,14 @@
         <entry key="file://$PROJECT_DIR$/vben/hooks/permission.hook.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562669294" />
+              <option name="lastModified" value="1743564016485" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/vben/routers/auth.router.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562675849" />
+              <option name="lastModified" value="1743564016486" />
               <option name="schema">
                 <list>
                   <option value="AuthRouter" />
@@ -919,7 +1438,7 @@
         <entry key="file://$PROJECT_DIR$/vben/routers/department.router.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562681378" />
+              <option name="lastModified" value="1743564016486" />
               <option name="schema">
                 <list>
                   <option value="SysDepartmentRouter" />
@@ -931,7 +1450,7 @@
         <entry key="file://$PROJECT_DIR$/vben/routers/dict.route.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562687681" />
+              <option name="lastModified" value="1743564016487" />
               <option name="schema">
                 <list>
                   <option value="SysDictRouter" />
@@ -943,7 +1462,7 @@
         <entry key="file://$PROJECT_DIR$/vben/routers/menu.router.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562692156" />
+              <option name="lastModified" value="1743564016488" />
               <option name="schema">
                 <list>
                   <option value="MenuRouter" />
@@ -955,7 +1474,7 @@
         <entry key="file://$PROJECT_DIR$/vben/routers/qywx.router.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562695657" />
+              <option name="lastModified" value="1743564016488" />
               <option name="schema">
                 <list>
                   <option value="QywxAuthRouter" />
@@ -967,7 +1486,7 @@
         <entry key="file://$PROJECT_DIR$/vben/routers/role.router.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562700988" />
+              <option name="lastModified" value="1743564016488" />
               <option name="schema">
                 <list>
                   <option value="RoleRouter" />
@@ -979,7 +1498,7 @@
         <entry key="file://$PROJECT_DIR$/vben/routers/tencent.cloud.router.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562705362" />
+              <option name="lastModified" value="1743564016489" />
               <option name="schema">
                 <list>
                   <option value="TencentCloudRouter" />
@@ -991,7 +1510,7 @@
         <entry key="file://$PROJECT_DIR$/vben/routers/user.router.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562706772" />
+              <option name="lastModified" value="1743564016489" />
               <option name="schema">
                 <list>
                   <option value="SysUserRouter" />
@@ -1003,7 +1522,7 @@
         <entry key="file://$PROJECT_DIR$/vben/services/sys.department.service.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562715060" />
+              <option name="lastModified" value="1743564016490" />
               <option name="schema">
                 <list>
                   <option value="SysDepartmentService" />
@@ -1015,7 +1534,7 @@
         <entry key="file://$PROJECT_DIR$/vben/services/sys.role.service.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562721003" />
+              <option name="lastModified" value="1743564016490" />
               <option name="schema">
                 <list>
                   <option value="SysRoleService" />
@@ -1027,7 +1546,7 @@
         <entry key="file://$PROJECT_DIR$/vben/services/sys.user.service.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562725429" />
+              <option name="lastModified" value="1743564016491" />
               <option name="schema">
                 <list>
                   <option value="SysUserService" />
@@ -1039,7 +1558,7 @@
         <entry key="file://$PROJECT_DIR$/vben/services/tencent.cloud.service.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562735406" />
+              <option name="lastModified" value="1743564016491" />
               <option name="schema">
                 <list>
                   <option value="TencentCloud" />
@@ -1049,10 +1568,51 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/vben/vo/auth.vo.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016492" />
+              <option name="schema">
+                <list>
+                  <option value="LoginVo" />
+                  <option value="LoginUserInfoVo" />
+                  <option value="OauthLoginVo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/vo/department.vo.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016492" />
+              <option name="schema">
+                <list>
+                  <option value="SysDepartmentVo" />
+                  <option value="SysDepartmentTreeVo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/vben/vo/dict.vo.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016493" />
+              <option name="schema">
+                <list>
+                  <option value="SysDictVo" />
+                  <option value="SysDictChildVo" />
+                  <option value="SysCodeList" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/vben/vo/menu.vo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562740726" />
+              <option name="lastModified" value="1743564016494" />
               <option name="schema">
                 <list>
                   <option value="SysMenuWithMeta" />
@@ -1067,10 +1627,22 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/vben/vo/qywx.vo.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1743564016495" />
+              <option name="schema">
+                <list>
+                  <option value="SignatureVo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/vben/vo/role.vo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562745019" />
+              <option name="lastModified" value="1743564016495" />
               <option name="schema">
                 <list>
                   <option value="SysRoleVo" />
@@ -1082,7 +1654,7 @@
         <entry key="file://$PROJECT_DIR$/vben/vo/user.vo.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1743562749193" />
+              <option name="lastModified" value="1743564016496" />
               <option name="schema">
                 <list>
                   <option value="UserOptionsVo" />
@@ -1100,6 +1672,7 @@
         <entry key="api_code_bo" value="ApiCodeBo" />
         <entry key="auth_router" value="AuthRouter" />
         <entry key="better_color_writer" value="BetterColorWriter" />
+        <entry key="bind_real_name_bo" value="BindRealNameBo" />
         <entry key="claims" value="Claims" />
         <entry key="claims_additions" value="ClaimsAdditions" />
         <entry key="code_error" value="CodeError" />
@@ -1115,14 +1688,22 @@
         <entry key="jwt_config" value="JwtConfig" />
         <entry key="log_config" value="LogConfig" />
         <entry key="logger" value="Logger" />
+        <entry key="login_bo" value="LoginBo" />
+        <entry key="login_user_info_vo" value="LoginUserInfoVo" />
+        <entry key="login_vo" value="LoginVo" />
         <entry key="menu_router" value="MenuRouter" />
         <entry key="new_config_param" value="NewConfigParam" />
+        <entry key="oauth_login_vo" value="OauthLoginVo" />
         <entry key="order_param" value="OrderParam" />
         <entry key="page_param" value="PageParam" />
         <entry key="page_result" value="PageResult" />
         <entry key="page_result_list" value="PageResultList" />
+        <entry key="permission_bo" value="PermissionBo" />
         <entry key="pre_gorm" value="PreGorm" />
+        <entry key="query" value="Query" />
+        <entry key="query_ctx" value="queryCtx" />
         <entry key="query_ids" value="QueryIds" />
+        <entry key="query_tx" value="QueryTx" />
         <entry key="qywx" value="Qywx" />
         <entry key="qywx_auth_router" value="QywxAuthRouter" />
         <entry key="redis_cache" value="RedisCache" />
@@ -1134,34 +1715,55 @@
         <entry key="router_group" value="RouterGroup" />
         <entry key="server_config" value="ServerConfig" />
         <entry key="server_run_option" value="ServerRunOption" />
+        <entry key="signature_vo" value="SignatureVo" />
         <entry key="simple_tree_bo" value="SimpleTreeBo" />
+        <entry key="sys_code_list" value="SysCodeList" />
+        <entry key="sys_department" value="sysDepartment" />
         <entry key="sys_department_bo" value="SysDepartmentBo" />
+        <entry key="sys_department_do" value="sysDepartmentDo" />
         <entry key="sys_department_page_bo" value="SysDepartmentPageBo" />
         <entry key="sys_department_router" value="SysDepartmentRouter" />
         <entry key="sys_department_service" value="SysDepartmentService" />
+        <entry key="sys_department_tree_vo" value="SysDepartmentTreeVo" />
+        <entry key="sys_department_vo" value="SysDepartmentVo" />
+        <entry key="sys_dict" value="sysDict" />
         <entry key="sys_dict_bo" value="SysDictBo" />
+        <entry key="sys_dict_child" value="sysDictChild" />
         <entry key="sys_dict_child_bo" value="SysDictChildBo" />
+        <entry key="sys_dict_child_do" value="sysDictChildDo" />
         <entry key="sys_dict_child_page_bo" value="SysDictChildPageBo" />
+        <entry key="sys_dict_child_vo" value="SysDictChildVo" />
+        <entry key="sys_dict_do" value="sysDictDo" />
         <entry key="sys_dict_page_bo" value="SysDictPageBo" />
         <entry key="sys_dict_router" value="SysDictRouter" />
+        <entry key="sys_dict_vo" value="SysDictVo" />
+        <entry key="sys_menu" value="sysMenu" />
         <entry key="sys_menu_bo" value="SysMenuBo" />
+        <entry key="sys_menu_do" value="sysMenuDo" />
         <entry key="sys_menu_meta_bo" value="SysMenuMetaBo" />
         <entry key="sys_menu_meta_vo" value="SysMenuMetaVo" />
-        <entry key="sys_menu_metum" value="SysMenuMetum" />
+        <entry key="sys_menu_metum" value="sysMenuMetum" />
+        <entry key="sys_menu_metum_do" value="sysMenuMetumDo" />
         <entry key="sys_menu_vo" value="SysMenuVo" />
         <entry key="sys_menu_with_meta" value="SysMenuWithMeta" />
         <entry key="sys_menu_with_meta_vo" value="SysMenuWithMetaVo" />
-        <entry key="sys_role" value="SysRole" />
+        <entry key="sys_role" value="sysRole" />
         <entry key="sys_role_bo" value="SysRoleBo" />
+        <entry key="sys_role_do" value="sysRoleDo" />
         <entry key="sys_role_page_bo" value="SysRolePageBo" />
         <entry key="sys_role_service" value="SysRoleService" />
         <entry key="sys_role_vo" value="SysRoleVo" />
         <entry key="sys_simple_menu_vo" value="SysSimpleMenuVo" />
-        <entry key="sys_user" value="SysUser" />
+        <entry key="sys_user" value="sysUser" />
         <entry key="sys_user_bo" value="SysUserBo" />
+        <entry key="sys_user_department" value="sysUserDepartment" />
+        <entry key="sys_user_department_do" value="sysUserDepartmentDo" />
+        <entry key="sys_user_do" value="sysUserDo" />
         <entry key="sys_user_page_bo" value="SysUserPageBo" />
         <entry key="sys_user_router" value="SysUserRouter" />
         <entry key="sys_user_service" value="SysUserService" />
+        <entry key="sys_user_third_bind" value="sysUserThirdBind" />
+        <entry key="sys_user_third_bind_do" value="sysUserThirdBindDo" />
         <entry key="sys_user_vo" value="SysUserVo" />
         <entry key="tencent_cloud" value="TencentCloud" />
         <entry key="tencent_cloud_cos_tmp_key" value="TencentCloudCosTmpKey" />
