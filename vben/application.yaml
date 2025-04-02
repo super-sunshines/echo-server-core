@@ -1,0 +1,6 @@
+DataBase:
+  Host: 111.231.164.113
+  DataBase: echo-vben-admin
+  Port: 3306
+  User: echo-vben-admin
+  Pass: echo_vben_admin
