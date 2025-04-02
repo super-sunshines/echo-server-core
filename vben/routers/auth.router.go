@@ -1,13 +1,13 @@
 package routers
 
 import (
-	"github.com/XiaoSGentle/echo-server-core/core"
-	"github.com/XiaoSGentle/echo-server-core/vben/bo"
-	_const "github.com/XiaoSGentle/echo-server-core/vben/const"
-	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
-	"github.com/XiaoSGentle/echo-server-core/vben/helper"
-	"github.com/XiaoSGentle/echo-server-core/vben/vo"
 	"github.com/labstack/echo/v4"
+	"github.com/super-sunshines/echo-server-core/core"
+	"github.com/super-sunshines/echo-server-core/vben/bo"
+	_const "github.com/super-sunshines/echo-server-core/vben/const"
+	"github.com/super-sunshines/echo-server-core/vben/gorm/model"
+	"github.com/super-sunshines/echo-server-core/vben/helper"
+	"github.com/super-sunshines/echo-server-core/vben/vo"
 	"gorm.io/gorm"
 )
 

@@ -1,6 +1,6 @@
 package vo
 
-import "github.com/XiaoSGentle/echo-server-core/core"
+import "github.com/super-sunshines/echo-server-core/core"
 
 type SysRoleVo struct {
 	ID                 int64             `json:"id"`                 // 主键

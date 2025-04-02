@@ -2,7 +2,7 @@ package helper
 
 import (
 	"fmt"
-	"github.com/XiaoSGentle/echo-server-core/core"
+	"github.com/super-sunshines/echo-server-core/core"
 	"github.com/xen0n/go-workwx/v2"
 	"net/url"
 )

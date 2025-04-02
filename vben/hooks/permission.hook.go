@@ -1,11 +1,11 @@
 package hooks
 
 import (
-	"github.com/XiaoSGentle/echo-server-core/core"
-	_const "github.com/XiaoSGentle/echo-server-core/vben/const"
-	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
-	"github.com/XiaoSGentle/echo-server-core/vben/gorm/query"
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/super-sunshines/echo-server-core/core"
+	_const "github.com/super-sunshines/echo-server-core/vben/const"
+	"github.com/super-sunshines/echo-server-core/vben/gorm/model"
+	"github.com/super-sunshines/echo-server-core/vben/gorm/query"
 )
 
 // RolePermissionHook 返回一个预定义的管理员角色权限映射

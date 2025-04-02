@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
+	"github.com/super-sunshines/echo-server-core/vben/gorm/model"
 )
 
 func newSysUserDepartment(db *gorm.DB, opts ...gen.DOOption) sysUserDepartment {

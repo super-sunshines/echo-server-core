@@ -5,7 +5,7 @@
 package model
 
 import (
-	"github.com/XiaoSGentle/echo-server-core/core"
+	"github.com/super-sunshines/echo-server-core/core"
 	"gorm.io/gorm"
 )
 

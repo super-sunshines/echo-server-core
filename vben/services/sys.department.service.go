@@ -1,10 +1,10 @@
 package services
 
 import (
-	"github.com/XiaoSGentle/echo-server-core/core"
-	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
-	"github.com/XiaoSGentle/echo-server-core/vben/vo"
 	"github.com/labstack/echo/v4"
+	"github.com/super-sunshines/echo-server-core/core"
+	"github.com/super-sunshines/echo-server-core/vben/gorm/model"
+	"github.com/super-sunshines/echo-server-core/vben/vo"
 	"gorm.io/gorm"
 )
 

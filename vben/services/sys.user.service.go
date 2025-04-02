@@ -2,11 +2,11 @@ package services
 
 import (
 	"fmt"
-	"github.com/XiaoSGentle/echo-server-core/core"
-	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
-	"github.com/XiaoSGentle/echo-server-core/vben/gorm/query"
-	"github.com/XiaoSGentle/echo-server-core/vben/vo"
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/super-sunshines/echo-server-core/core"
+	"github.com/super-sunshines/echo-server-core/vben/gorm/model"
+	"github.com/super-sunshines/echo-server-core/vben/gorm/query"
+	"github.com/super-sunshines/echo-server-core/vben/vo"
 )
 
 type SysUserService struct {

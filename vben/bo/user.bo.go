@@ -1,6 +1,6 @@
 package bo
 
-import "github.com/XiaoSGentle/echo-server-core/core"
+import "github.com/super-sunshines/echo-server-core/core"
 
 type UserInfoBo struct {
 	UID      int64  `valid:"required,min=5" zh_comment:"账号" json:"uid" query:"uid"`           // 账号

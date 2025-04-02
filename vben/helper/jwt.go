@@ -1,8 +1,8 @@
 package helper
 
 import (
-	"github.com/XiaoSGentle/echo-server-core/core"
-	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
+	"github.com/super-sunshines/echo-server-core/core"
+	"github.com/super-sunshines/echo-server-core/vben/gorm/model"
 )
 
 func GenJwtByUserInfo(platform string, a model.SysUser) string {

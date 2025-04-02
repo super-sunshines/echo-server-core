@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/XiaoSGentle/echo-server-core/core"
+	"github.com/super-sunshines/echo-server-core/core"
 	"gorm.io/driver/mysql"
 	"gorm.io/gen"
 	"gorm.io/gen/field"

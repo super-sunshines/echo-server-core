@@ -1,4 +1,4 @@
-module github.com/XiaoSGentle/echo-server-core
+module github.com/super-sunshines/echo-server-core
 
 go 1.24
 

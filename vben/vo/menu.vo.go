@@ -1,10 +1,10 @@
 package vo
 
 import (
-	"github.com/XiaoSGentle/echo-server-core/core"
-	_const "github.com/XiaoSGentle/echo-server-core/vben/const"
-	"github.com/XiaoSGentle/echo-server-core/vben/gorm/model"
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/super-sunshines/echo-server-core/core"
+	_const "github.com/super-sunshines/echo-server-core/vben/const"
+	"github.com/super-sunshines/echo-server-core/vben/gorm/model"
 	"sort"
 )
 

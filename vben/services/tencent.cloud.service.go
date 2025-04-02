@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/XiaoSGentle/echo-server-core/core"
+	"github.com/super-sunshines/echo-server-core/core"
 	"time"
 
 	"github.com/tencentyun/qcloud-cos-sts-sdk/go"

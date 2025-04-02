@@ -1,9 +1,9 @@
 package routers
 
 import (
-	"github.com/XiaoSGentle/echo-server-core/core"
-	"github.com/XiaoSGentle/echo-server-core/vben/services"
 	"github.com/labstack/echo/v4"
+	"github.com/super-sunshines/echo-server-core/core"
+	"github.com/super-sunshines/echo-server-core/vben/services"
 )
 
 var TencentCloudRouterGroup = core.NewRouterGroup("/tencent/cloud", NewTencentCloudRouter, func(rg *echo.Group, group *core.RouterGroup) error {
