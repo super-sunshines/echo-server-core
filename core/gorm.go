@@ -142,6 +142,16 @@ func (r *Gorm[M, V]) SkipGlobalHook() *Gorm[M, V] {
 	return r
 }
 
+// ReplaceDB 增加一定的维护性
+func (r *Gorm[M, V]) ReplaceDB(db *gorm.DB) *Gorm[M, V] {
+	g := Gorm[M, V]{
+		DB:     db,
+		config: r.config,
+	}
+	g.DB = g.GetModelDb()
+	return &g
+}
+
 func (r *Gorm[M, V]) CheckHasField(column string) error {
 	structure := r.createModelInstance()
 	v := reflect.ValueOf(structure)
