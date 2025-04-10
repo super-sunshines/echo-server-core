@@ -16,6 +16,8 @@ import (
 	"time"
 )
 
+var PathFuncStrMap = map[string]string{}
+
 func CheckFile(filePath string) {
 	_, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
@@ -30,17 +32,20 @@ func CheckFile(filePath string) {
 }
 
 type ServerRunOption struct {
-	GormOptions        InitGormOptions        // Gorm  数据库操作全局钩子
-	PermissionsOptions PermissionsOptions     // 角色权限全局钩子
-	EchoOption         func(echo2 *echo.Echo) // ServerRun 之前的钩子
+	GormOptions        InitGormOptions       // Gorm  数据库操作全局钩子
+	PermissionsOptions PermissionsOptions    // 角色权限全局钩子
+	BeforeRun          func(echo *echo.Echo) // ServerRun 之前的钩子
+	LoggerOptions      LoggerOptions
 }
 
 func NewServer(routerGroup []*RouterGroup, option ServerRunOption) {
 	CheckFile("./application.yaml")
 	InitConfig()
+	CheckFile(config.Ip2RegionConfig.FilePath)
 	initGormConfig(option.GormOptions)
 	initRolePermission(option.PermissionsOptions)
 	initRedis()
+	initLogMiddleware(option.LoggerOptions)
 	e := echo.New()
 	// 关闭Banner
 	e.HideBanner = true
@@ -56,13 +61,14 @@ func NewServer(routerGroup []*RouterGroup, option ServerRunOption) {
 	for _, group := range routerGroup {
 		RegisterGroup(e.Group(config.Server.GlobalPrefix), group)
 	}
+	// 生产环境下不打开Swagger
 	if config.Server.Dev {
 		e.GET("/swagger/*", echoSwagger.WrapHandler)
-		PrintRoutes(e)
 	}
-
-	if option.EchoOption != nil {
-		option.EchoOption(e)
+	//
+	ResolveRoutes(e)
+	if option.BeforeRun != nil {
+		option.BeforeRun(e)
 	}
 	fmt.Println(fmt.Sprintf(`%s==> Server Started !%s`, logger.Green, logger.Reset))
 	err := e.Start(fmt.Sprintf(":%d", config.Server.HttpPort))
@@ -78,11 +84,8 @@ func EchoError() func(err error, c echo.Context) {
 			c.Logger().Errorf(fmt.Sprintf("%s", err.Error()))
 			codeErr := TransformErr(err)
 			fmt.Println(fmt.Sprintf("%+v ", codeErr))
-			if codeErr.GetErrCode() < 100100 && codeErr.GetErrCode() >= 100050 {
-				c.Response().WriteHeader(http.StatusUnauthorized)
-			}
-			context := GetContext[any](c)
-			_ = context.Fail(codeErr)
+			c.Response().Header().Set("Content-Type", "application/json")
+			_ = GetContext[any](c).Fail(codeErr)
 			return
 		}
 	}
@@ -94,7 +97,6 @@ func RecoverMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		defer func() {
 			if r := recover(); r != nil {
 				if IsXError(r) {
-
 					return
 				}
 				// 创建一个缓冲区来存储堆栈信息
@@ -199,9 +201,10 @@ func RequestLoggerMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-// PrintRoutes 打印所有注册的路由
-func PrintRoutes(e *echo.Echo) {
+// ResolveRoutes 打印所有注册的路由
+func ResolveRoutes(e *echo.Echo) {
 	routes := e.Routes()
+
 	fmt.Println(fmt.Sprintf(`%s==> All Routers%s`, logger.Magenta, logger.Reset))
 	// 创建一个新的表格
 	t := table.NewWriter()
@@ -210,6 +213,7 @@ func PrintRoutes(e *echo.Echo) {
 	// 添加表头
 	t.AppendHeader(table.Row{"METHOD", "PATH", "FUN"})
 	for _, route := range routes {
+		PathFuncStrMap[route.Path] = route.Name
 		t.AppendRows([]table.Row{
 			{route.Method, route.Path, route.Name},
 		})

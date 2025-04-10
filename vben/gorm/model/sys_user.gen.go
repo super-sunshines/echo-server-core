@@ -23,7 +23,7 @@ type SysUser struct {
 	Avatar         string             `gorm:"column:avatar;type:varchar(255);comment:头像" json:"avatar"`                       // 头像
 	LoginFailCount int64              `gorm:"column:login_fail_count;type:int(11);comment:登录失败次数" json:"loginFailCount"`      // 登录失败次数
 	Phone          string             `gorm:"column:phone;type:varchar(11);comment:手机号" json:"phone"`                         // 手机号
-	Status         int64              `gorm:"column:status;type:int(11);comment:状态" json:"status"`                            // 状态
+	EnableStatus   int64              `gorm:"column:enable_status;type:int(11);comment:状态" json:"enableStatus"`               // 状态
 	LastOnline     int64              `gorm:"column:last_online;type:bigint(20);comment:上次在线时间" json:"lastOnline"`            // 上次在线时间
 	DepartmentID   int64              `gorm:"column:department_id;type:int(11);comment:部门ID" json:"departmentId"`             // 部门ID
 	CreateDept     int64              `gorm:"column:create_dept;type:int(11);comment:创建部门" json:"createDept"`                 // 创建部门

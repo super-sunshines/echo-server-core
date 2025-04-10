@@ -5,15 +5,22 @@ import (
 	"github.com/super-sunshines/echo-server-core/vben/routers"
 )
 
-var Routers = []*core.RouterGroup{
+var BaseRouters = []*core.RouterGroup{
 	routers.AuthRouterGroup,
 	routers.MenuRouterGroup,
-	routers.QywxRouterGroup,
-	routers.TencentCloudRouterGroup,
+	routers.SysLogRouterGroup,
 	routers.SysDictRouterGroup,
 	routers.SysUserRouterGroup,
 	routers.SysRoleRouterGroup,
 	routers.SysDepartmentRouterGroup,
+}
+
+var TencentRouters = []*core.RouterGroup{
+	routers.TencentCloudRouterGroup,
+}
+
+var TencentQywxRouters = []*core.RouterGroup{
+	routers.QywxRouterGroup,
 }
 
 func AddPermissionCodes(codes []string) {

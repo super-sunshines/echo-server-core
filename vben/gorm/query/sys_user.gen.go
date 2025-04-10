@@ -37,7 +37,7 @@ func newSysUser(db *gorm.DB, opts ...gen.DOOption) sysUser {
 	_sysUser.Avatar = field.NewString(tableName, "avatar")
 	_sysUser.LoginFailCount = field.NewInt64(tableName, "login_fail_count")
 	_sysUser.Phone = field.NewString(tableName, "phone")
-	_sysUser.Status = field.NewInt64(tableName, "status")
+	_sysUser.EnableStatus = field.NewInt64(tableName, "enable_status")
 	_sysUser.LastOnline = field.NewInt64(tableName, "last_online")
 	_sysUser.DepartmentID = field.NewInt64(tableName, "department_id")
 	_sysUser.CreateDept = field.NewInt64(tableName, "create_dept")
@@ -66,7 +66,7 @@ type sysUser struct {
 	Avatar         field.String // 头像
 	LoginFailCount field.Int64  // 登录失败次数
 	Phone          field.String // 手机号
-	Status         field.Int64  // 状态
+	EnableStatus   field.Int64  // 状态
 	LastOnline     field.Int64  // 上次在线时间
 	DepartmentID   field.Int64  // 部门ID
 	CreateDept     field.Int64  // 创建部门
@@ -101,7 +101,7 @@ func (s *sysUser) updateTableName(table string) *sysUser {
 	s.Avatar = field.NewString(table, "avatar")
 	s.LoginFailCount = field.NewInt64(table, "login_fail_count")
 	s.Phone = field.NewString(table, "phone")
-	s.Status = field.NewInt64(table, "status")
+	s.EnableStatus = field.NewInt64(table, "enable_status")
 	s.LastOnline = field.NewInt64(table, "last_online")
 	s.DepartmentID = field.NewInt64(table, "department_id")
 	s.CreateDept = field.NewInt64(table, "create_dept")
@@ -137,7 +137,7 @@ func (s *sysUser) fillFieldMap() {
 	s.fieldMap["avatar"] = s.Avatar
 	s.fieldMap["login_fail_count"] = s.LoginFailCount
 	s.fieldMap["phone"] = s.Phone
-	s.fieldMap["status"] = s.Status
+	s.fieldMap["enable_status"] = s.EnableStatus
 	s.fieldMap["last_online"] = s.LastOnline
 	s.fieldMap["department_id"] = s.DepartmentID
 	s.fieldMap["create_dept"] = s.CreateDept

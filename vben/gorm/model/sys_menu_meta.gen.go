@@ -16,7 +16,7 @@ type SysMenuMetum struct {
 	ID                 int64              `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true;comment:id" json:"id"`        // id
 	Title              string             `gorm:"column:title;type:varchar(255);comment:路由名称" json:"title"`                         // 路由名称
 	Icon               string             `gorm:"column:icon;type:varchar(255);comment:访问路径" json:"icon"`                           // 访问路径
-	Order_             int64              `gorm:"column:order;type:int(11);comment:排序" json:"order"`                                // 排序
+	OrderNum           int64              `gorm:"column:order_num;type:int(11);comment:排序" json:"orderNum"`                         // 排序
 	ActiveIcon         string             `gorm:"column:active_icon;type:varchar(255);comment:激活时的Icon" json:"activeIcon"`          // 激活时的Icon
 	HideInMenu         core.IntBool       `gorm:"column:hide_in_menu;type:int(1);comment:隐藏菜单" json:"hideInMenu"`                   // 隐藏菜单
 	HideInTab          core.IntBool       `gorm:"column:hide_in_tab;type:int(1);comment:标签页隐藏" json:"hideInTab"`                    // 标签页隐藏

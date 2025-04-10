@@ -50,18 +50,15 @@ func (j TokenManager) GetJwtExpirationTime(tokenStr string) int64 {
 }
 func (j TokenManager) ParseJwt(token string) (Claims, *CodeError) {
 	key := GetConfig().Jwt.JwtKey
-	claims := &Claims{}
-	tkn, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+	claims := Claims{}
+	tkn, err := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(key), nil
 	})
 	if (err != nil) || (tkn != nil && !tkn.Valid) {
-		//if errors.Is(err, jwt.ErrSignatureInvalid) {
-		//
-		//}
 		zap.L().Info(fmt.Sprintf("Token 解析出错！%#v", err))
-		return *claims, NewErrCodeMsg(TOKEN_EXPIRE_ERROR, err.Error())
+		return claims, NewErrCodeMsg(TOKEN_EXPIRE_ERROR, err.Error())
 	}
-	return *claims, nil
+	return claims, nil
 }
 func (j TokenManager) GenJwtString(platform string, user ClaimsAdditions) (string, error) {
 	userJwt := j.GetUserJwt(user.UID, platform)

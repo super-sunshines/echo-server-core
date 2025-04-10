@@ -31,9 +31,9 @@ func HaveOneOfPermissions(roles ...string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			context := GetContext[any](c)
-			codes := context.GetLoginUser().RoleCodes
-			if !PermissionMange.CheckRoleHaveCodePermission(codes, roles, false) {
-				context.CheckError(NewFrontShowErrMsg(fmt.Sprintf("Dont Have OneOf Permission Check Error: %#v", roles)))
+			user, err := context.GetLoginUser()
+			if err != nil || !PermissionMange.CheckRoleHaveCodePermission(user.RoleCodes, roles, false) {
+				context.Error(NewFrontShowErrMsg(fmt.Sprintf("Dont Have OneOf Permission Check Error: %#v", roles)))
 			}
 			return next(c)
 		}
@@ -43,9 +43,9 @@ func HaveAllPermissions(roles ...string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			context := GetContext[any](c)
-			codes := context.GetLoginUser().RoleCodes
-			if !PermissionMange.CheckRoleHaveCodePermission(codes, roles, true) {
-				context.CheckError(NewFrontShowErrMsg(fmt.Sprintf("Dont All Permission Check Error: %#v", roles)))
+			user, err := context.GetLoginUser()
+			if err != nil || !PermissionMange.CheckRoleHaveCodePermission(user.RoleCodes, roles, true) {
+				context.Error(NewFrontShowErrMsg(fmt.Sprintf("Dont All Permission Check Error: %#v", roles)))
 			}
 			return next(c)
 		}
@@ -56,9 +56,9 @@ func HavePermission(role string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			context := GetContext[any](c)
-			codes := context.GetLoginUser().RoleCodes
-			if !PermissionMange.CheckRoleHaveCodePermission(codes, []string{role}, false) {
-				context.CheckError(NewFrontShowErrMsg(fmt.Sprintf("Dont Have Permission Check Error: %#v", role)))
+			user, err := context.GetLoginUser()
+			if err != nil || !PermissionMange.CheckRoleHaveCodePermission(user.RoleCodes, []string{role}, false) {
+				context.Error(NewFrontShowErrMsg(fmt.Sprintf("Dont Have Permission Check Error: %#v", role)))
 			}
 			return next(c)
 		}
@@ -67,6 +67,7 @@ func HavePermission(role string) echo.MiddlewareFunc {
 func IgnorePermission() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			c.Set(GormGlobalSkipHookKey, true)
 			return next(c)
 		}
 	}
@@ -138,6 +139,12 @@ func (r *RolePermission) Refresh() error {
 
 func (r *RolePermission) CheckRoleHaveCodePermission(roles []string, codes []string, all bool) bool {
 	// 初始化一个空的字符串切片，用于存储从缓存中获取的权限码
+	if len(roles) == 0 {
+		return false
+	}
+	if len(codes) == 0 {
+		return true
+	}
 	var cacheCodes []string
 	listStrList := r.RoleCodeRedis.XHMGet(roles...)
 	slice.ForEach(listStrList, func(index int, listStr []string) {

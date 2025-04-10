@@ -14,12 +14,12 @@ import (
 
 var SysUserRouterGroup = core.NewRouterGroup("/system/user", NewSysUserRouter, func(rg *echo.Group, group *core.RouterGroup) error {
 	return group.Reg(func(m *SysUserRouter) {
-		rg.GET("/list", m.SysUserList, core.IgnorePermission())
-		rg.GET("/options", m.optionsList, core.IgnorePermission())
-		rg.GET("/:id", m.SysUserDetail, core.IgnorePermission())
-		rg.PUT("/:id", m.SysUserUpdate, core.IgnorePermission())
-		rg.POST("", m.SysUserAdd, core.IgnorePermission())
-		rg.DELETE("", m.SysUserDelete, core.IgnorePermission())
+		rg.GET("/list", m.SysUserList, core.HavePermission("SYS::USER::QUERY"), core.Log("用户分页列表"))
+		rg.GET("/options", m.optionsList, core.HavePermission("SYS::USER::OPTIONS"), core.Log("用户下拉列表"))
+		rg.GET("/:id", m.SysUserDetail, core.HavePermission("SYS::USER::QUERY"), core.Log("查询用户"))
+		rg.PUT("/:id", m.SysUserUpdate, core.HavePermission("SYS::USER::UPDATE"), core.Log("修改用户"))
+		rg.POST("", m.SysUserAdd, core.HavePermission("SYS::USER::ADD"), core.Log("新增用户"))
+		rg.DELETE("", m.SysUserDelete, core.HavePermission("SYS::USER::DEL"), core.Log("删除用户"))
 	})
 })
 
@@ -35,15 +35,17 @@ func NewSysUserRouter() *SysUserRouter {
 	}
 }
 
-// @Summary	用户下拉列表
-// @Tags		[系统]用户模块
-// @Success	200	{object}	core.ResponseSuccess{data=[]vo.UserOptionsVo}
-// @Router		/system/user/options [get]
+//	@Summary	用户下拉列表
+//	@Tags		[系统]用户模块
+//	@Success	200	{object}	core.ResponseSuccess{data=[]vo.UserOptionsVo}
+//	@Router		/system/user/options [get]
 func (receiver SysUserRouter) optionsList(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
 	err, userList := receiver.SysUserService.WithContext(ec).SkipGlobalHook().
 		FindList()
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	vos := slice.Map(userList, func(index int, item model.SysUser) vo.UserOptionsVo {
 		return vo.UserOptionsVo{
 			Uid:      item.ID,
@@ -55,88 +57,121 @@ func (receiver SysUserRouter) optionsList(ec echo.Context) (err error) {
 }
 
 // SysUserList
-// @Summary	系统用户列表
-// @Tags		[系统]用户模块
-// @Success	200	{object}	core.ResponseSuccess{data=core.PageResultList[vo.SysUserVo]}
-// @Router		/system/user/list [GET]
-// @Param		bo	query	bo.SysUserPageBo	true	"分页参数"
+//
+//	@Summary	系统用户列表
+//	@Tags		[系统]用户模块
+//	@Success	200	{object}	core.ResponseSuccess{data=core.PageResultList[vo.SysUserVo]}
+//	@Router		/system/user/list [GET]
+//	@Param		bo	query	bo.SysUserPageBo	true	"分页参数"
 func (receiver SysUserRouter) SysUserList(c echo.Context) error {
 	context := core.GetContext[bo.SysUserPageBo](c)
-	pageBo := context.GetQueryParamAndValid()
+	pageBo, err := context.GetQueryParamAndValid()
+	if err != nil {
+		return err
+	}
 	err, x := receiver.SysUserService.WithContext(c).SkipGlobalHook().
 		FindVoListByPage(pageBo.PageParam, func(db *gorm.DB) *gorm.DB {
 			core.BooleanFun(pageBo.DepartmentId != 0, func() {
 				children, err := receiver.SysDepartmentService.GetChildren(c, pageBo.DepartmentId)
-				context.CheckError(err)
+				if err != nil {
+					c.Error(err)
+					return
+				}
 				db.Where("department_id in (?)", children)
 			})
 			return db
 		})
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(x)
 }
 
 // SysUserDetail
-// @Summary	系统用户详情
-// @Tags		[系统]用户模块
-// @Success	200	{object}	core.ResponseSuccess{data=vo.SysUserVo}
-// @Router		/system/user/:id [GET]
-// @Param		id	path	int	true	"id"
+//
+//	@Summary	系统用户详情
+//	@Tags		[系统]用户模块
+//	@Success	200	{object}	core.ResponseSuccess{data=vo.SysUserVo}
+//	@Router		/system/user/:id [GET]
+//	@Param		id	path	int	true	"id"
 func (receiver SysUserRouter) SysUserDetail(c echo.Context) error {
 	context := core.GetContext[any](c)
-	id := context.GetPathParamInt64("id")
+	id, err := context.GetPathParamInt64("id")
+	if err != nil {
+		return err
+	}
 	err, x := receiver.SysUserService.WithContext(c).SkipGlobalHook().FindOneVoByPrimaryKey(id)
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(x)
 }
 
 // SysUserUpdate
-// @Summary	系统用户更新
-// @Tags		[系统]用户模块
-// @Success	200	{object}	core.ResponseSuccess{data=int}
-// @Router		/system/user/:id [PUT]
-// @Param		id	path	int				true	"id"
-// @Param		bo	body	bo.SysUserBo	true	"修改参数"
+//
+//	@Summary	系统用户更新
+//	@Tags		[系统]用户模块
+//	@Success	200	{object}	core.ResponseSuccess{data=int}
+//	@Router		/system/user/:id [PUT]
+//	@Param		id	path	int				true	"id"
+//	@Param		bo	body	bo.SysUserBo	true	"修改参数"
 func (receiver SysUserRouter) SysUserUpdate(c echo.Context) error {
 	context := core.GetContext[bo.SysUserBo](c)
-	updateBo := context.GetBodyAndValid()
-	id := context.GetPathParamInt64("id")
+	updateBo, err := context.GetBodyAndValid()
+	id, err := context.GetPathParamInt64("id")
+	if err != nil {
+		return err
+	}
 	from := core.CopyFrom[model.SysUser](updateBo)
-	core.BooleanFun(from.Status == _const.CommonStateBanned, func() {
+	core.BooleanFun(from.EnableStatus == _const.CommonStateBanned, func() {
 		core.GetTokenManager().RemoveTokenByUid(id)
 	})
 	err, x := receiver.SysUserService.WithContext(c).SkipGlobalHook().
 		SaveByPrimaryKey(id, from, "password")
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(x)
 }
 
 // SysUserAdd
-// @Summary	系统用户新增
-// @Tags		[系统]用户模块
-// @Success	200	{object}	core.ResponseSuccess{data=vo.SysUserVo}
-// @Router		/system/user [POST]
-// @Param		bo	body	bo.SysUserBo	true	"新增参数"
+//
+//	@Summary	系统用户新增
+//	@Tags		[系统]用户模块
+//	@Success	200	{object}	core.ResponseSuccess{data=vo.SysUserVo}
+//	@Router		/system/user [POST]
+//	@Param		bo	body	bo.SysUserBo	true	"新增参数"
 func (receiver SysUserRouter) SysUserAdd(c echo.Context) error {
 	context := core.GetContext[bo.SysUserBo](c)
-	addBo := context.GetBodyAndValid()
+	addBo, err := context.GetBodyAndValid()
+	if err != nil {
+		return err
+	}
 	err, meta := receiver.SysUserService.WithContext(c).SkipGlobalHook().
 		InsertOne(core.CopyFrom[model.SysUser](addBo))
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(core.CopyFrom[vo.SysUserVo](meta))
 }
 
 // SysUserDelete
-// @Summary	系统用户删除
-// @Tags		[系统]用户模块
-// @Success	200	{object}	core.ResponseSuccess{data=int}
-// @Router		/system/user [DELETE]
-// @Param		param	query	core.QueryIds	true	"删除参数"
+//
+//	@Summary	系统用户删除
+//	@Tags		[系统]用户模块
+//	@Success	200	{object}	core.ResponseSuccess{data=int}
+//	@Router		/system/user [DELETE]
+//	@Param		param	query	core.QueryIds	true	"删除参数"
 func (receiver SysUserRouter) SysUserDelete(c echo.Context) error {
 	context := core.GetContext[any](c)
-	ids := context.QueryParamIds()
+	ids, err := context.QueryParamIds()
+	if err != nil {
+		return err
+	}
 	err, row := receiver.SysUserService.WithContext(c).SkipGlobalHook().
 		DeleteByPrimaryKeys(ids)
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(row)
 }

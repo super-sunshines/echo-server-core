@@ -38,24 +38,31 @@ var DataStrategyMap = map[int64]DBExecutionStrategy{
 }
 
 func queryStrategy(roles []model.SysRole, db *gorm.DB, context *core.XContext[any], departService services.SysDepartmentService) {
+	user, err := context.GetLoginUser()
+	if err != nil {
+		return
+	}
 	var topQuery = int64(0)
 	for _, role := range roles {
 		if role.QueryStrategy >= topQuery {
 			topQuery = role.QueryStrategy
 		}
 	}
-
 	switch topQuery {
 	case PersonalDataOnly:
-		db.Where("create_by = ?", context.GetLoginUserUid())
+		db.Where("create_by = ?", user.UID)
 		break
 	case DepartmentBelow:
-		childrenIds, _ := departService.GetChildren(context, context.GetLoginUserDepartmentId())
-		db.Where("create_dept IN (?)", childrenIds).Or("create_by = ?", context.GetLoginUserUid())
+		childrenIds, _ := departService.GetChildren(context, user.DepartmentId)
+		db.Where("create_dept IN (?)", childrenIds).Or("create_by = ?", user.UID)
 		break
 	}
 }
 func updateStrategy(roles []model.SysRole, db *gorm.DB, context *core.XContext[any], departService services.SysDepartmentService) {
+	user, err := context.GetLoginUser()
+	if err != nil {
+		return
+	}
 	var topQuery = int64(0)
 	for _, role := range roles {
 		if role.UpdateStrategy >= topQuery {
@@ -64,16 +71,17 @@ func updateStrategy(roles []model.SysRole, db *gorm.DB, context *core.XContext[a
 	}
 	switch topQuery {
 	case PersonalDataOnly:
-		db.Where("create_by = ?", context.GetLoginUserUid())
+		db.Where("create_by = ?", user.UID)
 		break
 	case DepartmentBelow:
-		childrenIds, _ := departService.GetChildren(context, context.GetLoginUserDepartmentId())
-		db.Where("create_dept IN (?)", childrenIds).Or("create_by = ?", context.GetLoginUserUid())
+		childrenIds, _ := departService.GetChildren(context, user.DepartmentId)
+		db.Where("create_dept IN (?)", childrenIds).Or("create_by = ?", user.UID)
 		break
 	}
 }
 
 func GlobalGormHook(globalDb *gorm.DB) {
+
 	roleService := services.NewSysRoleService()
 	departService := services.NewDepartmentService()
 	_ = globalDb.Callback().Update().Before("gorm:update").Register("custom:BeforeUpdate", func(_db *gorm.DB) {
@@ -90,9 +98,12 @@ func GlobalGormHook(globalDb *gorm.DB) {
 		if get := context.Get(core.GormGlobalSkipHookKey); get != nil && get.(bool) {
 			return
 		}
-		codes := context.GetLoginUser().RoleCodes
-		updateStrategy(roleService.GetRoleConfigByCodes(context, codes...), _db, context, departService)
-		_db.Statement.SetColumn("update_by", context.GetLoginUserUid())
+		user, err := context.GetLoginUser()
+		if err != nil {
+			return
+		}
+		updateStrategy(roleService.GetRoleConfigByCodes(context, user.RoleCodes...), _db, context, departService)
+		_db.Statement.SetColumn("update_by", user.UID)
 	})
 
 	_ = globalDb.Callback().Create().Before("gorm:create").Register("custom:BeforeCreate", func(_db *gorm.DB) {
@@ -113,8 +124,12 @@ func GlobalGormHook(globalDb *gorm.DB) {
 			return
 		}
 		if ok {
-			_db.Statement.SetColumn("create_by", context.GetLoginUserUid())
-			_db.Statement.SetColumn("create_dept", context.GetLoginUserDepartmentId())
+			user, err := context.GetLoginUser()
+			if err != nil {
+				return
+			}
+			_db.Statement.SetColumn("create_by", user.UID)
+			_db.Statement.SetColumn("create_dept", user.DepartmentId)
 		}
 	})
 
@@ -132,8 +147,11 @@ func GlobalGormHook(globalDb *gorm.DB) {
 		if get := context.Get(core.GormGlobalSkipHookKey); get != nil && get.(bool) {
 			return
 		}
-		codes := context.GetLoginUser().RoleCodes
-		queryStrategy(roleService.GetRoleConfigByCodes(context, codes...), _db, context, departService)
+		user, err := context.GetLoginUser()
+		if err != nil {
+			return
+		}
+		queryStrategy(roleService.GetRoleConfigByCodes(context, user.RoleCodes...), _db, context, departService)
 	})
 
 }

@@ -26,7 +26,7 @@ func (r SysRoleService) GetAllRole(c echo.Context) map[string]model.SysRole {
 	all := r.roleCache.XHGetAll()
 	if len(all) == 0 {
 		var roles []model.SysRole
-		r.WithContext(c).Set(core.GormGlobalSkipHookKey, true).Find(&roles)
+		r.WithContext(c).SkipGlobalHook().Find(&roles)
 		for _, role := range roles {
 			r.roleCache.XHSet(role.Code, role)
 		}

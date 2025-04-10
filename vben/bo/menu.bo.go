@@ -17,7 +17,7 @@ type SysMenuMetaBo struct {
 	MenuID                   int64              `json:"menuId"`                   // 菜单名称
 	Title                    string             `json:"title"`                    // 路由名称
 	Icon                     string             `json:"icon"`                     // 访问路径
-	Order                    int64              `json:"order"`                    // 排序
+	OrderNum                 int64              `json:"order"`                    // 排序
 	ActiveIcon               string             `json:"activeIcon"`               // 组件地址
 	HideInMenu               core.IntBool       `json:"hideInMenu"`               // 隐藏菜单
 	HideInTab                core.IntBool       `json:"hideInTab"`                // 标签页隐藏

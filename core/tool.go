@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/jinzhu/copier"
+	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/exp/slices"
@@ -190,6 +191,37 @@ func SetField(obj interface{}, fieldName string, value interface{}) error {
 
 	field.Set(val)
 	return nil
+}
+
+func GetOs(c echo.Context) (string, string, string) {
+	userAgent := c.Request().UserAgent()
+	os := "Unknown OS"
+	browser := "Unknown Browser"
+
+	// 简单的操作系统识别
+	if strings.Contains(userAgent, "Windows") {
+		os = "Windows"
+	} else if strings.Contains(userAgent, "Macintosh") {
+		os = "Mac OS"
+	} else if strings.Contains(userAgent, "Linux") {
+		os = "Linux"
+	} else if strings.Contains(userAgent, "iPhone") {
+		os = "iOS"
+	} else if strings.Contains(userAgent, "Android") {
+		os = "Android"
+	}
+
+	// 简单的浏览器识别
+	if strings.Contains(userAgent, "Chrome") {
+		browser = "Chrome"
+	} else if strings.Contains(userAgent, "Firefox") {
+		browser = "Firefox"
+	} else if strings.Contains(userAgent, "Safari") {
+		browser = "Safari"
+	} else if strings.Contains(userAgent, "MSIE") || strings.Contains(userAgent, "Trident") {
+		browser = "Internet Explorer"
+	}
+	return os, browser, userAgent
 }
 
 func Instance[T any]() (result T) {

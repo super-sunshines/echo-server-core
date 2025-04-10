@@ -21,7 +21,7 @@ type SysRole struct {
 	HomePath       string            `gorm:"column:home_path;type:varchar(255);comment:主页目录" json:"homePath"`                 // 主页目录
 	QueryStrategy  int64             `gorm:"column:query_strategy;type:int(1);default:1;comment:查询策略" json:"queryStrategy"`   // 查询策略
 	UpdateStrategy int64             `gorm:"column:update_strategy;type:int(1);default:1;comment:更新策略" json:"updateStrategy"` // 更新策略
-	Enable         core.IntBool      `gorm:"column:enable;type:int(1);comment:启用状态" json:"enable"`                            // 启用状态
+	EnableStatus   int64             `gorm:"column:enable_status;type:int(1);comment:启用状态" json:"enableStatus"`               // 启用状态
 	CreateDept     int64             `gorm:"column:create_dept;type:int(255);comment:创建部门" json:"createDept"`                 // 创建部门
 	CreateBy       int64             `gorm:"column:create_by;type:int(255);comment:创建者" json:"createBy"`                      // 创建者
 	CreateTime     core.Time         `gorm:"column:create_time;autoCreateTime;type:datetime;comment:创建时间" json:"createTime"`  // 创建时间

@@ -1,12 +1,14 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/super-sunshines/echo-server-core/core"
 	"github.com/super-sunshines/echo-server-core/vben/bo"
 	_const "github.com/super-sunshines/echo-server-core/vben/const"
 	"github.com/super-sunshines/echo-server-core/vben/gorm/model"
 	"github.com/super-sunshines/echo-server-core/vben/helper"
+	"github.com/super-sunshines/echo-server-core/vben/services"
 	"github.com/super-sunshines/echo-server-core/vben/vo"
 	"gorm.io/gorm"
 )
@@ -22,34 +24,41 @@ var AuthRouterGroup = core.NewRouterGroup("", NewAuthRouter, func(rg *echo.Group
 })
 
 type AuthRouter struct {
-	userService core.PreGorm[model.SysUser, any]
-	menuService core.PreGorm[model.SysMenu, any]
+	userService     core.PreGorm[model.SysUser, any]
+	menuService     core.PreGorm[model.SysMenu, any]
+	loginLogService services.SysLoginInfoService
 }
 
 func NewAuthRouter() *AuthRouter {
 	return &AuthRouter{
-		userService: core.NewService[model.SysUser, any](),
-		menuService: core.NewService[model.SysMenu, any](),
+		userService:     core.NewService[model.SysUser, any](),
+		menuService:     core.NewService[model.SysMenu, any](),
+		loginLogService: services.NewSysLoginInfoService(),
 	}
 }
 
-// @Summary	用户登录
-// @Tags		[系统]授权模块
-// @Success	200	{object}	core.ResponseSuccess{data=vo.LoginVo}
-// @Router		/auth/login [post]
-// @Param		loginBo	body	bo.LoginBo	true	"登录参数"
+//	@Summary	用户登录
+//	@Tags		[系统]授权模块
+//	@Success	200	{object}	core.ResponseSuccess{data=vo.LoginVo}
+//	@Router		/auth/login [post]
+//	@Param		loginBo	body	bo.LoginBo	true	"登录参数"
 func (r AuthRouter) login(ec echo.Context) (err error) {
 	context := core.GetContext[bo.LoginBo](ec)
 	maxLoginFailCount := core.GetConfig().Jwt.MaxLoginFailCount
-	loginInfo := context.GetBodyAndValid()
+	loginInfo, err := context.GetBodyAndValid()
+	if err != nil {
+		return context.Fail(err)
+	}
 	err, a := r.userService.WithContext(context).SkipGlobalHook().FindOne(func(db *gorm.DB) *gorm.DB {
 		return db.Where("username = ?", loginInfo.Username)
 	})
-	if a.Status == _const.CommonStateBanned || a.LoginFailCount >= maxLoginFailCount {
+	if a.EnableStatus == _const.CommonStateBanned || a.LoginFailCount >= maxLoginFailCount {
+		r.loginLogService.AddLog(ec, loginInfo.Username, _const.LoginTypePassword, 2, "账户已锁定，请联系管理员解锁！")
 		return context.Fail(core.NewFrontShowErrMsg("账户已锁定，请联系管理员解锁！"))
 	}
 	if err != nil {
-		context.CheckError(core.NewFrontShowErrMsg("用户名或者密码错误！"))
+		r.loginLogService.AddLog(ec, loginInfo.Username, _const.LoginTypePassword, 2, "用户名或者密码错误！")
+		return context.Fail(core.NewFrontShowErrMsg("用户名或者密码错误！"))
 	}
 	if core.ComparePasswords(a.Password, loginInfo.Password) {
 		// 重置登录失败次数
@@ -57,6 +66,7 @@ func (r AuthRouter) login(ec echo.Context) (err error) {
 			"login_fail_count": 0,
 			"last_online":      core.GetNowTimeUnixMilli(),
 		})
+		r.loginLogService.AddLog(ec, loginInfo.Username, _const.LoginTypePassword, 1, "登录成功")
 		return context.Success(vo.LoginVo{AccessToken: helper.GenJwtByUserInfo(context.GetAppPlatformCode(), a)})
 	} else {
 		r.userService.WithContext(ec).SkipGlobalHook().Where("id = ?", a.ID).UpdateColumns(map[string]any{
@@ -67,23 +77,25 @@ func (r AuthRouter) login(ec echo.Context) (err error) {
 				"status": _const.CommonStateBanned,
 			})
 		}
+		r.loginLogService.AddLog(ec, loginInfo.Username, _const.LoginTypePassword, 2, "用户名或者密码错误！"+fmt.Sprintf("尝试第%d次", a.LoginFailCount+1))
 		return context.Fail(core.NewFrontShowErrMsg("用户名或者密码错误！"))
 	}
 }
 
-// @Summary	检测token
-// @Tags		[系统]授权模块
-// @Success	200	{object}	core.ResponseSuccess{data=bool}
-// @Router		/auth/check [get]
+//	@Summary	检测token
+//	@Tags		[系统]授权模块
+//	@Success	200	{object}	core.ResponseSuccess{data=bool}
+//	@Router		/auth/check [get]
 func (r AuthRouter) checkToken(ec echo.Context) (err error) {
 	context := core.GetContext[bo.LoginBo](ec)
-	return context.Success(core.GetTokenManager().ValidToken(context.GetLoginUserUid(), context.GetAppPlatformCode(), context.GetUserToken()))
+	uid, err := context.GetLoginUserUid()
+	return context.Success(core.GetTokenManager().ValidToken(uid, context.GetAppPlatformCode(), context.GetUserToken()))
 }
 
-// @Summary	登出
-// @Tags		[系统]授权模块
-// @Success	200	{object}	core.ResponseSuccess{data=bool}
-// @Router		/auth/logout [get]
+//	@Summary	登出
+//	@Tags		[系统]授权模块
+//	@Success	200	{object}	core.ResponseSuccess{data=bool}
+//	@Router		/auth/logout [get]
 func (r AuthRouter) logout(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
 	param := context.QueryParam("accessToken")
@@ -96,38 +108,45 @@ func (r AuthRouter) logout(ec echo.Context) (err error) {
 	}
 }
 
-// @Summary	获取目录列表
-// @Tags		[系统]授权模块
-// @Success	200	{object}	core.ResponseSuccess{data=[]vo.SysMenuWithMetaVo}
-// @Router		/menu/all [GET]
+//	@Summary	获取目录列表
+//	@Tags		[系统]授权模块
+//	@Success	200	{object}	core.ResponseSuccess{data=[]vo.SysMenuWithMetaVo}
+//	@Router		/menu/all [GET]
 func (r AuthRouter) menu(c echo.Context) error {
 	context := core.GetContext[any](c)
-	var metas []vo.SysMenuWithMeta
-	codes := context.GetLoginUser().RoleCodes
-	menuIds := core.PermissionMange.GetRoleMenuIdList(codes...)
-	tx := r.menuService.WithContext(c).SkipGlobalHook().
-		Model(vo.SysMenuWithMeta{}).Preload("Meta").
-		Where("id in (?)", menuIds).
-		Where("type in ?", _const.MenuTreeType).Find(&metas)
-	context.CheckError(tx.Error)
+	user, err := context.GetLoginUser()
+	if err != nil || user.RoleCodes == nil {
+		return context.Fail(err)
+	}
+	menuIds := core.PermissionMange.GetRoleMenuIdList(user.RoleCodes...)
+	service := core.NewService[vo.SysMenuWithMeta, vo.SysMenuWithMeta]()
+	err, metas := service.WithContext(c).SkipGlobalHook().FindList(func(db *gorm.DB) *gorm.DB {
+		return db.Where("id in (?)", menuIds).Where("type in ?", _const.MenuTreeType).Preload("Meta")
+	})
+	if err != nil {
+		return context.Fail(err)
+	}
 	userMenuVoList := core.CopyListFrom[vo.SysMenuWithMetaVo](metas)
 	return context.Success(vo.BuildTree(userMenuVoList))
 }
 
-// @Summary	用户基本信息
-// @Tags		[系统]授权模块
-// @Success	200	{object}	core.ResponseSuccess{data=vo.LoginUserInfoVo}
-// @Router		/user/info [get]
-// @Param		loginBo	body	bo.LoginBo	true	"登录参数"
+//	@Summary	用户基本信息
+//	@Tags		[系统]授权模块
+//	@Success	200	{object}	core.ResponseSuccess{data=vo.LoginUserInfoVo}
+//	@Router		/user/info [get]
+//	@Param		loginBo	body	bo.LoginBo	true	"登录参数"
 func (r AuthRouter) loginUserInfo(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
-	err, loginUserInfo := r.userService.WithContext(ec).SkipGlobalHook().FindOneByPrimaryKey(context.GetLoginUserUid())
-	roleCodes := context.GetLoginUser().RoleCodes
+	user, err := context.GetLoginUser()
+	if err != nil {
+		return context.Fail(err)
+	}
+	err, loginUserInfo := r.userService.WithContext(ec).SkipGlobalHook().FindOneByPrimaryKey(user.UID)
 	return context.Success(vo.LoginUserInfoVo{
 		UserId:   loginUserInfo.ID,
 		RealName: loginUserInfo.RealName,
-		Roles:    roleCodes,
+		Roles:    user.RoleCodes,
 		Username: loginUserInfo.Username,
-		HomePath: core.BooleanTo(len(roleCodes) != 0, core.PermissionMange.GetRoleHomePath(roleCodes[0]), "/"),
+		HomePath: core.BooleanTo(len(user.RoleCodes) != 0, core.PermissionMange.GetRoleHomePath(user.RoleCodes[0]), "/"),
 	})
 }

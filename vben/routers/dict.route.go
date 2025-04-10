@@ -13,16 +13,16 @@ import (
 
 var SysDictRouterGroup = core.NewRouterGroup("/system/dict", NewSysDictRouter, func(rg *echo.Group, group *core.RouterGroup) error {
 	return group.Reg(func(m *SysDictRouter) {
-		rg.GET("/list", m.SysDictList, core.IgnorePermission())
-		rg.GET("/code-list", m.SysDictCodeList, core.IgnorePermission())
-		rg.GET("/code-exist", m.SysDictExist, core.IgnorePermission())
-		rg.GET("/:id", m.SysDictDetail, core.IgnorePermission())
+		rg.GET("/list", m.SysDictList, core.HavePermission("SYS::DICT::QUERY"), core.Log("字典列表"))
+		rg.GET("/code-list", m.SysDictCodeList, core.HavePermission("SYS::DICT::QUERY"), core.Log("所有字典代码"))
+		rg.GET("/code-exist", m.SysDictExist, core.HavePermission("SYS::DICT::QUERY"), core.Log("代码存在"))
+		rg.GET("/:id", m.SysDictDetail, core.HavePermission("SYS::DICT::QUERY"), core.Log("代码内容"))
 		rg.GET("/code/:code", m.SysDictCodeDetail, core.IgnorePermission())
-		rg.PUT("/:id", m.SysDictUpdate, core.IgnorePermission())
-		rg.POST("", m.SysDictAdd, core.IgnorePermission())
-		rg.DELETE("", m.SysDictDelete, core.IgnorePermission())
-		rg.GET("/child/list", m.SysDictChildList, core.IgnorePermission())
-		rg.PUT("/child/:code", m.SysDictChildUpdate, core.IgnorePermission())
+		rg.PUT("/:id", m.SysDictUpdate, core.HavePermission("SYS::DICT::UPDATE"), core.Log("字典修改"))
+		rg.POST("", m.SysDictAdd, core.HavePermission("SYS::DICT::ADD"), core.Log("字典新增"))
+		rg.DELETE("", m.SysDictDelete, core.HavePermission("SYS::DICT::DEL"), core.Log("字典删除"))
+		rg.GET("/child/list", m.SysDictChildList, core.HavePermission("SYS::DICT::CHILD::QUERY"), core.Log("字典内容删除"))
+		rg.PUT("/child/:code", m.SysDictChildUpdate, core.HavePermission("SYS::DICT::CHILD::UPDATE"), core.Log("字典内容修改"))
 	})
 })
 
@@ -41,14 +41,18 @@ func NewSysDictRouter() *SysDictRouter {
 }
 
 // SysDictList
-// @Summary	[系统]字典列表
-// @Tags		[系统]字典模块
-// @Success	200	{object}	core.ResponseSuccess{data=core.PageResultList[vo.SysDictVo]}
-// @Router		/system/dict/list [GET]
-// @Param		bo	query	bo.SysDictPageBo	true	"分页参数"
+//
+//	@Summary	[系统]字典列表
+//	@Tags		[系统]字典模块
+//	@Success	200	{object}	core.ResponseSuccess{data=core.PageResultList[vo.SysDictVo]}
+//	@Router		/system/dict/list [GET]
+//	@Param		bo	query	bo.SysDictPageBo	true	"分页参数"
 func (receiver SysDictRouter) SysDictList(c echo.Context) error {
 	context := core.GetContext[bo.SysDictPageBo](c)
-	pageBo := context.GetQueryParamAndValid()
+	pageBo, err := context.GetQueryParamAndValid()
+	if err != nil {
+		return err
+	}
 	err, x := receiver.SysDictService.WithContext(c).SkipGlobalHook().
 		FindVoListByPage(pageBo.PageParam, func(db *gorm.DB) *gorm.DB {
 			core.BooleanFun(pageBo.Module != 0, func() {
@@ -56,21 +60,24 @@ func (receiver SysDictRouter) SysDictList(c echo.Context) error {
 			})
 			return db
 		})
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(x)
 }
 
 // SysDictCodeDetail
-// @Summary	[系统]字典详情[code]
-// @Tags		[系统]字典模块
-// @Success	200	{object}	core.ResponseSuccess{data=vo.SysDictVo}
-// @Router		/system/dict/code/:code [GET]
-// @Param		code	path	string	true	"code"
+//
+//	@Summary	[系统]字典详情[code]
+//	@Tags		[系统]字典模块
+//	@Success	200	{object}	core.ResponseSuccess{data=vo.SysDictVo}
+//	@Router		/system/dict/code/:code [GET]
+//	@Param		code	path	string	true	"code"
 func (receiver SysDictRouter) SysDictCodeDetail(c echo.Context) error {
 	context := core.GetContext[any](c)
 	code := context.GetPathParam("code")
 	if code == "" {
-		context.CheckError(core.NewErrCode(core.PARAM_VALIDATE_ERROR))
+		return core.NewErrCode(core.PARAM_VALIDATE_ERROR)
 	}
 	//缓存有的话就直接返回
 	if exists := receiver.SysDictRedisCache.XHExists(code); exists {
@@ -80,41 +87,54 @@ func (receiver SysDictRouter) SysDictCodeDetail(c echo.Context) error {
 		FindOneVo(func(db *gorm.DB) *gorm.DB {
 			return db.Where("code = ?", code).Where("status = ?", _const.DictEnableStatusOK)
 		})
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	err, list := receiver.SysDictChildService.WithContext(c).SkipGlobalHook().
 		FindVoList(func(db *gorm.DB) *gorm.DB {
 			return db.Where("dict_code = ?", code)
 		})
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	x.Children = list
 	receiver.SysDictRedisCache.XHSet(code, x)
 	return context.Success(x)
 }
 
 // SysDictDetail
-// @Summary	[系统]字典详情
-// @Tags		[系统]字典模块
-// @Success	200	{object}	core.ResponseSuccess{data=vo.SysDictVo}
-// @Router		/system/dict/:id [GET]
-// @Param		id	path	int	true	"id"
+//
+//	@Summary	[系统]字典详情
+//	@Tags		[系统]字典模块
+//	@Success	200	{object}	core.ResponseSuccess{data=vo.SysDictVo}
+//	@Router		/system/dict/:id [GET]
+//	@Param		id	path	int	true	"id"
 func (receiver SysDictRouter) SysDictDetail(c echo.Context) error {
 	context := core.GetContext[any](c)
-	id := context.GetPathParamInt64("id")
+	id, err := context.GetPathParamInt64("id")
+	if err != nil {
+		return err
+	}
 	err, x := receiver.SysDictService.WithContext(c).SkipGlobalHook().
 		FindOneVoByPrimaryKey(id)
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(x)
 }
 
 // SysDictCodeList
-// @Summary	[系统]所有字典代码
-// @Tags		[系统]字典模块
-// @Success	200	{object}	core.ResponseSuccess{data=[]vo.SysCodeList}
-// @Router		/system/dict/code-list [GET]
+//
+//	@Summary	[系统]所有字典代码
+//	@Tags		[系统]字典模块
+//	@Success	200	{object}	core.ResponseSuccess{data=[]vo.SysCodeList}
+//	@Router		/system/dict/code-list [GET]
 func (receiver SysDictRouter) SysDictCodeList(c echo.Context) error {
 	context := core.GetContext[any](c)
 	err, dictList := receiver.SysDictService.WithContext(c).FindList()
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	lists := slice.Map(dictList, func(index int, item model.SysDict) vo.SysCodeList {
 		return vo.SysCodeList{
 			Code: item.Code,
@@ -125,11 +145,12 @@ func (receiver SysDictRouter) SysDictCodeList(c echo.Context) error {
 }
 
 // SysDictExist
-// @Summary	[系统]检测字典代码
-// @Tags		[系统]字典模块
-// @Success	200	{object}	core.ResponseSuccess{data=bool}
-// @Router		/system/dict/code-exist [GET]
-// @Param		code	query	int	true	"code"
+//
+//	@Summary	[系统]检测字典代码
+//	@Tags		[系统]字典模块
+//	@Success	200	{object}	core.ResponseSuccess{data=bool}
+//	@Router		/system/dict/code-exist [GET]
+//	@Param		code	query	int	true	"code"
 func (receiver SysDictRouter) SysDictExist(c echo.Context) error {
 	context := core.GetContext[any](c)
 	code := context.QueryParam("code")
@@ -140,45 +161,61 @@ func (receiver SysDictRouter) SysDictExist(c echo.Context) error {
 }
 
 // SysDictUpdate
-// @Summary	[系统]字典更新
-// @Tags		[系统]字典模块
-// @Success	200	{object}	core.ResponseSuccess{data=int}
-// @Router		/system/dict/:id [PUT]
-// @Param		id	path	int				true	"id"
-// @Param		bo	body	bo.SysDictBo	true	"修改参数"
+//
+//	@Summary	[系统]字典更新
+//	@Tags		[系统]字典模块
+//	@Success	200	{object}	core.ResponseSuccess{data=int}
+//	@Router		/system/dict/:id [PUT]
+//	@Param		id	path	int				true	"id"
+//	@Param		bo	body	bo.SysDictBo	true	"修改参数"
 func (receiver SysDictRouter) SysDictUpdate(c echo.Context) error {
 	context := core.GetContext[bo.SysDictBo](c)
-	updateBo := context.GetBodyAndValid()
-	id := context.GetPathParamInt64("id")
+	updateBo, err := context.GetBodyAndValid()
+	id, err := context.GetPathParamInt64("id")
+	if err != nil {
+		return err
+	}
 	receiver.SysDictRedisCache.XHDel(updateBo.Code)
 	err, x := receiver.SysDictService.WithContext(c).SaveByPrimaryKey(id, core.CopyFrom[model.SysDict](updateBo))
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(x)
 }
 
 // SysDictAdd
-// @Summary	[系统]字典新增
-// @Tags		[系统]字典模块
-// @Success	200	{object}	core.ResponseSuccess{data=vo.SysDictVo}
-// @Router		/system/dict [POST]
-// @Param		bo	body	bo.SysDictBo	true	"新增参数"
+//
+//	@Summary	[系统]字典新增
+//	@Tags		[系统]字典模块
+//	@Success	200	{object}	core.ResponseSuccess{data=vo.SysDictVo}
+//	@Router		/system/dict [POST]
+//	@Param		bo	body	bo.SysDictBo	true	"新增参数"
 func (receiver SysDictRouter) SysDictAdd(c echo.Context) error {
 	context := core.GetContext[bo.SysDictBo](c)
-	addBo := context.GetBodyAndValid()
+	addBo, err := context.GetBodyAndValid()
+	if err != nil {
+		return err
+	}
 	err, meta := receiver.SysDictService.WithContext(c).InsertOne(core.CopyFrom[model.SysDict](addBo))
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(core.CopyFrom[vo.SysDictVo](meta))
 }
 
 // SysDictDelete
-// @Summary	[系统]字典删除
-// @Tags		[系统]字典模块
-// @Success	200	{object}	core.ResponseSuccess{data=int}
-// @Router		/system/dict [DELETE]
-// @Param		param	query	core.QueryIds	true	"删除参数"
+//
+//	@Summary	[系统]字典删除
+//	@Tags		[系统]字典模块
+//	@Success	200	{object}	core.ResponseSuccess{data=int}
+//	@Router		/system/dict [DELETE]
+//	@Param		param	query	core.QueryIds	true	"删除参数"
 func (receiver SysDictRouter) SysDictDelete(c echo.Context) error {
 	context := core.GetContext[any](c)
-	ids := context.QueryParamIds()
+	ids, err := context.QueryParamIds()
+	if err != nil {
+		return err
+	}
 	_, deleteRows := receiver.SysDictService.WithContext(c).FindVoList(func(db *gorm.DB) *gorm.DB {
 		return db.Where("id in ?", ids)
 	})
@@ -187,7 +224,9 @@ func (receiver SysDictRouter) SysDictDelete(c echo.Context) error {
 	})
 
 	err, row := receiver.SysDictService.WithContext(c).DeleteByPrimaryKeys(ids)
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(row)
 }
 
@@ -200,11 +239,16 @@ func (receiver SysDictRouter) SysDictDelete(c echo.Context) error {
 //	@Param		bo	query	bo.SysDictChildPageBo	true	"分页参数"
 func (receiver SysDictRouter) SysDictChildList(c echo.Context) error {
 	context := core.GetContext[bo.SysDictChildPageBo](c)
-	pageBo := context.GetQueryParamAndValid()
-	err, x := receiver.SysDictChildService.WithContext(c).FindVoListByPage(pageBo.PageParam, func(db *gorm.DB) *gorm.DB {
+	pageBo, err := context.GetQueryParamAndValid()
+	if err != nil {
+		return err
+	}
+	err, x := receiver.SysDictChildService.WithContext(c).SkipGlobalHook().FindVoListByPage(pageBo.PageParam, func(db *gorm.DB) *gorm.DB {
 		return db.Where("dict_code = ?", pageBo.DictCode)
 	})
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(x)
 }
 
@@ -218,8 +262,11 @@ func (receiver SysDictRouter) SysDictChildList(c echo.Context) error {
 //	@Param		bo	body	[]bo.SysDictChildBo	true	"修改参数"
 func (receiver SysDictRouter) SysDictChildUpdate(c echo.Context) error {
 	context := core.GetContext[[]bo.SysDictChildBo](c)
-	updateBo := context.GetBodyAndValid()
+	updateBo, err := context.GetBodyAndValid()
 	code := context.GetPathParam("code")
+	if err != nil {
+		return err
+	}
 	modelList := core.CopyListFrom[model.SysDictChild](updateBo)
 	receiver.SysDictRedisCache.XHDel(code)
 	newCodes := slice.Map(modelList, func(index int, item model.SysDictChild) int64 {
@@ -234,11 +281,18 @@ func (receiver SysDictRouter) SysDictChildUpdate(c echo.Context) error {
 		if item.ID == 0 {
 			item.DictCode = code
 			err, _ := receiver.SysDictChildService.WithContext(c).InsertOne(item)
-			context.CheckError(err)
+			if err != nil {
+				c.Error(err)
+				return
+			}
 		} else {
 			item.DictCode = code
 			err, _ := receiver.SysDictChildService.WithContext(c).UpdateByPrimaryKey(item.ID, item)
-			context.CheckError(err)
+			if err != nil {
+				c.Error(err)
+				return
+			}
+
 		}
 	})
 	return context.Success(true)

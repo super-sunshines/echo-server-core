@@ -30,7 +30,7 @@ func newSysMenuMetum(db *gorm.DB, opts ...gen.DOOption) sysMenuMetum {
 	_sysMenuMetum.ID = field.NewInt64(tableName, "id")
 	_sysMenuMetum.Title = field.NewString(tableName, "title")
 	_sysMenuMetum.Icon = field.NewString(tableName, "icon")
-	_sysMenuMetum.Order_ = field.NewInt64(tableName, "order")
+	_sysMenuMetum.OrderNum = field.NewInt64(tableName, "order_num")
 	_sysMenuMetum.ActiveIcon = field.NewString(tableName, "active_icon")
 	_sysMenuMetum.HideInMenu = field.NewField(tableName, "hide_in_menu")
 	_sysMenuMetum.HideInTab = field.NewField(tableName, "hide_in_tab")
@@ -64,7 +64,7 @@ type sysMenuMetum struct {
 	ID                 field.Int64  // id
 	Title              field.String // 路由名称
 	Icon               field.String // 访问路径
-	Order_             field.Int64  // 排序
+	OrderNum           field.Int64  // 排序
 	ActiveIcon         field.String // 激活时的Icon
 	HideInMenu         field.Field  // 隐藏菜单
 	HideInTab          field.Field  // 标签页隐藏
@@ -104,7 +104,7 @@ func (s *sysMenuMetum) updateTableName(table string) *sysMenuMetum {
 	s.ID = field.NewInt64(table, "id")
 	s.Title = field.NewString(table, "title")
 	s.Icon = field.NewString(table, "icon")
-	s.Order_ = field.NewInt64(table, "order")
+	s.OrderNum = field.NewInt64(table, "order_num")
 	s.ActiveIcon = field.NewString(table, "active_icon")
 	s.HideInMenu = field.NewField(table, "hide_in_menu")
 	s.HideInTab = field.NewField(table, "hide_in_tab")
@@ -145,7 +145,7 @@ func (s *sysMenuMetum) fillFieldMap() {
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["title"] = s.Title
 	s.fieldMap["icon"] = s.Icon
-	s.fieldMap["order"] = s.Order_
+	s.fieldMap["order_num"] = s.OrderNum
 	s.fieldMap["active_icon"] = s.ActiveIcon
 	s.fieldMap["hide_in_menu"] = s.HideInMenu
 	s.fieldMap["hide_in_tab"] = s.HideInTab

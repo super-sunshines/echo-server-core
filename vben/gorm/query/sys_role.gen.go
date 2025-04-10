@@ -35,7 +35,7 @@ func newSysRole(db *gorm.DB, opts ...gen.DOOption) sysRole {
 	_sysRole.HomePath = field.NewString(tableName, "home_path")
 	_sysRole.QueryStrategy = field.NewInt64(tableName, "query_strategy")
 	_sysRole.UpdateStrategy = field.NewInt64(tableName, "update_strategy")
-	_sysRole.Enable = field.NewField(tableName, "enable")
+	_sysRole.EnableStatus = field.NewInt64(tableName, "enable_status")
 	_sysRole.CreateDept = field.NewInt64(tableName, "create_dept")
 	_sysRole.CreateBy = field.NewInt64(tableName, "create_by")
 	_sysRole.CreateTime = field.NewField(tableName, "create_time")
@@ -60,7 +60,7 @@ type sysRole struct {
 	HomePath       field.String // 主页目录
 	QueryStrategy  field.Int64  // 查询策略
 	UpdateStrategy field.Int64  // 更新策略
-	Enable         field.Field  // 启用状态
+	EnableStatus   field.Int64  // 启用状态
 	CreateDept     field.Int64  // 创建部门
 	CreateBy       field.Int64  // 创建者
 	CreateTime     field.Field  // 创建时间
@@ -91,7 +91,7 @@ func (s *sysRole) updateTableName(table string) *sysRole {
 	s.HomePath = field.NewString(table, "home_path")
 	s.QueryStrategy = field.NewInt64(table, "query_strategy")
 	s.UpdateStrategy = field.NewInt64(table, "update_strategy")
-	s.Enable = field.NewField(table, "enable")
+	s.EnableStatus = field.NewInt64(table, "enable_status")
 	s.CreateDept = field.NewInt64(table, "create_dept")
 	s.CreateBy = field.NewInt64(table, "create_by")
 	s.CreateTime = field.NewField(table, "create_time")
@@ -123,7 +123,7 @@ func (s *sysRole) fillFieldMap() {
 	s.fieldMap["home_path"] = s.HomePath
 	s.fieldMap["query_strategy"] = s.QueryStrategy
 	s.fieldMap["update_strategy"] = s.UpdateStrategy
-	s.fieldMap["enable"] = s.Enable
+	s.fieldMap["enable_status"] = s.EnableStatus
 	s.fieldMap["create_dept"] = s.CreateDept
 	s.fieldMap["create_by"] = s.CreateBy
 	s.fieldMap["create_time"] = s.CreateTime

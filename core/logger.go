@@ -1,8 +1,10 @@
 package core
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -67,6 +69,7 @@ func (c *Logger) Printf(format string, args ...interface{}) {
 }
 
 func (c *Logger) Printj(j log.JSON) {
+	c.ZapLogger.Sugar().Info(j)
 }
 
 func (c *Logger) Debug(i ...interface{}) {
@@ -78,7 +81,7 @@ func (c *Logger) Debugf(format string, args ...interface{}) {
 }
 
 func (c *Logger) Debugj(j log.JSON) {
-
+	c.ZapLogger.Sugar().Info(j)
 }
 
 func (c *Logger) Info(i ...interface{}) {
@@ -90,7 +93,7 @@ func (c *Logger) Infof(format string, args ...interface{}) {
 }
 
 func (c *Logger) Infoj(j log.JSON) {
-
+	c.ZapLogger.Sugar().Info(j)
 }
 
 func (c *Logger) Warn(i ...interface{}) {
@@ -102,6 +105,7 @@ func (c *Logger) Warnf(format string, args ...interface{}) {
 }
 
 func (c *Logger) Warnj(j log.JSON) {
+	c.ZapLogger.Sugar().Warn(j)
 }
 
 func (c *Logger) Error(i ...interface{}) {
@@ -113,6 +117,7 @@ func (c *Logger) Errorf(format string, args ...interface{}) {
 }
 
 func (c *Logger) Errorj(j log.JSON) {
+	c.ZapLogger.Sugar().Error(j)
 }
 
 func (c *Logger) Fatal(i ...interface{}) {
@@ -120,7 +125,7 @@ func (c *Logger) Fatal(i ...interface{}) {
 }
 
 func (c *Logger) Fatalj(j log.JSON) {
-
+	c.ZapLogger.Sugar().Fatal(j)
 }
 
 func (c *Logger) Fatalf(format string, args ...interface{}) {
@@ -135,6 +140,7 @@ func (c *Logger) Panicf(format string, args ...interface{}) {
 	c.ZapLogger.Sugar().Panic(format, args)
 }
 func (c *Logger) Panicj(j log.JSON) {
+	c.ZapLogger.Sugar().Panic(j)
 }
 func GetLogger() *Logger {
 	if zapLogger == nil {
@@ -230,4 +236,110 @@ func initLogger() {
 	zapLogger = zap.New(zapcore.NewTee(core, errorCore), zap.AddCaller())
 	// 替换zap包中全局的logger实例，后续在其他包中只需使用zap.L()调用即可
 	zap.ReplaceGlobals(zapLogger)
+}
+
+type BusinessType int64
+
+const (
+	BusinessTypeQuery  BusinessType = 1
+	BusinessTypeAdd                 = 2
+	BusinessTypeUpdate              = 3
+	BusinessTypeDelete              = 4
+	BusinessTypeImport              = 5
+	BusinessTypeExport              = 6
+	BusinessTypeAny                 = 7
+)
+
+type LoggerOptions struct {
+	LoggerSaver func(RequestInfo, echo.Context)
+}
+
+var loggerOptions *LoggerOptions
+
+func initLogMiddleware(options LoggerOptions) {
+	loggerOptions = &options
+}
+
+type RequestInfo struct {
+	Title           string `json:"title"`           // 标题
+	BusinessType    int64  `json:"businessType"`    // 业务类型
+	CallFunc        string `json:"callFunc"`        // 执行的方法
+	RequestMethod   string `json:"requestMethod"`   // 请求方法
+	OperateType     int64  `json:"operateType"`     // 操作类型
+	OperateName     string `json:"operateName"`     // 操作人员
+	OperateDepart   string `json:"operateDepart"`   // 部门名称
+	OperateURL      string `json:"operateUrl"`      // 请求地址
+	OperateIP       string `json:"operateIp"`       // 请求IP
+	OperateLocation string `json:"operateLocation"` // 请求地点
+	OperateParam    string `json:"operateParam"`    // 请求参数
+	RequestJSONBody string `json:"requestJsonBody"` // 请求体
+	JSONResult      string `json:"jsonResult"`      // 返回响应
+	ErrorMsg        string `json:"errorMsg"`        // 错误信息
+	Status          int64  `json:"status"`          // 操作状态
+	OperateTime     Time   `json:"operateTime"`     // 操作时间
+	CostTime        int64  `json:"costTime"`
+}
+
+var methodBusinessTypeMap = map[string]BusinessType{
+	"GET":  BusinessTypeQuery,
+	"POST": BusinessTypeAdd,
+	"PUT":  BusinessTypeUpdate,
+	"DEL":  BusinessTypeDelete,
+}
+
+func Log(title string, operateType ...BusinessType) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if c.Request().Method == "OPTIONS" {
+				return next(c)
+			}
+			start := time.Now() // 记录开始时间
+			originalWriter := c.Response().Writer
+			customWriter := &CustomResponseWriter{ResponseWriter: originalWriter}
+			c.Response().Writer = customWriter
+			buffer, _ := io.ReadAll(c.Request().Body) //直接读取请求体
+			c.Request().Body = io.NopCloser(bytes.NewBuffer(buffer))
+			defer func(Body io.ReadCloser) {
+				_ = Body.Close()
+			}(c.Request().Body)
+			err := next(c)
+			// 获取响应体
+			parse, _ := IPParse(c.RealIP())
+			errMsg := ""
+			if err != nil {
+				errMsg = err.Error()
+			}
+			responseBody := string(customWriter.body)
+			if loggerOptions != nil && loggerOptions.LoggerSaver != nil {
+				_operateType := methodBusinessTypeMap[c.Request().Method]
+				if len(operateType) != 0 {
+					_operateType = operateType[0]
+				}
+				if _operateType == 0 {
+					_operateType = BusinessTypeAny
+				}
+				loggerOptions.LoggerSaver(
+					RequestInfo{
+						Title:           title,
+						BusinessType:    int64(_operateType),
+						CallFunc:        PathFuncStrMap[c.Path()],
+						RequestMethod:   c.Request().Method,
+						OperateType:     int64(_operateType),
+						OperateURL:      c.Path(),
+						OperateIP:       c.RealIP(),
+						OperateLocation: parse,
+						OperateParam:    c.QueryParams().Encode(),
+						RequestJSONBody: string(buffer),
+						JSONResult:      responseBody,
+						ErrorMsg:        errMsg,
+						Status:          int64(BooleanTo(err == nil, 1, 2)),
+						OperateTime:     NewTime(time.Now()),
+						CostTime:        time.Since(start).Milliseconds(),
+					}, c,
+				)
+			}
+
+			return err
+		}
+	}
 }

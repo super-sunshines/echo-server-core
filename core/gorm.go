@@ -10,7 +10,6 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	gormLog "gorm.io/gorm/logger"
 	"gorm.io/plugin/dbresolver"
 	"reflect"
 	"strings"
@@ -56,11 +55,12 @@ func connectDataBase() *gorm.DB {
 	connectUrl := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&loc=Local&charset=utf8mb4%s",
 		options.User, options.Pass, options.Host, options.Port, options.DataBase, options.OtherSettings)
 	mysqlDialectic := mysql.Open(connectUrl)
-	var gormLogger gormLog.Interface
-	gormLogger = gormLog.Default.LogMode(gormLog.Info)
+	/*	var gormLogger gormLog.Interface
+		gormLogger = gormLog.Default.LogMode(gormLog)*/
 	gormDb, err := gorm.Open(mysqlDialectic, &gorm.Config{
-		Logger: gormLogger,
+		//Logger: gormLogger,
 	})
+
 	if err != nil {
 		panic(err)
 	}
@@ -236,27 +236,14 @@ func (r *Gorm[M, V]) FindVoList(conditions ...func(*gorm.DB) *gorm.DB) (error, [
 
 func (r *Gorm[M, V]) FindVoListByPage(param PageParam, conditions ...func(*gorm.DB) *gorm.DB) (error, PageResultList[V]) {
 	var result PageResultList[V]
-	var err error
+	err, p := r.FindListByPage(param, conditions...)
+	if err != nil {
+		return err, result
+	}
 	result.PageParam = param
-	db := r.DBWithConditions(conditions...)
-	resultList := r.ModelList()
-	err = db.Offset((param.Page - 1) * param.PageSize).Limit(param.PageSize).Find(&resultList).Error
-	if err != nil {
-		return err, result
-	}
-	err, result.Items = r.CopyViewListFromModelList(resultList)
-	if err != nil {
-		return err, result
-	}
-	if size := len(resultList); 0 < param.PageSize && 0 < size && size < param.PageSize {
-		result.Total = int64(size + (param.Page-1)*param.PageSize)
-		return nil, result
-	}
-	err = db.Offset(-1).Limit(-1).Count(&result.Total).Error
-	if err != nil {
-		return err, result
-	}
-	return nil, result
+	result.Total = p.Total
+	result.Items = CopyListFrom[V](p.Items)
+	return err, result
 }
 
 // UpdateByPrimaryKey   更新非零字段 false 0 "" 均不会被更新
@@ -415,7 +402,7 @@ func (r *Gorm[M, V]) DBWithConditions(conditions ...func(*gorm.DB) *gorm.DB) (db
 
 func mergeInjectServiceDefaultConfig(config ...InjectServiceConfig) InjectServiceConfig {
 	var defaultConfig = InjectServiceConfig{
-		SpecialPrimaryKey: []string{"id", "UID"},
+		SpecialPrimaryKey: []string{"ID"},
 		PrimaryKeyField:   "id",
 		CreateDeptField:   "create_dept",
 		CreateByField:     "create_by",
@@ -502,6 +489,11 @@ type Time struct {
 	time.Time
 }
 
+func NewTime(time time.Time) Time {
+	return Time{
+		Time: time,
+	}
+}
 func (mt Time) MarshalJSON() ([]byte, error) {
 	return json.Marshal(mt.Format("2006-01-02 15:04:05"))
 }

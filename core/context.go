@@ -41,54 +41,69 @@ func (c *XContext[V]) GetAppPlatformCode() string {
 }
 
 // GetLoginUser  获取请求头参数
-func (c *XContext[V]) GetLoginUser() ClaimsAdditions {
+func (c *XContext[V]) GetLoginUser() (ClaimsAdditions, error) {
 	claims, err := GetTokenManager().ParseJwt(c.GetUserToken())
 	if err != nil {
-		c.CheckError(NewErrCodeMsg(TOKEN_EXPIRE_ERROR, "登录身份过期，请重新登录！"))
-		c.CheckError(err)
+		return claims.ClaimsAdditions, NewErrCodeMsg(TOKEN_EXPIRE_ERROR, "登录身份过期，请重新登录！")
 	}
-	return claims.ClaimsAdditions
+	return claims.ClaimsAdditions, nil
+}
+
+// GetLoginUserErr 不自动返回错误
+func (c *XContext[V]) GetLoginUserErr() (ClaimsAdditions, error) {
+	claims, err := GetTokenManager().ParseJwt(c.GetUserToken())
+	if err != nil {
+		return claims.ClaimsAdditions, NewErrCodeMsg(TOKEN_EXPIRE_ERROR, "登录身份过期，请重新登录！")
+	}
+	return claims.ClaimsAdditions, nil
 }
 
 // GetUserToken  获取请求头参数
 func (c *XContext[V]) GetUserToken() string {
 	param := c.GetHeardParam(Authorization)
 	split := strings.Split(param, " ")
-	if len(split) != 2 {
-		c.CheckError(NewErrCode(TOKEN_FORMAT_ERROR))
+	if len(split) >= 2 {
+		return split[1]
 	}
-	return split[1]
+	return ""
+}
+
+func (c *XContext[V]) IsLogin() bool {
+	param := c.GetHeardParam(Authorization)
+	split := strings.Split(param, " ")
+	return len(split) == 2
 }
 
 // GetLoginUerName GetHeardParam 获取请求头参数
-func (c *XContext[V]) GetLoginUerName() string {
-	return c.GetLoginUser().NickName
+func (c *XContext[V]) GetLoginUerName() (string, error) {
+	user, err := c.GetLoginUser()
+	return user.NickName, err
 }
 
 // GetLoginUserUid  获取UID
-func (c *XContext[V]) GetLoginUserUid() int64 {
-	return c.GetLoginUser().UID
+func (c *XContext[V]) GetLoginUserUid() (int64, error) {
+	user, err := c.GetLoginUser()
+	return user.UID, err
 }
 
 // GetLoginUserDepartmentId  获取用户所属的部门ID
-func (c *XContext[V]) GetLoginUserDepartmentId() int64 {
-	return c.GetLoginUser().DepartmentId
+func (c *XContext[V]) GetLoginUserDepartmentId() (int64, error) {
+	user, err := c.GetLoginUser()
+	return user.DepartmentId, err
 }
 
-func (c *XContext[V]) GetQueryParamAndValid() (body V) {
+func (c *XContext[V]) GetQueryParamAndValid() (body V, err error) {
 	t := new(V)
-	err := c.Bind(t)
+	err = c.Bind(t)
 	err = c.validate.ValidateStruct(t)
-	c.CheckError(err)
-	return *t
+	return *t, err
 }
-func (c *XContext[V]) GetBodyAndValid() (body V) {
+func (c *XContext[V]) GetBodyAndValid() (body V, err error) {
 	// 创建一个新的 V 类型的实例
 	t := new(V)
 	// 绑定请求体到 t
-	err := c.Bind(t)
+	err = c.Bind(t)
 	if err != nil {
-		c.CheckError(err)
 		return
 	}
 	// 使用反射检查 t 是否是切片或数组
@@ -99,7 +114,6 @@ func (c *XContext[V]) GetBodyAndValid() (body V) {
 			elem := val.Index(i).Interface() // 获取当前元素
 			err = c.validate.ValidateStruct(elem)
 			if err != nil {
-				c.CheckError(err)
 				return
 			}
 		}
@@ -107,12 +121,12 @@ func (c *XContext[V]) GetBodyAndValid() (body V) {
 		// 如果不是切片或数组，直接验证 t
 		err = c.validate.ValidateStruct(t)
 		if err != nil {
-			c.CheckError(err)
+
 			return
 		}
 	}
 	// 返回绑定并验证后的值
-	return *t
+	return *t, err
 }
 
 // SetEchoContext 中间件函数，设置自定义上下文
@@ -132,27 +146,25 @@ func (c *XContext[V]) GetDB() *gorm.DB {
 }
 
 func (c *XContext[V]) Success(body interface{}) error {
-	if !c.Response().Committed {
-		return c.JSON(http.StatusOK, c.CreateSuccess(body))
+	if c.Response().Committed {
+		return nil
 	}
-	return nil
+	return c.JSON(http.StatusOK, c.CreateSuccess(body))
 }
 
-func (c *XContext[V]) Fail(err *CodeError) error {
-	if !c.Response().Committed {
-		return c.JSON(http.StatusOK, c.CreateError(err.GetErrCode(), err.GetErrMsg()))
+func (c *XContext[V]) Fail(err error) error {
+	if c.Response().Committed {
+		return nil
 	}
-	return nil
+	if IsXError(err) {
+		_err := TransformErr(err)
+		return c.JSON(http.StatusOK, c.CreateError(_err.GetErrCode(), _err.GetErrMsg()))
+	} else {
+		return c.JSON(http.StatusOK, c.CreateError(FONT_SHOW_MSG, err.Error()))
+	}
 }
 func (c *XContext[V]) ValidateStruct(s interface{}) error {
 	return c.validate.ValidateStruct(s)
-}
-
-func (c *XContext[V]) CheckError(err error) {
-	if err != nil {
-		c.Context.Error(err)
-		panic(err)
-	}
 }
 
 func (c *XContext[V]) QueryArray(queryName string) (arr []string) {
@@ -176,22 +188,22 @@ func (c *XContext[V]) QueryInt64Array(queryName string) (arr []int64) {
 func (c *XContext[V]) GetPathParam(pathName string) string {
 	return c.Param(pathName)
 }
-func (c *XContext[V]) GetPathParamInt64(pathName string) int64 {
+func (c *XContext[V]) GetPathParamInt64(pathName string) (int64, error) {
 	param := c.Param(pathName)
 	parseInt, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
-		c.CheckError(NewFrontShowErrMsg("请输入正确的参数！"))
+		c.Error(NewFrontShowErrMsg("请输入正确的参数！"))
 	}
-	return parseInt
+	return parseInt, err
 }
 
 // QueryParamIds 获取query参数的id列表 参数名为 ids
-func (c *XContext[V]) QueryParamIds() []int64 {
+func (c *XContext[V]) QueryParamIds() ([]int64, error) {
 	t := new(QueryIds)
 	err := c.Bind(t)
 	err = c.validate.ValidateStruct(t)
-	c.CheckError(err)
-	return t.Ids
+
+	return t.Ids, err
 }
 
 func (c *XContext[V]) CreateSuccess(v any) *ResponseSuccess {

@@ -11,12 +11,12 @@ import (
 
 var SysDepartmentRouterGroup = core.NewRouterGroup("/system/department", NewSysDepartmentRouter, func(rg *echo.Group, group *core.RouterGroup) error {
 	return group.Reg(func(m *SysDepartmentRouter) {
-		rg.GET("/list", m.SysDepartmentList, core.IgnorePermission())
-		rg.GET("/tree", m.SysDepartmentTree, core.IgnorePermission())
-		rg.GET("/:id", m.SysDepartmentDetail, core.IgnorePermission())
-		rg.PUT("/:id", m.SysDepartmentUpdate, core.IgnorePermission())
-		rg.POST("", m.SysDepartmentAdd, core.IgnorePermission())
-		rg.DELETE("", m.SysDepartmentDelete, core.IgnorePermission())
+		rg.GET("/list", m.SysDepartmentList, core.HavePermission("SYS::DEPART::QUERY"), core.Log("部门列表"))
+		rg.GET("/tree", m.SysDepartmentTree, core.HavePermission("SYS::DEPART::QUERY"), core.Log("部门树形列表"))
+		rg.GET("/:id", m.SysDepartmentDetail, core.HavePermission("SYS::DEPART::QUERY"), core.Log("部门详情"))
+		rg.PUT("/:id", m.SysDepartmentUpdate, core.HavePermission("SYS::DEPART::UPDATE"), core.Log("部门修改"))
+		rg.POST("", m.SysDepartmentAdd, core.HavePermission("SYS::DEPART::ADD"), core.Log("部门新增"))
+		rg.DELETE("", m.SysDepartmentDelete, core.HavePermission("SYS::DEPART:DEL"), core.Log("部门删除"))
 	})
 })
 
@@ -39,11 +39,16 @@ func NewSysDepartmentRouter() *SysDepartmentRouter {
 //	@Param		bo	query	bo.SysDepartmentPageBo	true	"分页参数"
 func (receiver SysDepartmentRouter) SysDepartmentList(c echo.Context) error {
 	context := core.GetContext[bo.SysDepartmentPageBo](c)
-	pageBo := context.GetQueryParamAndValid()
+	pageBo, err := context.GetQueryParamAndValid()
+	if err != nil {
+		return err
+	}
 	err, x := receiver.SysDepartmentService.WithContext(c).SkipGlobalHook().FindVoListByPage(pageBo.PageParam, func(db *gorm.DB) *gorm.DB {
 		return db
 	})
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(x)
 }
 
@@ -56,9 +61,14 @@ func (receiver SysDepartmentRouter) SysDepartmentList(c echo.Context) error {
 //	@Param		id	path	int	true	"id"
 func (receiver SysDepartmentRouter) SysDepartmentDetail(c echo.Context) error {
 	context := core.GetContext[any](c)
-	id := context.GetPathParamInt64("id")
+	id, err := context.GetPathParamInt64("id")
+	if err != nil {
+		return err
+	}
 	err, x := receiver.SysDepartmentService.WithContext(c).SkipGlobalHook().FindOneVoByPrimaryKey(id)
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(x)
 }
 
@@ -72,10 +82,15 @@ func (receiver SysDepartmentRouter) SysDepartmentDetail(c echo.Context) error {
 //	@Param		bo	body	bo.SysDepartmentBo	true	"修改参数"
 func (receiver SysDepartmentRouter) SysDepartmentUpdate(c echo.Context) error {
 	context := core.GetContext[bo.SysDepartmentBo](c)
-	updateBo := context.GetBodyAndValid()
-	id := context.GetPathParamInt64("id")
+	updateBo, err := context.GetBodyAndValid()
+	id, err := context.GetPathParamInt64("id")
+	if err != nil {
+		return err
+	}
 	err, x := receiver.SysDepartmentService.WithContext(c).SkipGlobalHook().SaveByPrimaryKey(id, core.CopyFrom[model.SysDepartment](updateBo))
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(x)
 }
 
@@ -88,10 +103,17 @@ func (receiver SysDepartmentRouter) SysDepartmentUpdate(c echo.Context) error {
 //	@Param		bo	body	bo.SysDepartmentBo	true	"新增参数"
 func (receiver SysDepartmentRouter) SysDepartmentAdd(c echo.Context) error {
 	context := core.GetContext[bo.SysDepartmentBo](c)
-	addBo := context.GetBodyAndValid()
+	addBo, err := context.GetBodyAndValid()
+	if err != nil {
+		return err
+	}
+
 	err, meta := receiver.SysDepartmentService.WithContext(c).SkipGlobalHook().
 		InsertOne(core.CopyFrom[model.SysDepartment](addBo))
-	context.CheckError(err)
+
+	if err != nil {
+		return err
+	}
 	return context.Success(core.CopyFrom[vo.SysDepartmentVo](meta))
 }
 
@@ -104,10 +126,15 @@ func (receiver SysDepartmentRouter) SysDepartmentAdd(c echo.Context) error {
 //	@Param		param	query	core.QueryIds	true	"删除参数"
 func (receiver SysDepartmentRouter) SysDepartmentDelete(c echo.Context) error {
 	context := core.GetContext[any](c)
-	ids := context.QueryParamIds()
+	ids, err := context.QueryParamIds()
+	if err != nil {
+		return err
+	}
 	err, row := receiver.SysDepartmentService.WithContext(c).SkipGlobalHook().
 		DeleteByPrimaryKeys(ids)
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(row)
 }
 
@@ -120,6 +147,8 @@ func (receiver SysDepartmentRouter) SysDepartmentDelete(c echo.Context) error {
 func (receiver SysDepartmentRouter) SysDepartmentTree(c echo.Context) error {
 	context := core.GetContext[any](c)
 	err, departments := receiver.SysDepartmentService.WithContext(c).SkipGlobalHook().FindVoList()
-	context.CheckError(err)
+	if err != nil {
+		return err
+	}
 	return context.Success(vo.ToSysDepartmentTreeVo(departments))
 }

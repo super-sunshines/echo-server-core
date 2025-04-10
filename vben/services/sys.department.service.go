@@ -44,6 +44,32 @@ func (r SysDepartmentService) GetDepartmentUsers(c echo.Context, id int64) ([]mo
 	return users, err
 }
 
+func (r SysDepartmentService) GetUserDepartment(c echo.Context) model.SysDepartment {
+	context := core.GetContext[any](c)
+	if !context.IsLogin() {
+		return model.SysDepartment{
+			Name: "无法获取部门",
+		}
+	}
+	claimsAdditions, err := context.GetLoginUserErr()
+	if err != nil {
+		return model.SysDepartment{
+			Name: "无法获取部门",
+		}
+	}
+	department := r.GetAllDepartment(c)
+	for _, dept := range department {
+		if dept.ID == claimsAdditions.DepartmentId {
+			return dept
+		}
+	}
+	return model.SysDepartment{
+		ID:          0,
+		Name:        "未知部门",
+		Description: "未知部门",
+	}
+}
+
 func (r SysDepartmentService) GetChildren(c echo.Context, id int64) ([]int64, error) {
 	departments := r.GetAllDepartment(c)
 	// 创建一个映射来存储每个部门的子部门

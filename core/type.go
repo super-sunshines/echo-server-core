@@ -3,12 +3,13 @@ package core
 import "gorm.io/gorm"
 
 type Config struct {
-	DataBase GormConfig
-	Server   ServerConfig
-	Logger   LogConfig
-	Redis    RedisConfig
-	Jwt      JwtConfig
-	Tencent  TencentConfig
+	DataBase        GormConfig
+	Server          ServerConfig
+	Logger          LogConfig
+	Redis           RedisConfig
+	Jwt             JwtConfig
+	Tencent         TencentConfig
+	Ip2RegionConfig Ip2RegionConfig
 }
 type JwtConfig struct {
 	JwtKey            string
@@ -35,6 +36,10 @@ type RedisConfig struct {
 	Addr     string
 	Password string
 	DB       int
+}
+
+type Ip2RegionConfig struct {
+	FilePath string
 }
 
 type TencentConfig struct {

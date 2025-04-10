@@ -9,8 +9,8 @@ import (
 )
 
 type SysMenuWithMeta struct {
-	model.SysMenu `json:"model.SysMenu"`
-	Meta          model.SysMenuMetum `gorm:"foreignKey:meta_id" json:"meta" json:"meta"`
+	model.SysMenu
+	Meta model.SysMenuMetum `gorm:"foreignKey:meta_id" json:"meta" json:"meta"`
 }
 
 type SysMenuVo struct {
@@ -29,7 +29,7 @@ type SysMenuMetaVo struct {
 	MenuID             int64              `json:"menuId"`             // 菜单名称
 	Title              string             `json:"title"`              // 路由名称
 	Icon               string             `json:"icon"`               // 访问路径
-	Order              int64              `json:"order"`              // 排序
+	OrderNum           int64              `json:"order"`              // 排序
 	ActiveIcon         string             `json:"activeIcon"`         // 组件地址
 	HideInMenu         core.IntBool       `json:"hideInMenu"`         // 隐藏菜单
 	HideInTab          core.IntBool       `json:"hideInTab"`          // 标签页隐藏
@@ -68,7 +68,7 @@ type SysSimpleMenuVo struct {
 	ID       int64              `json:"value"`
 	Pid      int64              `json:"-"`
 	Type     int64              `json:"-"`
-	Order    int64              `json:"-"`
+	OrderNum int64              `json:"-"`
 	Children []*SysSimpleMenuVo `json:"children"`
 }
 
@@ -78,7 +78,7 @@ func BuildSimpleTree(menus []SysMenuWithMeta) []*SysSimpleMenuVo {
 		return SysSimpleMenuVo{
 			Name:     core.BooleanTo(item.Type != _const.MenuTypeApi, item.Meta.Title, item.APIDescription),
 			ID:       item.ID,
-			Order:    item.Meta.Order_,
+			OrderNum: item.Meta.OrderNum,
 			Pid:      item.Pid,
 			Children: nil, // Initialize Children as nil
 		}
@@ -107,7 +107,7 @@ func BuildSimpleTree(menus []SysMenuWithMeta) []*SysSimpleMenuVo {
 
 	// Sort the tree by Order
 	sort.Slice(tree, func(i, j int) bool {
-		return tree[i].Order < tree[j].Order
+		return tree[i].OrderNum < tree[j].OrderNum
 	})
 
 	return tree
@@ -137,7 +137,7 @@ func BuildTree(menus []SysMenuWithMetaVo) []*SysMenuWithMetaVo {
 		}
 	}
 	sort.Slice(tree, func(i, j int) bool {
-		return tree[i].Meta.Order < tree[j].Meta.Order
+		return tree[i].Meta.OrderNum < tree[j].Meta.OrderNum
 	})
 	return tree
 }
