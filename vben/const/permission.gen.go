@@ -27,4 +27,6 @@ var GeneratePermissionCodes = []string{
 	"SYS::USER::UPDATE",
 	"SYS::USER::ADD",
 	"SYS::USER::DEL",
+	"SYS::USER::UNLOCK",
+	"SYS::USER::LOCK",
 }

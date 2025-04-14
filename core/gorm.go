@@ -10,7 +10,10 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gorm.io/plugin/dbresolver"
+	"log"
+	"os"
 	"reflect"
 	"strings"
 	"time"
@@ -52,13 +55,23 @@ func GetGormDB() *gorm.DB {
 
 func connectDataBase() *gorm.DB {
 	options := GetConfig().DataBase
+	serverConfig := GetConfig().Server
 	connectUrl := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&loc=Local&charset=utf8mb4%s",
 		options.User, options.Pass, options.Host, options.Port, options.DataBase, options.OtherSettings)
 	mysqlDialectic := mysql.Open(connectUrl)
-	/*	var gormLogger gormLog.Interface
-		gormLogger = gormLog.Default.LogMode(gormLog)*/
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold:             time.Second, // 慢 SQL 阈值
+			Colorful:                  true,        // 禁用彩色打印
+			IgnoreRecordNotFoundError: true,
+			ParameterizedQueries:      false,
+			LogLevel:                  BooleanTo(serverConfig.Dev, logger.Info, logger.Warn), // Log level
+		},
+	)
+
 	gormDb, err := gorm.Open(mysqlDialectic, &gorm.Config{
-		//Logger: gormLogger,
+		Logger: newLogger,
 	})
 
 	if err != nil {

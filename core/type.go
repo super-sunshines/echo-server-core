@@ -61,6 +61,8 @@ type Cos struct {
 	Region    string
 	CdnUrl    string
 	Bucket    string
+	Action    []string
+	Resource  []string
 }
 
 type OrderParam struct {

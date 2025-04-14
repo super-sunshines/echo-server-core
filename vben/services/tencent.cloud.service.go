@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/super-sunshines/echo-server-core/core"
 	"time"
 
@@ -59,20 +60,31 @@ func (t *TencentCloud) GetTempCosKey() (TencentCloudCosTmpKey, error) {
 	// 从全局配置中获取腾讯云COS的配置信息。
 	tencentCosConfig := core.GetConfig().Tencent.Cos
 
+	if tencentCosConfig.SecretId == "" || tencentCosConfig.SecretKey == "" {
+		return TencentCloudCosTmpKey{}, fmt.Errorf("腾讯云COS配置信息错误")
+	}
+
+	// 定义允许的操作，包括文件上传、分片上传等。
+	defaultActions := []string{
+		"name/cos:PutObject", "name/cos:PostObject", "name/cos:sliceUploadFile", "name/cos:InitiateMultipartUpload",
+		"name/cos:ListMultipartUploads", "name/cos:ListParts", "name/cos:UploadPart", "name/cos:CompleteMultipartUpload", "name/cos:AbortMultipartUpload",
+	}
+	defaultActions = append(defaultActions, tencentCosConfig.Action...)
+	// 定义允许访问的资源路径前缀，根据实际需求设置。
+	defaultResources := []string{
+		"qcs::cos:" + tencentCosConfig.Region + ":uid/" + tencentCosConfig.AppId + ":" + tencentCosConfig.Bucket + "/*",
+	}
+	for i := range tencentCosConfig.Resource {
+		var resource = tencentCosConfig.Resource[i]
+		defaultResources = append(defaultResources, fmt.Sprintf(resource, tencentCosConfig.Region, tencentCosConfig.AppId, tencentCosConfig.Bucket))
+	}
 	// 初始化获取临时密钥的选项。
 	opt := &sts.CredentialOptions{
 		Policy: &sts.CredentialPolicy{Statement: []sts.CredentialPolicyStatement{
 			{
-				// 定义允许的操作，包括文件上传、分片上传等。
-				Action: []string{
-					"name/cos:PutObject", "name/cos:PostObject", "name/cos:sliceUploadFile", "name/cos:InitiateMultipartUpload",
-					"name/cos:ListMultipartUploads", "name/cos:ListParts", "name/cos:UploadPart", "name/cos:CompleteMultipartUpload", "name/cos:AbortMultipartUpload",
-				},
-				Effect: "allow",
-				// 定义允许访问的资源路径前缀，根据实际需求设置。
-				Resource: []string{
-					"qcs::cos:" + tencentCosConfig.Region + ":uid/" + tencentCosConfig.AppId + ":" + tencentCosConfig.Bucket + "/*",
-				},
+				Action:   defaultActions,
+				Effect:   "allow",
+				Resource: defaultResources,
 			},
 		}},
 		// 设置临时密钥的有效期为1小时。

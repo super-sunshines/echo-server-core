@@ -20,6 +20,8 @@ var SysUserRouterGroup = core.NewRouterGroup("/system/user", NewSysUserRouter, f
 		rg.PUT("/:id", m.SysUserUpdate, core.HavePermission("SYS::USER::UPDATE"), core.Log("修改用户"))
 		rg.POST("", m.SysUserAdd, core.HavePermission("SYS::USER::ADD"), core.Log("新增用户"))
 		rg.DELETE("", m.SysUserDelete, core.HavePermission("SYS::USER::DEL"), core.Log("删除用户"))
+		rg.PUT("/unlock/:id", m.SysUserUnLock, core.HavePermission("SYS::USER::UNLOCK"), core.Log("解锁用户"))
+		rg.PUT("/lock/:id", m.SysUserLock, core.HavePermission("SYS::USER::LOCK"), core.Log("封禁用户"))
 	})
 })
 
@@ -35,10 +37,10 @@ func NewSysUserRouter() *SysUserRouter {
 	}
 }
 
-//	@Summary	用户下拉列表
-//	@Tags		[系统]用户模块
-//	@Success	200	{object}	core.ResponseSuccess{data=[]vo.UserOptionsVo}
-//	@Router		/system/user/options [get]
+// @Summary	用户下拉列表
+// @Tags		[系统]用户模块
+// @Success	200	{object}	core.ResponseSuccess{data=[]vo.UserOptionsVo}
+// @Router		/system/user/options [get]
 func (receiver SysUserRouter) optionsList(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
 	err, userList := receiver.SysUserService.WithContext(ec).SkipGlobalHook().
@@ -74,7 +76,7 @@ func (receiver SysUserRouter) SysUserList(c echo.Context) error {
 			core.BooleanFun(pageBo.DepartmentId != 0, func() {
 				children, err := receiver.SysDepartmentService.GetChildren(c, pageBo.DepartmentId)
 				if err != nil {
-					c.Error(err)
+					_ = context.Fail(err)
 					return
 				}
 				db.Where("department_id in (?)", children)
@@ -147,8 +149,10 @@ func (receiver SysUserRouter) SysUserAdd(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+	from := core.CopyFrom[model.SysUser](addBo)
+	from.Password = core.HashPassword(from.Username + "123!")
 	err, meta := receiver.SysUserService.WithContext(c).SkipGlobalHook().
-		InsertOne(core.CopyFrom[model.SysUser](addBo))
+		InsertOne(from)
 	if err != nil {
 		return err
 	}
@@ -174,4 +178,42 @@ func (receiver SysUserRouter) SysUserDelete(c echo.Context) error {
 		return err
 	}
 	return context.Success(row)
+}
+
+// SysUserUnLock
+//
+//	@Summary	系统用户解锁
+//	@Tags		[系统]用户模块
+//	@Success	200	{object}	core.ResponseSuccess{data=bool}
+//	@Router		/system/user/unlock/:id [put]
+func (receiver SysUserRouter) SysUserUnLock(c echo.Context) error {
+	context := core.GetContext[any](c)
+	id, err := context.GetPathParamInt64("id")
+	if err != nil {
+		return err
+	}
+	tx := receiver.SysUserService.WithContext(c).SkipGlobalHook().Where("id = ?", id).Updates(map[string]any{
+		"enable_status":    _const.CommonStateOk,
+		"login_fail_count": 0,
+	})
+	return context.Success(tx.RowsAffected > 0)
+}
+
+// SysUserLock
+//
+//	@Summary	系统用户封禁
+//	@Tags		[系统]用户模块
+//	@Success	200	{object}	core.ResponseSuccess{data=bool}
+//	@Router		/system/user/lock/:id [put]
+func (receiver SysUserRouter) SysUserLock(c echo.Context) error {
+	context := core.GetContext[any](c)
+	id, err := context.GetPathParamInt64("id")
+	if err != nil {
+		return err
+	}
+	tx := receiver.SysUserService.WithContext(c).SkipGlobalHook().Where("id = ?", id).Updates(map[string]any{
+		"enable_status":    _const.CommonStateBanned,
+		"login_fail_count": 100,
+	})
+	return context.Success(tx.RowsAffected > 0)
 }

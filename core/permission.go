@@ -34,8 +34,10 @@ func HaveOneOfPermissions(roles ...string) echo.MiddlewareFunc {
 			user, err := context.GetLoginUser()
 			if err != nil || !PermissionMange.CheckRoleHaveCodePermission(user.RoleCodes, roles, false) {
 				context.Error(NewFrontShowErrMsg(fmt.Sprintf("Dont Have OneOf Permission Check Error: %#v", roles)))
+			} else {
+				return next(c)
 			}
-			return next(c)
+			return err
 		}
 	}
 }
@@ -46,8 +48,10 @@ func HaveAllPermissions(roles ...string) echo.MiddlewareFunc {
 			user, err := context.GetLoginUser()
 			if err != nil || !PermissionMange.CheckRoleHaveCodePermission(user.RoleCodes, roles, true) {
 				context.Error(NewFrontShowErrMsg(fmt.Sprintf("Dont All Permission Check Error: %#v", roles)))
+			} else {
+				return next(c)
 			}
-			return next(c)
+			return err
 		}
 	}
 }
@@ -59,8 +63,10 @@ func HavePermission(role string) echo.MiddlewareFunc {
 			user, err := context.GetLoginUser()
 			if err != nil || !PermissionMange.CheckRoleHaveCodePermission(user.RoleCodes, []string{role}, false) {
 				context.Error(NewFrontShowErrMsg(fmt.Sprintf("Dont Have Permission Check Error: %#v", role)))
+			} else {
+				return next(c)
 			}
-			return next(c)
+			return err
 		}
 	}
 }
@@ -120,10 +126,8 @@ func (r *RolePermission) init() error {
 	for key, roles := range rolePermissions {
 		// 将角色的菜单ID列表转换为JSON字符串并存储到缓存中。
 		r.RoleMenuIdRedis.XHSet(key, roles.MenuIds)
-
 		// 将角色的权限代码列表转换为JSON字符串并存储到缓存中。
 		r.RoleCodeRedis.XHSet(key, roles.Codes)
-
 		// 将角色的主页路径存储到缓存中。
 		r.RoleHomeRedis.XHSet(key, roles.HomePath)
 	}

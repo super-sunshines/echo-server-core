@@ -17,26 +17,6 @@ var (
 	AllData          = int64(3)
 )
 
-type DBExecutionStrategy struct {
-	Name string `json:"name"` // 策略名
-	Code int64  `json:"code"` // 策略标记
-}
-
-var DataStrategyMap = map[int64]DBExecutionStrategy{
-	PersonalDataOnly: {
-		Name: "仅本人数据",
-		Code: PersonalDataOnly,
-	},
-	DepartmentBelow: {
-		Name: "部门及以下",
-		Code: DepartmentBelow,
-	},
-	AllData: {
-		Name: "所有数据",
-		Code: AllData,
-	},
-}
-
 func queryStrategy(roles []model.SysRole, db *gorm.DB, context *core.XContext[any], departService services.SysDepartmentService) {
 	user, err := context.GetLoginUser()
 	if err != nil {
@@ -81,7 +61,6 @@ func updateStrategy(roles []model.SysRole, db *gorm.DB, context *core.XContext[a
 }
 
 func GlobalGormHook(globalDb *gorm.DB) {
-
 	roleService := services.NewSysRoleService()
 	departService := services.NewDepartmentService()
 	_ = globalDb.Callback().Update().Before("gorm:update").Register("custom:BeforeUpdate", func(_db *gorm.DB) {
@@ -133,25 +112,34 @@ func GlobalGormHook(globalDb *gorm.DB) {
 		}
 	})
 
+	// 全局查询策略
 	_ = globalDb.Callback().Query().Before("gorm:query").Register("custom:BeforeQuery", func(_db *gorm.DB) {
+		// 获取GORM绑定的Context
 		ctx := _db.Statement.Context
+		// 如果是普通的Context
 		if bgContext, ok := ctx.(context2.Context); ok {
 			if bgContext.Value(core.GormGlobalSkipHookKey) != nil && bgContext.Value(core.GormGlobalSkipHookKey).(bool) {
 				return
 			}
 		}
+		// 检测是不是XContext
 		context, ok := ctx.(*core.XContext[any])
 		if !ok || context == nil {
 			return
 		}
-		if get := context.Get(core.GormGlobalSkipHookKey); get != nil && get.(bool) {
+		// 获取全局跳过的标记
+		get := context.Get(core.GormGlobalSkipHookKey)
+		// 如果获取到了且是true
+		if get != nil && get.(bool) {
 			return
 		}
+		// 最后进入策略
 		user, err := context.GetLoginUser()
 		if err != nil {
-			return
+			_ = context.Fail(err)
 		}
-		queryStrategy(roleService.GetRoleConfigByCodes(context, user.RoleCodes...), _db, context, departService)
+		codes := roleService.GetRoleConfigByCodes(context, user.RoleCodes...)
+		queryStrategy(codes, _db, context, departService)
 	})
 
 }

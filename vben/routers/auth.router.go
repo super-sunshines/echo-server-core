@@ -37,11 +37,11 @@ func NewAuthRouter() *AuthRouter {
 	}
 }
 
-//	@Summary	用户登录
-//	@Tags		[系统]授权模块
-//	@Success	200	{object}	core.ResponseSuccess{data=vo.LoginVo}
-//	@Router		/auth/login [post]
-//	@Param		loginBo	body	bo.LoginBo	true	"登录参数"
+// @Summary	用户登录
+// @Tags		[系统]授权模块
+// @Success	200	{object}	core.ResponseSuccess{data=vo.LoginVo}
+// @Router		/auth/login [post]
+// @Param		loginBo	body	bo.LoginBo	true	"登录参数"
 func (r AuthRouter) login(ec echo.Context) (err error) {
 	context := core.GetContext[bo.LoginBo](ec)
 	maxLoginFailCount := core.GetConfig().Jwt.MaxLoginFailCount
@@ -74,7 +74,7 @@ func (r AuthRouter) login(ec echo.Context) (err error) {
 		})
 		if a.LoginFailCount+1 >= maxLoginFailCount {
 			r.userService.WithContext(ec).SkipGlobalHook().Where("id = ?", a.ID).UpdateColumns(map[string]any{
-				"status": _const.CommonStateBanned,
+				"enable_status": _const.CommonStateBanned,
 			})
 		}
 		r.loginLogService.AddLog(ec, loginInfo.Username, _const.LoginTypePassword, 2, "用户名或者密码错误！"+fmt.Sprintf("尝试第%d次", a.LoginFailCount+1))
@@ -82,20 +82,20 @@ func (r AuthRouter) login(ec echo.Context) (err error) {
 	}
 }
 
-//	@Summary	检测token
-//	@Tags		[系统]授权模块
-//	@Success	200	{object}	core.ResponseSuccess{data=bool}
-//	@Router		/auth/check [get]
+// @Summary	检测token
+// @Tags		[系统]授权模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/auth/check [get]
 func (r AuthRouter) checkToken(ec echo.Context) (err error) {
 	context := core.GetContext[bo.LoginBo](ec)
 	uid, err := context.GetLoginUserUid()
 	return context.Success(core.GetTokenManager().ValidToken(uid, context.GetAppPlatformCode(), context.GetUserToken()))
 }
 
-//	@Summary	登出
-//	@Tags		[系统]授权模块
-//	@Success	200	{object}	core.ResponseSuccess{data=bool}
-//	@Router		/auth/logout [get]
+// @Summary	登出
+// @Tags		[系统]授权模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/auth/logout [get]
 func (r AuthRouter) logout(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
 	param := context.QueryParam("accessToken")
@@ -108,10 +108,10 @@ func (r AuthRouter) logout(ec echo.Context) (err error) {
 	}
 }
 
-//	@Summary	获取目录列表
-//	@Tags		[系统]授权模块
-//	@Success	200	{object}	core.ResponseSuccess{data=[]vo.SysMenuWithMetaVo}
-//	@Router		/menu/all [GET]
+// @Summary	获取目录列表
+// @Tags		[系统]授权模块
+// @Success	200	{object}	core.ResponseSuccess{data=[]vo.SysMenuWithMetaVo}
+// @Router		/menu/all [GET]
 func (r AuthRouter) menu(c echo.Context) error {
 	context := core.GetContext[any](c)
 	user, err := context.GetLoginUser()
@@ -130,11 +130,11 @@ func (r AuthRouter) menu(c echo.Context) error {
 	return context.Success(vo.BuildTree(userMenuVoList))
 }
 
-//	@Summary	用户基本信息
-//	@Tags		[系统]授权模块
-//	@Success	200	{object}	core.ResponseSuccess{data=vo.LoginUserInfoVo}
-//	@Router		/user/info [get]
-//	@Param		loginBo	body	bo.LoginBo	true	"登录参数"
+// @Summary	用户基本信息
+// @Tags		[系统]授权模块
+// @Success	200	{object}	core.ResponseSuccess{data=vo.LoginUserInfoVo}
+// @Router		/user/info [get]
+// @Param		loginBo	body	bo.LoginBo	true	"登录参数"
 func (r AuthRouter) loginUserInfo(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
 	user, err := context.GetLoginUser()

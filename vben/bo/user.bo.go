@@ -22,6 +22,6 @@ type SysUserBo struct {
 	Avatar       string             `json:"avatar"`       // 头像
 	DepartmentId int64              `json:"departmentId"`
 	Phone        string             `json:"phone"`      // 手机号
-	Status       int64              `json:"status"`     // 状态
+	EnableStatus int64              `json:"status"`     // 状态
 	LastOnline   int64              `json:"lastOnline"` // 上次在线时间
 }
