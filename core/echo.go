@@ -41,7 +41,7 @@ type ServerRunOption struct {
 func NewServer(routerGroup []*RouterGroup, option ServerRunOption) {
 	CheckFile("./application.yaml")
 	InitConfig()
-	CheckFile(config.Ip2RegionConfig.FilePath)
+	checkIp2RegionFile()
 	initGormConfig(option.GormOptions)
 	initRolePermission(option.PermissionsOptions)
 	initRedis()
@@ -66,10 +66,11 @@ func NewServer(routerGroup []*RouterGroup, option ServerRunOption) {
 		e.GET("/swagger/*", echoSwagger.WrapHandler)
 	}
 	//
-	ResolveRoutes(e)
+
 	if option.BeforeRun != nil {
 		option.BeforeRun(e)
 	}
+	ResolveRoutes(e)
 	fmt.Println(fmt.Sprintf(`%s==> Server Started !%s`, logger.Green, logger.Reset))
 	err := e.Start(fmt.Sprintf(":%d", config.Server.HttpPort))
 	if err != nil {

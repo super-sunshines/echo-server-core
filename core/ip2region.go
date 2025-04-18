@@ -8,6 +8,13 @@ import (
 
 var ip2RegionSearcher *xdb.Searcher
 
+func checkIp2RegionFile() {
+	if GetConfig().Ip2RegionConfig.FilePath == "" {
+		GetConfig().Ip2RegionConfig.FilePath = "./ip2region.xdb"
+	}
+	CheckFile(GetConfig().Ip2RegionConfig.FilePath)
+}
+
 // LoadContentFromFile 从指定文件中加载内容
 func LoadContentFromFile(filename string) ([]byte, error) {
 	// 读取文件内容
@@ -20,7 +27,6 @@ func LoadContentFromFile(filename string) ([]byte, error) {
 
 func initIp2Region() {
 	var filePath = config.Ip2RegionConfig
-
 	// 1、从 dbPath 加载整个 xdb 到内存
 	cBuff, err := LoadContentFromFile(filePath.FilePath)
 	if err != nil {

@@ -151,7 +151,11 @@ type Gorm[M any, V any] struct {
 }
 
 func (r *Gorm[M, V]) SkipGlobalHook() *Gorm[M, V] {
-	r.context.Set(GormGlobalSkipHookKey, true)
+	if r.context == nil {
+		r.DB.WithContext(NewSkipGormGlobalHookContext())
+	} else {
+		r.context.Set(GormGlobalSkipHookKey, true)
+	}
 	return r
 }
 
@@ -379,12 +383,20 @@ func (r *Gorm[M, V]) createViewInstance() (result V) {
 }
 
 func (r *Gorm[M, V]) GetModelDb() *gorm.DB {
-	var db = r.context.GetDB()
+	var _db *gorm.DB
+	if r.DB != nil {
+		_db = r.DB
+	} else {
+		_db = r.context.GetDB()
+	}
 	result := r.createModelInstance()
-	return db.WithContext(r.context).Model(&result)
+	return _db.WithContext(r.context).Model(&result)
 }
 
 func (r *Gorm[M, V]) GetDb() *gorm.DB {
+	if r.DB != nil {
+		return r.DB
+	}
 	var db = r.context.GetDB()
 	return db.WithContext(r.context)
 }

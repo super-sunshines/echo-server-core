@@ -14,7 +14,6 @@ type LoginUserInfoVo struct {
 }
 
 type OauthLoginVo struct {
-	NeedRegister bool   `json:"needRegister"`
-	QywxUid      string `json:"qywxUid"`
-	AccessToken  string `json:"accessToken"`
+	QywxUid     string `json:"qywxUid"`
+	AccessToken string `json:"accessToken"`
 }

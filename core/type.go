@@ -30,6 +30,8 @@ type ServerConfig struct {
 	HttpPort      int
 	WebSocketPath string
 	GlobalPrefix  string
+	SeverDomain   string
+	FrontDomain   string
 }
 
 type RedisConfig struct {

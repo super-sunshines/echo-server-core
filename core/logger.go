@@ -281,10 +281,10 @@ type RequestInfo struct {
 }
 
 var methodBusinessTypeMap = map[string]BusinessType{
-	"GET":  BusinessTypeQuery,
-	"POST": BusinessTypeAdd,
-	"PUT":  BusinessTypeUpdate,
-	"DEL":  BusinessTypeDelete,
+	"GET":    BusinessTypeQuery,
+	"POST":   BusinessTypeAdd,
+	"PUT":    BusinessTypeUpdate,
+	"DELETE": BusinessTypeDelete,
 }
 
 func Log(title string, operateType ...BusinessType) echo.MiddlewareFunc {

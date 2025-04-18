@@ -490,6 +490,9 @@ func GetNowTimeUnixMilli() int64 {
 func GetNowTimeUnix() int64 {
 	return time.Now().In(getLocation()).Unix()
 }
+func GetNowLocalTime() time.Time {
+	return time.Now().In(getLocation())
+}
 
 func getLocation() *time.Location {
 	location, _ := time.LoadLocation("Asia/Shanghai")
