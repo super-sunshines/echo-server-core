@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	QywxRouterGroup = core.NewRouterGroup("/work-wechat", NewQywxAuthRouter, func(rg *echo.Group, group *core.RouterGroup) error {
+	WorkWechatRouterGroup = core.NewRouterGroup("/work-wechat", NewQywxAuthRouter, func(rg *echo.Group, group *core.RouterGroup) error {
 		services.NewTencentWorkWeChatService()
 		return group.Reg(func(m *QywxAuthRouter) {
 			rg.GET("/login", m.login, core.IgnorePermission())

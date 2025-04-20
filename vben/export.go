@@ -19,8 +19,8 @@ var TencentRouters = []*core.RouterGroup{
 	routers.TencentCloudRouterGroup,
 }
 
-var TencentQywxRouters = []*core.RouterGroup{
-	routers.QywxRouterGroup,
+var TencentWorkWechatRouters = []*core.RouterGroup{
+	routers.WorkWechatRouterGroup,
 }
 
 var TencentWechatAppRouters = []*core.RouterGroup{
