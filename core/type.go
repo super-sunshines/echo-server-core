@@ -45,11 +45,17 @@ type Ip2RegionConfig struct {
 }
 
 type TencentConfig struct {
-	Qywx Qywx
-	Cos  Cos
+	WorkWechat WorkWechat
+	Cos        Cos
+	WechatApp  WechatApp
 }
 
-type Qywx struct {
+type WechatApp struct {
+	AppId     string
+	AppSecret string
+}
+
+type WorkWechat struct {
 	CorpId         string
 	CorpSecret     string
 	AgentId        int64

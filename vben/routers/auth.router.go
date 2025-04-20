@@ -142,11 +142,15 @@ func (r AuthRouter) loginUserInfo(ec echo.Context) (err error) {
 		return context.Fail(err)
 	}
 	err, loginUserInfo := r.userService.WithContext(ec).SkipGlobalHook().FindOneByPrimaryKey(user.UID)
+	var HomePath string = "/"
+	if len(user.RoleCodes) > 0 {
+		HomePath = core.PermissionMange.GetRoleHomePath(user.RoleCodes[0])
+	}
 	return context.Success(vo.LoginUserInfoVo{
 		UserId:   loginUserInfo.ID,
 		RealName: loginUserInfo.RealName,
 		Roles:    user.RoleCodes,
 		Username: loginUserInfo.Username,
-		HomePath: core.BooleanTo(len(user.RoleCodes) != 0, core.PermissionMange.GetRoleHomePath(user.RoleCodes[0]), "/"),
+		HomePath: HomePath,
 	})
 }

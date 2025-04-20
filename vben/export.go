@@ -23,6 +23,10 @@ var TencentQywxRouters = []*core.RouterGroup{
 	routers.QywxRouterGroup,
 }
 
+var TencentWechatAppRouters = []*core.RouterGroup{
+	routers.WechatAppRouterGroup,
+}
+
 func AddPermissionCodes(codes []string) {
 	routers.AddRoleCodes(codes)
 }

@@ -8,6 +8,7 @@ require (
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.25.0
+	github.com/go-resty/resty/v2 v2.16.5
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/jinzhu/copier v0.4.0

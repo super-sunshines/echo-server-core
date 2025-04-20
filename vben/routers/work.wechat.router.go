@@ -51,7 +51,7 @@ func (r QywxAuthRouter) login(ec echo.Context) (err error) {
 		zap.L().Error("获取用户信息失败", zap.Error(err))
 		return context.Fail(core.NewFrontShowErrMsg("获取用户信息失败!请联系管理员"))
 	}
-	uid, exist := r.thirdBindService.WorkWechatUidToUid(_const.ThirdPlatformWorkWeChat, workWechatUserInfo.UserID)
+	uid, exist := r.thirdBindService.ThirdPlatformUidToUid(_const.ThirdPlatformWorkWeChat, workWechatUserInfo.UserID)
 
 	if !exist {
 		err, userInfo := r.userService.WithContext(context).SkipGlobalHook().InsertOne(model.SysUser{
@@ -59,6 +59,12 @@ func (r QywxAuthRouter) login(ec echo.Context) (err error) {
 			Password: core.HashPassword(workWechatUserInfo.UserID),
 			NickName: workWechatUserInfo.Name,
 			RealName: workWechatUserInfo.Name,
+		})
+
+		err, _ = r.thirdBindService.WithContext(ec).InsertOne(model.SysUserThirdBind{
+			UserID:    userInfo.ID,
+			LoginType: _const.ThirdPlatformWorkWeChat,
+			Openid:    workWechatUserInfo.UserID,
 		})
 
 		if err != nil {
@@ -70,7 +76,7 @@ func (r QywxAuthRouter) login(ec echo.Context) (err error) {
 			WorkWechatUserId: workWechatUserInfo.UserID,
 		})
 	}
-	uid, _ = r.thirdBindService.WorkWechatUidToUid(_const.ThirdPlatformWorkWeChat, workWechatUserInfo.UserID)
+	uid, _ = r.thirdBindService.ThirdPlatformUidToUid(_const.ThirdPlatformWorkWeChat, workWechatUserInfo.UserID)
 	err, useInfo := r.userService.WithContext(context).SkipGlobalHook().FindOne(func(db *gorm.DB) *gorm.DB {
 		return db.Where("id = ?", uid)
 	})

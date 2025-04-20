@@ -135,9 +135,16 @@ func BuildTree(menus []SysMenuWithMetaVo) []*SysMenuWithMetaVo {
 				parent.Children = append(parent.Children, menu) // 使用指针
 			}
 		}
+
 	}
 	sort.Slice(tree, func(i, j int) bool {
 		return tree[i].Meta.OrderNum < tree[j].Meta.OrderNum
+	})
+
+	slice.ForEach(tree, func(index int, item *SysMenuWithMetaVo) {
+		sort.Slice(item.Children, func(_i, _j int) bool {
+			return tree[index].Children[_i].Meta.OrderNum < tree[index].Children[_j].Meta.OrderNum
+		})
 	})
 	return tree
 }

@@ -206,6 +206,16 @@ func (c *XContext[V]) QueryParamIds() ([]int64, error) {
 	return t.Ids, err
 }
 
+// QueryInt64 获取query参数Int64
+func (c *XContext[V]) QueryInt64(key string) (int64, error) {
+	param := c.QueryParam(key)
+	i, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+	return i, err
+}
+
 func (c *XContext[V]) CreateSuccess(v any) *ResponseSuccess {
 	if v == nil {
 		return &ResponseSuccess{

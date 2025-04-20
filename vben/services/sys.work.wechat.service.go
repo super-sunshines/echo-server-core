@@ -17,7 +17,7 @@ func NewTencentWorkWeChatService() *TencentWorkWeChatService {
 	if tencentWorkWeChatService != nil {
 		return tencentWorkWeChatService
 	}
-	qywx := core.GetConfig().Tencent.Qywx
+	qywx := core.GetConfig().Tencent.WorkWechat
 	tencentWorkWeChatService = &TencentWorkWeChatService{
 		WorkwxApp: workwx.New(qywx.CorpId).WithApp(qywx.CorpSecret, qywx.AgentId),
 	}
@@ -42,7 +42,7 @@ func (r *TencentWorkWeChatService) UserInfoByCode(code string) (userInfo *workwx
 }
 
 func (r *TencentWorkWeChatService) GetAuthUrl() string {
-	qywx := core.GetConfig().Tencent.Qywx
+	qywx := core.GetConfig().Tencent.WorkWechat
 	return fmt.Sprintf(
 		"https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base&debug=1&state=#wechat_redirect",
 		qywx.CorpId, url.QueryEscape(qywx.RedirectionUrl))

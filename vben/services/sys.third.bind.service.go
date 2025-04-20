@@ -17,7 +17,7 @@ func NewSysThirdBindService() SysThirdBindService {
 	}
 }
 
-func (s SysThirdBindService) UidListToWorkWechatUidList(thirdPlatform string, uidList []int64) []string {
+func (s SysThirdBindService) UidListToThirdPlatformUidList(thirdPlatform string, uidList []int64) []string {
 	unique := slice.Unique(uidList)
 	var users []model.SysUserThirdBind
 	core.GetGormDB().Model(model.SysUserThirdBind{}).Where("user_id IN (?)", unique).Where("login_type = ?", thirdPlatform).Find(&users)
@@ -25,13 +25,13 @@ func (s SysThirdBindService) UidListToWorkWechatUidList(thirdPlatform string, ui
 		return item.Openid
 	})
 }
-func (s SysThirdBindService) UidToWorkWechatUid(thirdPlatform string, uid int64) string {
+func (s SysThirdBindService) UidToThirdPlatformUid(thirdPlatform string, uid int64) string {
 	var user model.SysUserThirdBind
 	core.GetGormDB().Model(model.SysUserThirdBind{}).Where("user_id = ?", uid).Where("login_type = ?", thirdPlatform).First(&user)
 	return user.Openid
 }
 
-func (s SysThirdBindService) WorkWechatUidToUid(thirdPlatform string, workWechatUid string) (uid int64, exist bool) {
+func (s SysThirdBindService) ThirdPlatformUidToUid(thirdPlatform string, workWechatUid string) (uid int64, exist bool) {
 	err, bind := s.SetDB(core.GetGormDB()).SkipGlobalHook().FindOne(func(db *gorm.DB) *gorm.DB {
 		return db.Where("openid = ?", workWechatUid).Where("login_type = ?", thirdPlatform)
 	})
