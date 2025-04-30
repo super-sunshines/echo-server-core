@@ -10,10 +10,10 @@ type LoginUserInfoVo struct {
 	Roles    []string `json:"roles"`
 	Username string   `json:"username"`
 	HomePath string   `json:"homePath"`
+	NickName string   `json:"nickName"`
 	Avatar   string   `json:"avatar"`
 }
 
 type OauthLoginVo struct {
-	QywxUid     string `json:"qywxUid"`
 	AccessToken string `json:"accessToken"`
 }

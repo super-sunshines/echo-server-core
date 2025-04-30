@@ -25,6 +25,14 @@ func (r SysUserService) InitUserCache(uid int64) {
 	_uid := fmt.Sprintf("%d", uid)
 	sysUserQuery := query.Use(core.GetGormDB()).SysUser
 	first, _ := sysUserQuery.Where(sysUserQuery.ID.Eq(uid)).First()
+	if first == nil {
+		r.UserCache.XHSet(_uid, model.SysUser{
+			ID:       uid,
+			NickName: "未知用户",
+			Username: "未知用户",
+		})
+		return
+	}
 	r.UserCache.XHSet(_uid, *first)
 }
 func (r SysUserService) GetUserInfo(uid int64) model.SysUser {
@@ -34,6 +42,7 @@ func (r SysUserService) GetUserInfo(uid int64) model.SysUser {
 	} else {
 		r.InitUserCache(uid)
 	}
+
 	return r.UserCache.XHGet(_uid)
 }
 func (r SysUserService) GetUserName(uid int64) string {
@@ -47,4 +56,7 @@ func (r SysUserService) FilterUserIdByStr(str string) []int64 {
 	patientQuery := query.Use(core.GetGormDB()).SysUser
 	find, _ := patientQuery.Where(patientQuery.NickName.Like(str)).Find()
 	return slice.Unique(core.GetFieldValueSlice[int64](find))
+}
+func (r SysUserService) RemoveCacheById(str int64) {
+	r.UserCache.XHDel(fmt.Sprintf("%d", str))
 }

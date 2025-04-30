@@ -364,7 +364,7 @@ func (client *RedisCache[T]) XHMGet(fields ...string) []T {
 		valesList = append(valesList, client.UnMarshal(vales[i].(string)))
 	}
 	if err != nil {
-		panic(err)
+		zap.L().Error("XHMGet error", zap.Error(err))
 	}
 	return valesList
 }

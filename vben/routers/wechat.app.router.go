@@ -72,11 +72,12 @@ func (r WechatAppAuthRouter) login(ec echo.Context) (err error) {
 	uid, exist := r.thirdBindService.ThirdPlatformUidToUid(_const.ThirdPlatformWeChatApp, code)
 	if !exist {
 		_, userInfo := r.userService.WithContext(context).SkipGlobalHook().InsertOne(model.SysUser{
-			Username: code,
-			Password: core.HashPassword(code),
-			NickName: "默认昵称",
-			RealName: "默认昵称",
-			Avatar:   "",
+			Username:     code,
+			Password:     core.HashPassword(code),
+			NickName:     Config.DefaultNickName,
+			RealName:     Config.DefaultNickName,
+			Avatar:       Config.DefaultAvatar,
+			EnableStatus: _const.CommonStateOk,
 		})
 
 		_err, _ := r.thirdBindService.WithContext(ec).InsertOne(model.SysUserThirdBind{
@@ -92,6 +93,9 @@ func (r WechatAppAuthRouter) login(ec echo.Context) (err error) {
 	err, useInfo := r.userService.WithContext(context).SkipGlobalHook().FindOne(func(db *gorm.DB) *gorm.DB {
 		return db.Where("id = ?", uid)
 	})
+	if useInfo.EnableStatus == _const.CommonStateBanned {
+		return core.NewErrCodeMsg(core.USER_STARTUS_ERROR, "账号已被禁用！")
+	}
 	if err != nil {
 		return err
 	}

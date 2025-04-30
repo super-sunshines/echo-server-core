@@ -3,13 +3,14 @@ package bo
 import "github.com/super-sunshines/echo-server-core/core"
 
 type SysDictBo struct {
-	ID        int64  `json:"id"`        // 主键
-	Module    int64  `json:"module"`    // 所属模块
-	Code      string `json:"code"`      // 字典代码
-	ValueType int64  `json:"valueType"` // 值类型
-	Name      string `json:"name"`      // 字典名称
-	Describe  string `json:"describe"`  // 字典描述
-	Status    int64  `json:"status"`    // 字典状态
+	ID           int64  `json:"id"`           // 主键
+	Module       int64  `json:"module"`       // 所属模块
+	Code         string `json:"code"`         // 字典代码
+	Regular      string `json:"regular"`      // 正则字符串
+	ValueType    int64  `json:"valueType"`    // 值类型
+	Name         string `json:"name"`         // 字典名称
+	Describe     string `json:"describe"`     // 字典描述
+	EnableStatus int64  `json:"enableStatus"` // 字典状态
 }
 type SysDictPageBo struct {
 	Module int64 `query:"module"` // 所属模块

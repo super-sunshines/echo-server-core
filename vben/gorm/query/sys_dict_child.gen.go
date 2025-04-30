@@ -53,20 +53,20 @@ type sysDictChild struct {
 
 	ALL        field.Asterisk
 	ID         field.Int64
-	DictCode   field.String
-	Type       field.Int64
-	Value      field.String
-	Label      field.String
-	Style      field.String
-	Describe   field.String
-	OrderNum   field.Int64
-	ItemClass  field.String
-	CreateDept field.Int64
-	CreateBy   field.Int64
-	CreateTime field.Field
-	UpdateBy   field.Int64
-	UpdateTime field.Field
-	DeleteTime field.Field
+	DictCode   field.String // 字典代码
+	Type       field.Int64  // 值类型
+	Value      field.String // 值
+	Label      field.String // 标签
+	Style      field.String // 样式
+	Describe   field.String // 描述
+	OrderNum   field.Int64  // 排序字符串
+	ItemClass  field.String // 样式标签页
+	CreateDept field.Int64  // 创建部门
+	CreateBy   field.Int64  // 创建者
+	CreateTime field.Field  // 创建时间
+	UpdateBy   field.Int64  // 更新者
+	UpdateTime field.Field  // 更新时间
+	DeleteTime field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
 }

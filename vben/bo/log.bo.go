@@ -2,9 +2,9 @@ package bo
 
 import "github.com/super-sunshines/echo-server-core/core"
 
-type SysSysLogPageBo struct {
+type SysLogOperatePageBo struct {
 	core.PageParam
 }
-type SysSysLoginLogPageBo struct {
+type SysLogLoginPageBo struct {
 	core.PageParam
 }

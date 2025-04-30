@@ -13,19 +13,20 @@ const TableNameSysDict = "sys_dict"
 
 // SysDict mapped from table <sys_dict>
 type SysDict struct {
-	ID         int64          `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true" json:"id"`
-	Module     int64          `gorm:"column:module;type:int(11)" json:"module"`
-	Code       string         `gorm:"column:code;type:varchar(255)" json:"code"`
-	Name       string         `gorm:"column:name;type:varchar(255)" json:"name"`
-	ValueType  int64          `gorm:"column:value_type;type:int(11)" json:"valueType"`
-	Describe   string         `gorm:"column:describe;type:varchar(255)" json:"describe"`
-	Status     int64          `gorm:"column:status;type:int(11)" json:"status"`
-	CreateDept int64          `gorm:"column:create_dept;type:int(11)" json:"createDept"`
-	CreateBy   int64          `gorm:"column:create_by;type:int(11)" json:"createBy"`
-	CreateTime core.Time      `gorm:"column:create_time;autoCreateTime;type:datetime" json:"createTime"`
-	UpdateBy   int64          `gorm:"column:update_by;type:int(11)" json:"updateBy"`
-	UpdateTime core.Time      `gorm:"column:update_time;autoUpdateTime;type:datetime" json:"updateTime"`
-	DeleteTime gorm.DeletedAt `gorm:"column:delete_time;type:varchar(255)" json:"deleteTime"`
+	ID           int64          `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true" json:"id"`
+	Module       int64          `gorm:"column:module;type:int(11);comment:所属模块" json:"module"`                          // 所属模块
+	Code         string         `gorm:"column:code;type:varchar(255);comment:字符串代码" json:"code"`                        // 字符串代码
+	Regular      string         `gorm:"column:regular;type:varchar(255);comment:正则字符串" json:"regular"`                  // 正则字符串
+	Name         string         `gorm:"column:name;type:varchar(255);comment:字典名称" json:"name"`                         // 字典名称
+	ValueType    int64          `gorm:"column:value_type;type:int(11);comment:字典值类型" json:"valueType"`                  // 字典值类型
+	Describe     string         `gorm:"column:describe;type:varchar(255);comment:描述" json:"describe"`                   // 描述
+	EnableStatus int64          `gorm:"column:enable_status;type:int(11);comment:启用状态" json:"enableStatus"`             // 启用状态
+	CreateDept   int64          `gorm:"column:create_dept;type:int(11);comment:创建部门" json:"createDept"`                 // 创建部门
+	CreateBy     int64          `gorm:"column:create_by;type:int(11);comment:创建者" json:"createBy"`                      // 创建者
+	CreateTime   core.Time      `gorm:"column:create_time;autoCreateTime;type:datetime;comment:创建时间" json:"createTime"` // 创建时间
+	UpdateBy     int64          `gorm:"column:update_by;type:int(11);comment:更新者" json:"updateBy"`                      // 更新者
+	UpdateTime   core.Time      `gorm:"column:update_time;autoUpdateTime;type:datetime;comment:更新时间" json:"updateTime"` // 更新时间
+	DeleteTime   gorm.DeletedAt `gorm:"column:delete_time;type:varchar(255);comment:删除时间" json:"deleteTime"`            // 删除时间
 }
 
 // TableName SysDict's table name

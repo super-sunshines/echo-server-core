@@ -85,7 +85,7 @@ func (receiver SysDictRouter) SysDictCodeDetail(c echo.Context) error {
 	}
 	err, x := receiver.SysDictService.WithContext(c).SkipGlobalHook().
 		FindOneVo(func(db *gorm.DB) *gorm.DB {
-			return db.Where("code = ?", code).Where("status = ?", _const.DictEnableStatusOK)
+			return db.Where("code = ?", code).Where("enable_status = ?", _const.DictEnableStatusOK)
 		})
 	if err != nil {
 		return err

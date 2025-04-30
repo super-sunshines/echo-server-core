@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"github.com/jedib0t/go-pretty/table"
-
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -82,9 +81,8 @@ func NewServer(routerGroup []*RouterGroup, option ServerRunOption) {
 func EchoError() func(err error, c echo.Context) {
 	return func(err error, c echo.Context) {
 		if err != nil && !c.Response().Committed {
-			c.Logger().Errorf(fmt.Sprintf("%s", err.Error()))
 			codeErr := TransformErr(err)
-			fmt.Println(fmt.Sprintf("%+v ", codeErr))
+			zap.L().Error("Get Server Error :", zap.Error(codeErr))
 			c.Response().Header().Set("Content-Type", "application/json")
 			_ = GetContext[any](c).Fail(codeErr)
 			return

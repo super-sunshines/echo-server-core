@@ -152,9 +152,10 @@ func TransformErr(err error) *CodeError {
 	var codeErr *CodeError
 	if errors.As(err, &codeErr) {
 		return codeErr // 返回 CodeError
+	} else {
+		return NewFrontShowErrMsg(err.Error())
 	}
-	// 如果不是 CodeError，返回一个默认的 CodeError
-	return NewErrCode(SERVER_COMMON_ERROR)
+
 }
 
 // IsXError 转换错误为 CodeError

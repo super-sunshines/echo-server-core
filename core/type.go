@@ -51,15 +51,19 @@ type TencentConfig struct {
 }
 
 type WechatApp struct {
-	AppId     string
-	AppSecret string
+	AppId           string
+	AppSecret       string
+	DefaultNickName string
+	DefaultAvatar   string
 }
 
 type WorkWechat struct {
+	AutoRegister   bool
 	CorpId         string
 	CorpSecret     string
 	AgentId        int64
 	RedirectionUrl string
+	DefaultRoles   []string
 }
 
 type Cos struct {
@@ -89,7 +93,8 @@ type PageParam struct {
 
 type PageResult struct {
 	PageParam
-	Total int64 `json:"total"`
+	Total    int64 `json:"total"`
+	LastPage bool  `json:"lastPage"`
 }
 
 type PageResultList[T any] struct {

@@ -33,9 +33,9 @@ func NewLogRouter() *LogRouter {
 // @Tags		[系统]日志模块
 // @Success	200	{object}	core.ResponseSuccess{data=core.PageResultList[model.SysOperateLog]}
 // @Router		/system/log/list [GET]
-// @Param		bo	query	bo.SysSysLogPageBo	true	"请求参数"
+// @Param		bo	query	bo.SysLogOperatePageBo	true	"请求参数"
 func (r LogRouter) operateLog(ec echo.Context) (err error) {
-	context := core.GetContext[bo.SysSysLogPageBo](ec)
+	context := core.GetContext[bo.SysLogOperatePageBo](ec)
 	queryParam, err := context.GetQueryParamAndValid()
 	if err != nil {
 		return err
@@ -54,9 +54,9 @@ func (r LogRouter) operateLog(ec echo.Context) (err error) {
 // @Tags		[系统]日志模块
 // @Success	200	{object}	core.ResponseSuccess{data=core.PageResultList[model.SysLoginInfo]}
 // @Router		/system/log/login/list [GET]
-// @Param		bo	query	bo.SysSysLoginLogPageBo	true	"请求参数"
+// @Param		bo	query	bo.SysLogLoginPageBo	true	"请求参数"
 func (r LogRouter) loginLog(ec echo.Context) (err error) {
-	context := core.GetContext[bo.SysSysLoginLogPageBo](ec)
+	context := core.GetContext[bo.SysLogLoginPageBo](ec)
 	queryParam, err := context.GetQueryParamAndValid()
 	if err != nil {
 		return err

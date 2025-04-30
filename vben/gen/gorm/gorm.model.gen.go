@@ -10,12 +10,16 @@ import (
 	"strings"
 )
 
+func main() {
+	_main()
+}
+
 var genModels = []string{
 	"sys_department",
 	"sys_dict",
 	"sys_dict_child",
-	"sys_operate_log",
-	"sys_login_info",
+	"sys_log_operate",
+	"sys_log_login",
 	"sys_menu",
 	"sys_menu_meta",
 	"sys_user_department",
@@ -63,7 +67,7 @@ var allModelTagGenConfig = []gen.ModelOpt{
 	gen.FieldType("update_time", "core.Time"),
 }
 
-func main() {
+func _main() {
 	core.InitConfig()
 	MysqlConfig := core.GetConfig().DataBase
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", MysqlConfig.User,

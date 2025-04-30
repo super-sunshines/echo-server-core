@@ -1,14 +1,15 @@
 package vo
 
 type SysDictVo struct {
-	ID        int64            `json:"id"`        // 主键
-	Module    int64            `json:"module"`    // 所属模块
-	Code      string           `json:"code"`      // 字典代码
-	Name      string           `json:"name"`      // 字典名称
-	Describe  string           `json:"describe"`  // 字典描述
-	ValueType int64            `json:"valueType"` // 值类型
-	Status    int64            `json:"status"`    // 字典状态
-	Children  []SysDictChildVo `json:"children"`  // 字典值
+	ID           int64            `json:"id"`           // 主键
+	Module       int64            `json:"module"`       // 所属模块
+	Code         string           `json:"code"`         // 字典代码
+	Regular      string           `json:"regular"`      // 正则字符串
+	Name         string           `json:"name"`         // 字典名称
+	Describe     string           `json:"describe"`     // 字典描述
+	ValueType    int64            `json:"valueType"`    // 值类型
+	EnableStatus int64            `json:"enableStatus"` // 字典状态
+	Children     []SysDictChildVo `json:"children"`     // 字典值
 }
 
 type SysDictChildVo struct {

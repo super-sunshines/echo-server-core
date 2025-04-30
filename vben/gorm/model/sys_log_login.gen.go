@@ -6,10 +6,10 @@ package model
 
 import "github.com/super-sunshines/echo-server-core/core"
 
-const TableNameSysLoginInfo = "sys_login_info"
+const TableNameSysLogLogin = "sys_log_login"
 
-// SysLoginInfo mapped from table <sys_login_info>
-type SysLoginInfo struct {
+// SysLogLogin mapped from table <sys_log_login>
+type SysLogLogin struct {
 	ID              int64     `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true;comment:主键" json:"id"`     // 主键
 	LoginType       int64     `gorm:"column:login_type;type:int(2);comment:登录方式" json:"loginType"`                   // 登录方式
 	RequestMethod   string    `gorm:"column:request_method;type:varchar(255);comment:请求方法" json:"requestMethod"`     // 请求方法
@@ -24,7 +24,7 @@ type SysLoginInfo struct {
 	OperateTime     core.Time `gorm:"column:operate_time;type:datetime;comment:操作时间" json:"operateTime"`             // 操作时间
 }
 
-// TableName SysLoginInfo's table name
-func (*SysLoginInfo) TableName() string {
-	return TableNameSysLoginInfo
+// TableName SysLogLogin's table name
+func (*SysLogLogin) TableName() string {
+	return TableNameSysLogLogin
 }

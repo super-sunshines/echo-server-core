@@ -14,20 +14,20 @@ const TableNameSysDictChild = "sys_dict_child"
 // SysDictChild mapped from table <sys_dict_child>
 type SysDictChild struct {
 	ID         int64          `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true" json:"id"`
-	DictCode   string         `gorm:"column:dict_code;type:varchar(255)" json:"dictCode"`
-	Type       int64          `gorm:"column:type;type:int(11)" json:"type"`
-	Value      string         `gorm:"column:value;type:varchar(255)" json:"value"`
-	Label      string         `gorm:"column:label;type:varchar(255)" json:"label"`
-	Style      string         `gorm:"column:style;type:varchar(255)" json:"style"`
-	Describe   string         `gorm:"column:describe;type:varchar(255)" json:"describe"`
-	OrderNum   int64          `gorm:"column:order_num;type:int(11)" json:"orderNum"`
-	ItemClass  string         `gorm:"column:item_class;type:varchar(255)" json:"itemClass"`
-	CreateDept int64          `gorm:"column:create_dept;type:int(11)" json:"createDept"`
-	CreateBy   int64          `gorm:"column:create_by;type:int(11)" json:"createBy"`
-	CreateTime core.Time      `gorm:"column:create_time;autoCreateTime;type:datetime" json:"createTime"`
-	UpdateBy   int64          `gorm:"column:update_by;type:int(11)" json:"updateBy"`
-	UpdateTime core.Time      `gorm:"column:update_time;autoUpdateTime;type:datetime" json:"updateTime"`
-	DeleteTime gorm.DeletedAt `gorm:"column:delete_time;type:varchar(255)" json:"deleteTime"`
+	DictCode   string         `gorm:"column:dict_code;type:varchar(255);comment:字典代码" json:"dictCode"`                // 字典代码
+	Type       int64          `gorm:"column:type;type:int(11);comment:值类型" json:"type"`                               // 值类型
+	Value      string         `gorm:"column:value;type:varchar(255);comment:值" json:"value"`                          // 值
+	Label      string         `gorm:"column:label;type:varchar(255);comment:标签" json:"label"`                         // 标签
+	Style      string         `gorm:"column:style;type:varchar(255);comment:样式" json:"style"`                         // 样式
+	Describe   string         `gorm:"column:describe;type:varchar(255);comment:描述" json:"describe"`                   // 描述
+	OrderNum   int64          `gorm:"column:order_num;type:int(11);comment:排序字符串" json:"orderNum"`                    // 排序字符串
+	ItemClass  string         `gorm:"column:item_class;type:varchar(255);comment:样式标签页" json:"itemClass"`             // 样式标签页
+	CreateDept int64          `gorm:"column:create_dept;type:int(11);comment:创建部门" json:"createDept"`                 // 创建部门
+	CreateBy   int64          `gorm:"column:create_by;type:int(11);comment:创建者" json:"createBy"`                      // 创建者
+	CreateTime core.Time      `gorm:"column:create_time;autoCreateTime;type:datetime;comment:创建时间" json:"createTime"` // 创建时间
+	UpdateBy   int64          `gorm:"column:update_by;type:int(11);comment:更新者" json:"updateBy"`                      // 更新者
+	UpdateTime core.Time      `gorm:"column:update_time;autoUpdateTime;type:datetime;comment:更新时间" json:"updateTime"` // 更新时间
+	DeleteTime gorm.DeletedAt `gorm:"column:delete_time;type:varchar(255);comment:删除时间" json:"deleteTime"`            // 删除时间
 }
 
 // TableName SysDictChild's table name

@@ -6,10 +6,10 @@ package model
 
 import "github.com/super-sunshines/echo-server-core/core"
 
-const TableNameSysOperateLog = "sys_operate_log"
+const TableNameSysLogOperate = "sys_log_operate"
 
-// SysOperateLog mapped from table <sys_operate_log>
-type SysOperateLog struct {
+// SysLogOperate mapped from table <sys_log_operate>
+type SysLogOperate struct {
 	ID              int64     `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true;comment:主键" json:"id"`     // 主键
 	Title           string    `gorm:"column:title;type:varchar(255);comment:标题" json:"title"`                        // 标题
 	BusinessType    int64     `gorm:"column:business_type;type:int(2);comment:业务类型" json:"businessType"`             // 业务类型
@@ -31,7 +31,7 @@ type SysOperateLog struct {
 	CostTime        int64     `gorm:"column:cost_time;type:int(11);comment:消耗时间" json:"costTime"`                    // 消耗时间
 }
 
-// TableName SysOperateLog's table name
-func (*SysOperateLog) TableName() string {
-	return TableNameSysOperateLog
+// TableName SysLogOperate's table name
+func (*SysLogOperate) TableName() string {
+	return TableNameSysLogOperate
 }

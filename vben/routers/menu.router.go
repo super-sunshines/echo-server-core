@@ -27,7 +27,7 @@ func AddRoleCodes(codes []string) {
 var MenuRouterGroup = core.NewRouterGroup("/system/menu", NewMenuRouter, func(rg *echo.Group, group *core.RouterGroup) error {
 	return group.Reg(func(m *MenuRouter) {
 		rg.GET("/list", m.list, core.HavePermission("SYS::MENU::QUERY"))
-		rg.GET("/simple", m.simpleMenu, core.HavePermission("SYS::MENU::SIMPLE::QUERY"), core.Log("目录简单列表"))
+		rg.GET("/simple", m.simpleMenu, core.HavePermission("SYS::MENU::SIMPLE::QUERY"))
 		rg.GET("/:id", m.detailMenu, core.HavePermission("SYS::MENU::QUERY"), core.Log("目录详情"))
 		rg.PUT("/:id", m.updateMenu, core.HavePermission("SYS::MENU::UPDATE"), core.Log("修改目录"))
 		rg.POST("", m.addMenu, core.HavePermission("SYS::MENU::ADD"), core.Log("新增目录"))
@@ -52,10 +52,10 @@ func NewMenuRouter() *MenuRouter {
 	}
 }
 
-//	@Summary	获取目录列表
-//	@Tags		[系统]目录模块
-//	@Success	200	{object}	core.ResponseSuccess{data=[]vo.SysMenuWithMeta}
-//	@Router		/system/menu/list [GET]
+// @Summary	获取目录列表
+// @Tags		[系统]目录模块
+// @Success	200	{object}	core.ResponseSuccess{data=[]vo.SysMenuWithMeta}
+// @Router		/system/menu/list [GET]
 func (r MenuRouter) list(c echo.Context) error {
 	context := core.GetContext[any](c)
 	service := core.NewService[vo.SysMenuWithMeta, vo.SysMenuWithMeta]()
@@ -69,10 +69,10 @@ func (r MenuRouter) list(c echo.Context) error {
 	return context.Success(vo.BuildTree(userMenuVoList))
 }
 
-//	@Summary	目录详情
-//	@Tags		[系统]目录模块
-//	@Success	200	{object}	core.ResponseSuccess{data=vo.SysMenuWithMetaVo}
-//	@Router		/system/menu/:id [GET]
+// @Summary	目录详情
+// @Tags		[系统]目录模块
+// @Success	200	{object}	core.ResponseSuccess{data=vo.SysMenuWithMetaVo}
+// @Router		/system/menu/:id [GET]
 func (r MenuRouter) detailMenu(c echo.Context) error {
 	context := core.GetContext[any](c)
 	id, err := context.GetPathParamInt64("id")
@@ -89,30 +89,30 @@ func (r MenuRouter) detailMenu(c echo.Context) error {
 	return context.Success(userMenuVo)
 }
 
-//	@Summary	名称是否存在
-//	@Tags		[系统]目录模块
-//	@Success	200	{object}	core.ResponseSuccess{data=bool}
-//	@Router		/system/menu/path-exists [GET]
+// @Summary	名称是否存在
+// @Tags		[系统]目录模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/system/menu/path-exists [GET]
 func (r MenuRouter) nameExist(c echo.Context) error {
 	context := core.GetContext[any](c)
 	return context.Success(false)
 }
 
-//	@Summary	地址是否存在
-//	@Tags		[系统]目录模块
-//	@Success	200	{object}	core.ResponseSuccess{data=bool}
-//	@Router		/system/menu/path-exists [GET]
+// @Summary	地址是否存在
+// @Tags		[系统]目录模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/system/menu/path-exists [GET]
 func (r MenuRouter) pathExist(c echo.Context) error {
 	context := core.GetContext[any](c)
 	return context.Success(false)
 }
 
-//	@Summary	更新系统菜单
-//	@Tags		[系统]目录模块
-//	@Success	200	{object}	core.ResponseSuccess{data=bool}
-//	@Router		/system/menu/:id [PUT]
-//	@Param		bo	body	bo.UserMenuBo	true	"更新参数"
-//	@Param		id	path	int				true	"主键"
+// @Summary	更新系统菜单
+// @Tags		[系统]目录模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/system/menu/:id [PUT]
+// @Param		bo	body	bo.UserMenuBo	true	"更新参数"
+// @Param		id	path	int				true	"主键"
 func (r MenuRouter) updateMenu(c echo.Context) error {
 	context := core.GetContext[bo.UserMenuBo](c)
 	userMenuBo, err := context.GetBodyAndValid()
@@ -136,11 +136,11 @@ func (r MenuRouter) updateMenu(c echo.Context) error {
 	return context.Success(true)
 }
 
-//	@Summary	新增系统菜单
-//	@Tags		[系统]目录模块
-//	@Success	200	{object}	core.ResponseSuccess{data=bool}
-//	@Router		/system/menu [POST]
-//	@Param		bo	body	bo.UserMenuBo	true	"更新参数"
+// @Summary	新增系统菜单
+// @Tags		[系统]目录模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/system/menu [POST]
+// @Param		bo	body	bo.UserMenuBo	true	"更新参数"
 func (r MenuRouter) addMenu(c echo.Context) error {
 	context := core.GetContext[bo.UserMenuBo](c)
 	userMenuBo, err := context.GetBodyAndValid()
@@ -160,11 +160,11 @@ func (r MenuRouter) addMenu(c echo.Context) error {
 	return context.Success(true)
 }
 
-//	@Summary	删除系统菜单
-//	@Tags		[系统]目录模块
-//	@Success	200	{object}	core.ResponseSuccess{data=int}
-//	@Router		/system/menu [DELETE]
-//	@Param		bo	body	bo.UserMenuBo	true	"更新参数"
+// @Summary	删除系统菜单
+// @Tags		[系统]目录模块
+// @Success	200	{object}	core.ResponseSuccess{data=int}
+// @Router		/system/menu [DELETE]
+// @Param		bo	body	bo.UserMenuBo	true	"更新参数"
 func (r MenuRouter) deleteMenu(c echo.Context) error {
 	context := core.GetContext[any](c)
 	ids, err := context.QueryParamIds()
@@ -179,11 +179,11 @@ func (r MenuRouter) deleteMenu(c echo.Context) error {
 	return context.Success(meta)
 }
 
-//	@Summary	简单系统菜单
-//	@Tags		[系统]目录模块
-//	@Success	200	{object}	core.ResponseSuccess{data=[]vo.SysSimpleMenuVo}
-//	@Router		/system/menu/simple [GET]
-//	@Param		bo	query	bo.SimpleTreeBo	true	"更新参数"
+// @Summary	简单系统菜单
+// @Tags		[系统]目录模块
+// @Success	200	{object}	core.ResponseSuccess{data=[]vo.SysSimpleMenuVo}
+// @Router		/system/menu/simple [GET]
+// @Param		bo	query	bo.SimpleTreeBo	true	"更新参数"
 func (r MenuRouter) simpleMenu(c echo.Context) error {
 	context := core.GetContext[bo.SimpleTreeBo](c)
 	params, err := context.GetQueryParamAndValid()
@@ -209,10 +209,10 @@ func (r MenuRouter) simpleMenu(c echo.Context) error {
 	return context.Success(sysSimpleMenuVoList)
 }
 
-//	@Summary	未录入的权限码
-//	@Tags		[系统]目录模块
-//	@Success	200	{object}	core.ResponseSuccess{data=[]string}
-//	@Router		/system/menu/new/codes [GET]
+// @Summary	未录入的权限码
+// @Tags		[系统]目录模块
+// @Success	200	{object}	core.ResponseSuccess{data=[]string}
+// @Router		/system/menu/new/codes [GET]
 func (r MenuRouter) newCodeList(c echo.Context) error {
 	context := core.GetContext[any](c)
 	err, notInList := r.MenuService.WithContext(c).FindList(func(db *gorm.DB) *gorm.DB {
@@ -227,11 +227,11 @@ func (r MenuRouter) newCodeList(c echo.Context) error {
 	return context.Success(slice.Unique(slice.Difference(AllRoleCodes, exitCodes)))
 }
 
-//	@Summary	录入权限码
-//	@Tags		[系统]目录模块
-//	@Success	200	{object}	core.ResponseSuccess{data=bool}
-//	@Router		/system/menu/code [POST]
-//	@Param		bo	body	bo.AddCodeListBo	true	"新增参数"
+// @Summary	录入权限码
+// @Tags		[系统]目录模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/system/menu/code [POST]
+// @Param		bo	body	bo.AddCodeListBo	true	"新增参数"
 func (r MenuRouter) addCode(c echo.Context) error {
 	context := core.GetContext[bo.AddCodeListBo](c)
 	body, err := context.GetBodyAndValid()
@@ -254,11 +254,11 @@ func (r MenuRouter) addCode(c echo.Context) error {
 	return context.Success(true)
 }
 
-//	@Summary	修改权限码
-//	@Tags		[系统]目录模块
-//	@Success	200	{object}	core.ResponseSuccess{data=bool}
-//	@Router		/system/menu/code/:id [PUT]
-//	@Param		bo	body	bo.ApiCodeBo	true	"新增参数"
+// @Summary	修改权限码
+// @Tags		[系统]目录模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/system/menu/code/:id [PUT]
+// @Param		bo	body	bo.ApiCodeBo	true	"新增参数"
 func (r MenuRouter) editCode(c echo.Context) error {
 	context := core.GetContext[bo.ApiCodeBo](c)
 	body, err := context.GetBodyAndValid()

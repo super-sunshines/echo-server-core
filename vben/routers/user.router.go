@@ -215,5 +215,8 @@ func (receiver SysUserRouter) SysUserLock(c echo.Context) error {
 		"enable_status":    _const.CommonStateBanned,
 		"login_fail_count": 100,
 	})
-	return context.Success(tx.RowsAffected > 0)
+	if tx.RowsAffected == 0 {
+		return core.NewFrontShowErrMsg("封禁失败！")
+	}
+	return context.Success(true)
 }

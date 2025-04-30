@@ -159,6 +159,11 @@ func (r *Gorm[M, V]) SkipGlobalHook() *Gorm[M, V] {
 	return r
 }
 
+func (r *Gorm[M, V]) Unscoped() *Gorm[M, V] {
+	r.DB.Unscoped()
+	return r
+}
+
 // ReplaceDB 增加一定的维护性
 func (r *Gorm[M, V]) ReplaceDB(db *gorm.DB) *Gorm[M, V] {
 	r.DB = db
@@ -230,10 +235,24 @@ func (r *Gorm[M, V]) FindListByPage(param PageParam, conditions ...func(*gorm.DB
 		return tx.Error, result
 	}
 	result.Items = resultList
+	// 情况1：如果当前页数据量不足 PageSize，说明是最后一页
+	currentItemCount := len(resultList)
+	if currentItemCount < param.PageSize {
+		result.LastPage = true
+		result.Total = int64((param.Page-1)*param.PageSize + currentItemCount)
+		return nil, result
+	}
+
+	// 情况2：否则查询 Total，并判断是否是最后一页
+	tx = db.Offset(-1).Limit(-1).Count(&result.Total)
+	if tx.Error != nil {
+		return tx.Error, result
+	}
 	if size := len(resultList); 0 < param.PageSize && 0 < size && size < param.PageSize {
 		result.Total = int64(size + (param.Page-1)*param.PageSize)
 		return nil, result
 	}
+
 	tx = db.Offset(-1).Limit(-1).Count(&result.Total)
 	if tx.Error != nil {
 		return tx.Error, result
@@ -266,6 +285,7 @@ func (r *Gorm[M, V]) FindVoListByPage(param PageParam, conditions ...func(*gorm.
 	result.PageParam = param
 	result.Total = p.Total
 	result.Items = CopyListFrom[V](p.Items)
+	result.LastPage = p.LastPage
 	return err, result
 }
 

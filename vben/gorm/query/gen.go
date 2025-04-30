@@ -20,10 +20,10 @@ var (
 	SysDepartment     *sysDepartment
 	SysDict           *sysDict
 	SysDictChild      *sysDictChild
-	SysLoginInfo      *sysLoginInfo
+	SysLogLogin       *sysLogLogin
+	SysLogOperate     *sysLogOperate
 	SysMenu           *sysMenu
 	SysMenuMetum      *sysMenuMetum
-	SysOperateLog     *sysOperateLog
 	SysRole           *sysRole
 	SysUser           *sysUser
 	SysUserDepartment *sysUserDepartment
@@ -35,10 +35,10 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	SysDepartment = &Q.SysDepartment
 	SysDict = &Q.SysDict
 	SysDictChild = &Q.SysDictChild
-	SysLoginInfo = &Q.SysLoginInfo
+	SysLogLogin = &Q.SysLogLogin
+	SysLogOperate = &Q.SysLogOperate
 	SysMenu = &Q.SysMenu
 	SysMenuMetum = &Q.SysMenuMetum
-	SysOperateLog = &Q.SysOperateLog
 	SysRole = &Q.SysRole
 	SysUser = &Q.SysUser
 	SysUserDepartment = &Q.SysUserDepartment
@@ -51,10 +51,10 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		SysDepartment:     newSysDepartment(db, opts...),
 		SysDict:           newSysDict(db, opts...),
 		SysDictChild:      newSysDictChild(db, opts...),
-		SysLoginInfo:      newSysLoginInfo(db, opts...),
+		SysLogLogin:       newSysLogLogin(db, opts...),
+		SysLogOperate:     newSysLogOperate(db, opts...),
 		SysMenu:           newSysMenu(db, opts...),
 		SysMenuMetum:      newSysMenuMetum(db, opts...),
-		SysOperateLog:     newSysOperateLog(db, opts...),
 		SysRole:           newSysRole(db, opts...),
 		SysUser:           newSysUser(db, opts...),
 		SysUserDepartment: newSysUserDepartment(db, opts...),
@@ -68,10 +68,10 @@ type Query struct {
 	SysDepartment     sysDepartment
 	SysDict           sysDict
 	SysDictChild      sysDictChild
-	SysLoginInfo      sysLoginInfo
+	SysLogLogin       sysLogLogin
+	SysLogOperate     sysLogOperate
 	SysMenu           sysMenu
 	SysMenuMetum      sysMenuMetum
-	SysOperateLog     sysOperateLog
 	SysRole           sysRole
 	SysUser           sysUser
 	SysUserDepartment sysUserDepartment
@@ -86,10 +86,10 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		SysDepartment:     q.SysDepartment.clone(db),
 		SysDict:           q.SysDict.clone(db),
 		SysDictChild:      q.SysDictChild.clone(db),
-		SysLoginInfo:      q.SysLoginInfo.clone(db),
+		SysLogLogin:       q.SysLogLogin.clone(db),
+		SysLogOperate:     q.SysLogOperate.clone(db),
 		SysMenu:           q.SysMenu.clone(db),
 		SysMenuMetum:      q.SysMenuMetum.clone(db),
-		SysOperateLog:     q.SysOperateLog.clone(db),
 		SysRole:           q.SysRole.clone(db),
 		SysUser:           q.SysUser.clone(db),
 		SysUserDepartment: q.SysUserDepartment.clone(db),
@@ -111,10 +111,10 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		SysDepartment:     q.SysDepartment.replaceDB(db),
 		SysDict:           q.SysDict.replaceDB(db),
 		SysDictChild:      q.SysDictChild.replaceDB(db),
-		SysLoginInfo:      q.SysLoginInfo.replaceDB(db),
+		SysLogLogin:       q.SysLogLogin.replaceDB(db),
+		SysLogOperate:     q.SysLogOperate.replaceDB(db),
 		SysMenu:           q.SysMenu.replaceDB(db),
 		SysMenuMetum:      q.SysMenuMetum.replaceDB(db),
-		SysOperateLog:     q.SysOperateLog.replaceDB(db),
 		SysRole:           q.SysRole.replaceDB(db),
 		SysUser:           q.SysUser.replaceDB(db),
 		SysUserDepartment: q.SysUserDepartment.replaceDB(db),
@@ -126,10 +126,10 @@ type queryCtx struct {
 	SysDepartment     ISysDepartmentDo
 	SysDict           ISysDictDo
 	SysDictChild      ISysDictChildDo
-	SysLoginInfo      ISysLoginInfoDo
+	SysLogLogin       ISysLogLoginDo
+	SysLogOperate     ISysLogOperateDo
 	SysMenu           ISysMenuDo
 	SysMenuMetum      ISysMenuMetumDo
-	SysOperateLog     ISysOperateLogDo
 	SysRole           ISysRoleDo
 	SysUser           ISysUserDo
 	SysUserDepartment ISysUserDepartmentDo
@@ -141,10 +141,10 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		SysDepartment:     q.SysDepartment.WithContext(ctx),
 		SysDict:           q.SysDict.WithContext(ctx),
 		SysDictChild:      q.SysDictChild.WithContext(ctx),
-		SysLoginInfo:      q.SysLoginInfo.WithContext(ctx),
+		SysLogLogin:       q.SysLogLogin.WithContext(ctx),
+		SysLogOperate:     q.SysLogOperate.WithContext(ctx),
 		SysMenu:           q.SysMenu.WithContext(ctx),
 		SysMenuMetum:      q.SysMenuMetum.WithContext(ctx),
-		SysOperateLog:     q.SysOperateLog.WithContext(ctx),
 		SysRole:           q.SysRole.WithContext(ctx),
 		SysUser:           q.SysUser.WithContext(ctx),
 		SysUserDepartment: q.SysUserDepartment.WithContext(ctx),

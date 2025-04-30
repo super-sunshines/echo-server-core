@@ -30,10 +30,11 @@ func newSysDict(db *gorm.DB, opts ...gen.DOOption) sysDict {
 	_sysDict.ID = field.NewInt64(tableName, "id")
 	_sysDict.Module = field.NewInt64(tableName, "module")
 	_sysDict.Code = field.NewString(tableName, "code")
+	_sysDict.Regular = field.NewString(tableName, "regular")
 	_sysDict.Name = field.NewString(tableName, "name")
 	_sysDict.ValueType = field.NewInt64(tableName, "value_type")
 	_sysDict.Describe = field.NewString(tableName, "describe")
-	_sysDict.Status = field.NewInt64(tableName, "status")
+	_sysDict.EnableStatus = field.NewInt64(tableName, "enable_status")
 	_sysDict.CreateDept = field.NewInt64(tableName, "create_dept")
 	_sysDict.CreateBy = field.NewInt64(tableName, "create_by")
 	_sysDict.CreateTime = field.NewField(tableName, "create_time")
@@ -49,20 +50,21 @@ func newSysDict(db *gorm.DB, opts ...gen.DOOption) sysDict {
 type sysDict struct {
 	sysDictDo
 
-	ALL        field.Asterisk
-	ID         field.Int64
-	Module     field.Int64
-	Code       field.String
-	Name       field.String
-	ValueType  field.Int64
-	Describe   field.String
-	Status     field.Int64
-	CreateDept field.Int64
-	CreateBy   field.Int64
-	CreateTime field.Field
-	UpdateBy   field.Int64
-	UpdateTime field.Field
-	DeleteTime field.Field
+	ALL          field.Asterisk
+	ID           field.Int64
+	Module       field.Int64  // 所属模块
+	Code         field.String // 字符串代码
+	Regular      field.String // 正则字符串
+	Name         field.String // 字典名称
+	ValueType    field.Int64  // 字典值类型
+	Describe     field.String // 描述
+	EnableStatus field.Int64  // 启用状态
+	CreateDept   field.Int64  // 创建部门
+	CreateBy     field.Int64  // 创建者
+	CreateTime   field.Field  // 创建时间
+	UpdateBy     field.Int64  // 更新者
+	UpdateTime   field.Field  // 更新时间
+	DeleteTime   field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
 }
@@ -82,10 +84,11 @@ func (s *sysDict) updateTableName(table string) *sysDict {
 	s.ID = field.NewInt64(table, "id")
 	s.Module = field.NewInt64(table, "module")
 	s.Code = field.NewString(table, "code")
+	s.Regular = field.NewString(table, "regular")
 	s.Name = field.NewString(table, "name")
 	s.ValueType = field.NewInt64(table, "value_type")
 	s.Describe = field.NewString(table, "describe")
-	s.Status = field.NewInt64(table, "status")
+	s.EnableStatus = field.NewInt64(table, "enable_status")
 	s.CreateDept = field.NewInt64(table, "create_dept")
 	s.CreateBy = field.NewInt64(table, "create_by")
 	s.CreateTime = field.NewField(table, "create_time")
@@ -108,14 +111,15 @@ func (s *sysDict) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *sysDict) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 13)
+	s.fieldMap = make(map[string]field.Expr, 14)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["module"] = s.Module
 	s.fieldMap["code"] = s.Code
+	s.fieldMap["regular"] = s.Regular
 	s.fieldMap["name"] = s.Name
 	s.fieldMap["value_type"] = s.ValueType
 	s.fieldMap["describe"] = s.Describe
-	s.fieldMap["status"] = s.Status
+	s.fieldMap["enable_status"] = s.EnableStatus
 	s.fieldMap["create_dept"] = s.CreateDept
 	s.fieldMap["create_by"] = s.CreateBy
 	s.fieldMap["create_time"] = s.CreateTime

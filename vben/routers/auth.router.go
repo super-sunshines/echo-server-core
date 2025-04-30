@@ -20,17 +20,20 @@ var AuthRouterGroup = core.NewRouterGroup("", NewAuthRouter, func(rg *echo.Group
 		rg.GET("/auth/logout", m.logout, core.IgnorePermission())
 		rg.GET("/menu/all", m.menu, core.IgnorePermission())
 		rg.GET("/user/info", m.loginUserInfo, core.IgnorePermission())
+		rg.PUT("/user/info", m.updateInfo, core.IgnorePermission())
 	})
 })
 
 type AuthRouter struct {
-	userService     core.PreGorm[model.SysUser, any]
+	services.SysUserService
 	menuService     core.PreGorm[model.SysMenu, any]
+	userService     core.PreGorm[model.SysUser, any]
 	loginLogService services.SysLoginInfoService
 }
 
 func NewAuthRouter() *AuthRouter {
 	return &AuthRouter{
+		SysUserService:  services.NewSysUserService(),
 		userService:     core.NewService[model.SysUser, any](),
 		menuService:     core.NewService[model.SysMenu, any](),
 		loginLogService: services.NewSysLoginInfoService(),
@@ -151,6 +154,29 @@ func (r AuthRouter) loginUserInfo(ec echo.Context) (err error) {
 		RealName: loginUserInfo.RealName,
 		Roles:    user.RoleCodes,
 		Username: loginUserInfo.Username,
+		NickName: loginUserInfo.NickName,
+		Avatar:   loginUserInfo.Avatar,
 		HomePath: HomePath,
 	})
+}
+
+// @Summary	更新个人信息
+// @Tags		[系统]授权模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/user/info [put]
+// @Param		bo	body	bo.UpdateUserInfoBo	true	"修改参数"
+func (r AuthRouter) updateInfo(ec echo.Context) (err error) {
+	context := core.GetContext[bo.UpdateUserInfoBo](ec)
+	body, err := context.GetBodyAndValid()
+	uid, err := context.GetLoginUserUid()
+	if err != nil {
+		return err
+	}
+	r.userService.WithContext(ec).GetModelDb().Where("id = ?", uid).
+		Updates(map[string]any{
+			"nick_name": body.NickName,
+			"avatar":    body.Avatar,
+		})
+	r.RemoveCacheById(uid)
+	return context.Success(true)
 }

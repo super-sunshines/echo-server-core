@@ -11,8 +11,8 @@ import (
 
 func LoggerMiddlewareHook(info core.RequestInfo, c echo.Context) {
 	go func() {
-		logQuery := query.Use(core.GetGormDB()).SysOperateLog.WithContext(core.NewSkipGormGlobalHookContext())
-		from := core.CopyFrom[model.SysOperateLog](info)
+		logQuery := query.Use(core.GetGormDB()).SysLogOperate.WithContext(core.NewSkipGormGlobalHookContext())
+		from := core.CopyFrom[model.SysLogOperate](info)
 		context := core.GetContext[any](c)
 		if context.IsLogin() {
 			user, _ := context.GetLoginUser()

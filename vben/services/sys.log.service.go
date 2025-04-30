@@ -8,20 +8,20 @@ import (
 )
 
 type SysLogService struct {
-	core.PreGorm[model.SysOperateLog, model.SysOperateLog]
+	core.PreGorm[model.SysLogOperate, model.SysLogOperate]
 	departmentService SysDepartmentService
 }
 
 func NewSysLogService() SysLogService {
 	return SysLogService{
-		PreGorm:           core.NewService[model.SysOperateLog, model.SysOperateLog](),
+		PreGorm:           core.NewService[model.SysLogOperate, model.SysLogOperate](),
 		departmentService: NewDepartmentService(),
 	}
 }
 
-func (r SysLogService) AddLog(c echo.Context, log model.SysOperateLog) {
+func (r SysLogService) AddLog(c echo.Context, log model.SysLogOperate) {
 	go func() {
-		from := core.CopyFrom[model.SysOperateLog](log)
+		from := core.CopyFrom[model.SysLogOperate](log)
 		context := core.GetContext[any](c)
 		if context.IsLogin() {
 			user, _ := context.GetLoginUser()
@@ -43,7 +43,7 @@ func (r SysLogService) AddLog(c echo.Context, log model.SysOperateLog) {
 }
 func (r SysLogService) AddLogSimple(c echo.Context, title string, content string) {
 	go func() {
-		var from = model.SysOperateLog{
+		var from = model.SysLogOperate{
 			Title:       title,
 			JSONResult:  content,
 			OperateType: 1,

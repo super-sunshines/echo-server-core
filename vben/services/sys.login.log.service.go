@@ -9,12 +9,12 @@ import (
 )
 
 type SysLoginInfoService struct {
-	core.PreGorm[model.SysLoginInfo, model.SysLoginInfo]
+	core.PreGorm[model.SysLogLogin, model.SysLogLogin]
 }
 
 func NewSysLoginInfoService() SysLoginInfoService {
 	return SysLoginInfoService{
-		PreGorm: core.NewService[model.SysLoginInfo, model.SysLoginInfo](),
+		PreGorm: core.NewService[model.SysLogLogin, model.SysLogLogin](),
 	}
 }
 
@@ -22,7 +22,7 @@ func (r SysLoginInfoService) AddLog(c echo.Context, username string, loginType _
 	go func() {
 		os, browser, agent := core.GetOs(c)
 		parse, _ := core.IPParse(c.RealIP())
-		newLogInfo := model.SysLoginInfo{
+		newLogInfo := model.SysLogLogin{
 			LoginType:       int64(loginType),
 			RequestMethod:   c.Request().Method,
 			UserAgent:       agent,

@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/exp/slices"
+	"math/rand"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -484,12 +485,17 @@ func GetNowTimeOnlyStr() string {
 func GetNowDateOnlyStr() string {
 	return time.Now().In(getLocation()).Format(time.DateOnly)
 }
+
+// GetNowTimeUnixMilli 获取当前13位时间戳（毫秒）
 func GetNowTimeUnixMilli() int64 {
 	return time.Now().In(getLocation()).UnixMilli()
 }
+
+// GetNowTimeUnix 获取当前10位时间戳（秒）
 func GetNowTimeUnix() int64 {
 	return time.Now().In(getLocation()).Unix()
 }
+
 func GetNowLocalTime() time.Time {
 	return time.Now().In(getLocation())
 }
@@ -497,4 +503,30 @@ func GetNowLocalTime() time.Time {
 func getLocation() *time.Location {
 	location, _ := time.LoadLocation("Asia/Shanghai")
 	return location
+}
+func GetRandom[T any](arr []T, count int) []T {
+	if count > len(arr) {
+		count = len(arr)
+	}
+	rand.Seed(time.Now().UnixNano())
+	indices := rand.Perm(len(arr))[:count]
+
+	selected := make([]T, count)
+	for i, index := range indices {
+		selected[i] = arr[index]
+	}
+	return selected
+}
+
+// GetRandomStr 生成指定长度的随机字符串
+// 参数：len - 需要生成的字符串长度
+// 返回：随机字符串
+func GetRandomStr(length int) string {
+	var seededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
 }
