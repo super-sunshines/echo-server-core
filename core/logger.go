@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/duke-git/lancet/v2/xerror"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"go.uber.org/zap"
@@ -310,6 +311,11 @@ func Log(title string, operateType ...BusinessType) echo.MiddlewareFunc {
 				errMsg = err.Error()
 			}
 			responseBody := string(customWriter.body)
+			resultMap := map[string]any{}
+			_ = json.Unmarshal([]byte(responseBody), &resultMap)
+			if resultMap["code"] != 200 {
+				err = xerror.New(resultMap["msg"].(string))
+			}
 			if loggerOptions != nil && loggerOptions.LoggerSaver != nil {
 				_operateType := methodBusinessTypeMap[c.Request().Method]
 				if len(operateType) != 0 {
