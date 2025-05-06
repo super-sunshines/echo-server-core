@@ -29,3 +29,12 @@ type SysUserVo struct {
 	UpdateTime   time.Time          `gorm:"column:update_time;autoUpdateTime;type:datetime;comment:更新时间" json:"updateTime"` // 更新时间
 
 }
+
+type SimpleUserVo struct {
+	ID       int64  `gorm:"column:id;type:int(255);primaryKey;autoIncrement:true;comment:主键" json:"id"` // 主键
+	NickName string `gorm:"column:nick_name;type:varchar(255);comment:昵称" json:"nickName"`              // 昵称
+	RealName string `gorm:"column:real_name;type:varchar(255);comment:真实姓名" json:"realName"`            // 真实姓名
+	Email    string `gorm:"column:email;type:varchar(255);comment:邮箱地址" json:"email"`                   // 邮箱地址
+	Avatar   string `gorm:"column:avatar;type:varchar(255);comment:头像" json:"avatar"`                   // 头像
+	Phone    string `gorm:"column:phone;type:varchar(11);comment:手机号" json:"phone"`                     // 手机号
+}

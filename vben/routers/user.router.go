@@ -17,6 +17,7 @@ var SysUserRouterGroup = core.NewRouterGroup("/system/user", NewSysUserRouter, f
 		rg.GET("/list", m.SysUserList, core.HavePermission("SYS::USER::QUERY"), core.Log("用户分页列表"))
 		rg.GET("/options", m.optionsList, core.HavePermission("SYS::USER::OPTIONS"), core.Log("用户下拉列表"))
 		rg.GET("/:id", m.SysUserDetail, core.HavePermission("SYS::USER::QUERY"), core.Log("查询用户"))
+		rg.GET("/simple-list", m.SysUserSimpleList, core.IgnorePermission())
 		rg.PUT("/:id", m.SysUserUpdate, core.HavePermission("SYS::USER::UPDATE"), core.Log("修改用户"))
 		rg.POST("", m.SysUserAdd, core.HavePermission("SYS::USER::ADD"), core.Log("新增用户"))
 		rg.DELETE("", m.SysUserDelete, core.HavePermission("SYS::USER::DEL"), core.Log("删除用户"))
@@ -219,4 +220,15 @@ func (receiver SysUserRouter) SysUserLock(c echo.Context) error {
 		return core.NewFrontShowErrMsg("封禁失败！")
 	}
 	return context.Success(true)
+}
+
+// SysUserSimpleList 系统用户简单列表
+func (receiver SysUserRouter) SysUserSimpleList(c echo.Context) error {
+	context := core.GetContext[any](c)
+	err, users := receiver.SysUserService.WithContext(c).SkipGlobalHook().FindList()
+	if err != nil {
+		return err
+	}
+	var userList = core.CopyListFrom[vo.SimpleUserVo](users)
+	return context.Success(userList)
 }
