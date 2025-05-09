@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"gorm.io/gorm/logger"
+	"sort"
 	"strings"
 )
 
@@ -33,6 +34,15 @@ func NewConfig(newConfigParam NewConfigParam) Config {
 	if err != nil {
 		panic(err)
 	}
+	_config.Instance = vip
+	fmt.Println(fmt.Sprintf(`%s==> Server Config All Keys  %s`, logger.Cyan, logger.Reset))
+	keys := _config.Instance.AllKeys()
+	sort.Slice(keys, func(i, j int) bool {
+		return keys[i] < keys[j]
+	})
+	for _, key := range keys {
+		fmt.Println(fmt.Sprintf(`%s==> %s`, logger.Cyan, logger.Reset), key)
+	}
 	return _config
 }
 
@@ -52,6 +62,5 @@ func InitConfig() {
 		EnvPrefix:  "CONFIG",
 	})
 	config = &_config
-	fmt.Println(fmt.Sprintf(`%s==> Server Configs %s`, logger.Cyan, logger.Reset))
-	fmt.Println(fmt.Sprintf("%+v", *config))
+
 }

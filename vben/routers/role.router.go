@@ -10,11 +10,11 @@ import (
 
 var SysRoleRouterGroup = core.NewRouterGroup("/system/role", NewRoleRouter, func(rg *echo.Group, group *core.RouterGroup) error {
 	return group.Reg(func(m *RoleRouter) {
-		rg.GET("/list", m.roleList, core.HavePermission("SYS::ROLE::QUERY"), core.Log("角色列表"))
-		rg.GET("/:id", m.roleDetail, core.HavePermission("SYS::ROLE::QUERY"), core.Log("角色详情"))
-		rg.POST("", m.addRole, core.HavePermission("SYS::ROLE::ADD"), core.Log("角色新增"))
-		rg.PUT("/:id", m.updateRole, core.HavePermission("SYS::ROLE::UPDATE"), core.Log("角色修改"))
-		rg.DELETE("", m.deleteRole, core.HavePermission("SYS::ROLE::DEL"), core.Log("角色删除"))
+		rg.GET("/list", m.roleList, core.Log("角色列表"), core.HavePermission("SYS::ROLE::QUERY"))
+		rg.GET("/:id", m.roleDetail, core.Log("角色详情"), core.HavePermission("SYS::ROLE::QUERY"))
+		rg.POST("", m.addRole, core.Log("角色新增"), core.HavePermission("SYS::ROLE::ADD"))
+		rg.PUT("/:id", m.updateRole, core.Log("角色修改"), core.HavePermission("SYS::ROLE::UPDATE"))
+		rg.DELETE("", m.deleteRole, core.Log("角色删除"), core.HavePermission("SYS::ROLE::DEL"))
 	})
 })
 

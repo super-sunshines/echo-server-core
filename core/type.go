@@ -1,8 +1,12 @@
 package core
 
-import "gorm.io/gorm"
+import (
+	"github.com/spf13/viper"
+	"gorm.io/gorm"
+)
 
 type Config struct {
+	Instance        *viper.Viper
 	DataBase        GormConfig
 	Server          ServerConfig
 	Logger          LogConfig

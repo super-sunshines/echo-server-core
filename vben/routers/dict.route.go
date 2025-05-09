@@ -13,16 +13,16 @@ import (
 
 var SysDictRouterGroup = core.NewRouterGroup("/system/dict", NewSysDictRouter, func(rg *echo.Group, group *core.RouterGroup) error {
 	return group.Reg(func(m *SysDictRouter) {
-		rg.GET("/list", m.SysDictList, core.HavePermission("SYS::DICT::QUERY"), core.Log("字典列表"))
-		rg.GET("/code-list", m.SysDictCodeList, core.HavePermission("SYS::DICT::QUERY"), core.Log("所有字典代码"))
-		rg.GET("/code-exist", m.SysDictExist, core.HavePermission("SYS::DICT::QUERY"), core.Log("代码存在"))
-		rg.GET("/:id", m.SysDictDetail, core.HavePermission("SYS::DICT::QUERY"), core.Log("代码内容"))
+		rg.GET("/list", m.SysDictList, core.Log("字典列表"), core.HavePermission("SYS::DICT::QUERY"))
+		rg.GET("/code-list", m.SysDictCodeList, core.Log("所有字典代码"), core.HavePermission("SYS::DICT::QUERY"))
+		rg.GET("/code-exist", m.SysDictExist, core.Log("代码存在"), core.HavePermission("SYS::DICT::QUERY"))
+		rg.GET("/:id", m.SysDictDetail, core.Log("代码内容"), core.HavePermission("SYS::DICT::QUERY"))
 		rg.GET("/code/:code", m.SysDictCodeDetail, core.IgnorePermission())
-		rg.PUT("/:id", m.SysDictUpdate, core.HavePermission("SYS::DICT::UPDATE"), core.Log("字典修改"))
-		rg.POST("", m.SysDictAdd, core.HavePermission("SYS::DICT::ADD"), core.Log("字典新增"))
-		rg.DELETE("", m.SysDictDelete, core.HavePermission("SYS::DICT::DEL"), core.Log("字典删除"))
-		rg.GET("/child/list", m.SysDictChildList, core.HavePermission("SYS::DICT::CHILD::QUERY"), core.Log("字典内容删除"))
-		rg.PUT("/child/:code", m.SysDictChildUpdate, core.HavePermission("SYS::DICT::CHILD::UPDATE"), core.Log("字典内容修改"))
+		rg.PUT("/:id", m.SysDictUpdate, core.Log("字典修改"), core.HavePermission("SYS::DICT::UPDATE"))
+		rg.POST("", m.SysDictAdd, core.Log("字典新增"), core.HavePermission("SYS::DICT::ADD"))
+		rg.DELETE("", m.SysDictDelete, core.Log("字典删除"), core.HavePermission("SYS::DICT::DEL"))
+		rg.GET("/child/list", m.SysDictChildList, core.Log("字典内容删除"), core.HavePermission("SYS::DICT::CHILD::QUERY"))
+		rg.PUT("/child/:code", m.SysDictChildUpdate, core.Log("字典内容修改"), core.HavePermission("SYS::DICT::CHILD::UPDATE"))
 	})
 })
 

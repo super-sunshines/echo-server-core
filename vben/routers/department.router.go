@@ -11,12 +11,12 @@ import (
 
 var SysDepartmentRouterGroup = core.NewRouterGroup("/system/department", NewSysDepartmentRouter, func(rg *echo.Group, group *core.RouterGroup) error {
 	return group.Reg(func(m *SysDepartmentRouter) {
-		rg.GET("/list", m.SysDepartmentList, core.HavePermission("SYS::DEPART::QUERY"), core.Log("部门列表"))
-		rg.GET("/tree", m.SysDepartmentTree, core.HavePermission("SYS::DEPART::QUERY"), core.Log("部门树形列表"))
-		rg.GET("/:id", m.SysDepartmentDetail, core.HavePermission("SYS::DEPART::QUERY"), core.Log("部门详情"))
-		rg.PUT("/:id", m.SysDepartmentUpdate, core.HavePermission("SYS::DEPART::UPDATE"), core.Log("部门修改"))
-		rg.POST("", m.SysDepartmentAdd, core.HavePermission("SYS::DEPART::ADD"), core.Log("部门新增"))
-		rg.DELETE("", m.SysDepartmentDelete, core.HavePermission("SYS::DEPART:DEL"), core.Log("部门删除"))
+		rg.GET("/list", m.SysDepartmentList, core.Log("部门列表"), core.HavePermission("SYS::DEPART::QUERY"))
+		rg.GET("/tree", m.SysDepartmentTree, core.Log("部门树形列表"), core.HavePermission("SYS::DEPART::QUERY"))
+		rg.GET("/:id", m.SysDepartmentDetail, core.Log("部门详情"), core.HavePermission("SYS::DEPART::QUERY"))
+		rg.PUT("/:id", m.SysDepartmentUpdate, core.Log("部门修改"), core.HavePermission("SYS::DEPART::UPDATE"))
+		rg.POST("", m.SysDepartmentAdd, core.Log("部门新增"), core.HavePermission("SYS::DEPART::ADD"))
+		rg.DELETE("", m.SysDepartmentDelete, core.Log("部门删除"), core.HavePermission("SYS::DEPART:DEL"))
 	})
 })
 

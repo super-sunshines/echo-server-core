@@ -14,8 +14,8 @@ import (
 
 var SysUserRouterGroup = core.NewRouterGroup("/system/user", NewSysUserRouter, func(rg *echo.Group, group *core.RouterGroup) error {
 	return group.Reg(func(m *SysUserRouter) {
-		rg.GET("/list", m.SysUserList, core.HavePermission("SYS::USER::QUERY"), core.Log("用户分页列表"))
-		rg.GET("/options", m.optionsList, core.HavePermission("SYS::USER::OPTIONS"), core.Log("用户下拉列表"))
+		rg.GET("/list", m.SysUserList, core.Log("用户分页列表"), core.HavePermission("SYS::USER::QUERY"))
+		rg.GET("/options", m.optionsList, core.Log("用户下拉列表"), core.HavePermission("SYS::USER::OPTIONS"))
 		rg.GET("/:id", m.SysUserDetail, core.HavePermission("SYS::USER::QUERY"), core.Log("查询用户"))
 		rg.GET("/simple-list", m.SysUserSimpleList, core.IgnorePermission())
 		rg.PUT("/:id", m.SysUserUpdate, core.HavePermission("SYS::USER::UPDATE"), core.Log("修改用户"))
