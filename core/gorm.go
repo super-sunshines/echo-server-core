@@ -228,35 +228,41 @@ func (r *Gorm[M, V]) FindOneVo(conditions ...func(*gorm.DB) *gorm.DB) (error, V)
 func (r *Gorm[M, V]) FindListByPage(param PageParam, conditions ...func(*gorm.DB) *gorm.DB) (error, PageResultList[M]) {
 	var result PageResultList[M]
 	result.PageParam = param
+
+	// 处理PageSize为0的情况
+	if param.PageSize <= 0 {
+		return errors.New("pageSize must be greater than 0"), result
+	}
+
 	db := r.DBWithConditions(conditions...)
 	resultList := r.ModelList()
+
+	// 查询当前页数据
 	tx := db.Offset((param.Page - 1) * param.PageSize).Limit(param.PageSize).Find(&resultList)
 	if tx.Error != nil {
 		return tx.Error, result
 	}
 	result.Items = resultList
-	// 情况1：如果当前页数据量不足 PageSize，说明是最后一页
+
 	currentItemCount := len(resultList)
+
+	// 情况1：如果当前页数据量不足PageSize，可以直接确定是最后一页
 	if currentItemCount < param.PageSize {
 		result.LastPage = true
 		result.Total = int64((param.Page-1)*param.PageSize + currentItemCount)
 		return nil, result
 	}
 
-	// 情况2：否则查询 Total，并判断是否是最后一页
+	// 情况2：需要查询总数来判断是否是最后一页
 	tx = db.Offset(-1).Limit(-1).Count(&result.Total)
 	if tx.Error != nil {
 		return tx.Error, result
-	}
-	if size := len(resultList); 0 < param.PageSize && 0 < size && size < param.PageSize {
-		result.Total = int64(size + (param.Page-1)*param.PageSize)
-		return nil, result
 	}
 
-	tx = db.Offset(-1).Limit(-1).Count(&result.Total)
-	if tx.Error != nil {
-		return tx.Error, result
-	}
+	// 计算是否是最后一页
+	totalPages := (result.Total + int64(param.PageSize) - 1) / int64(param.PageSize)
+	result.LastPage = param.Page >= int(totalPages)
+
 	return nil, result
 }
 

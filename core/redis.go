@@ -361,6 +361,9 @@ func (client *RedisCache[T]) XHMGet(fields ...string) []T {
 	vales, err := client.HMGet(ctx, client.key, fields...).Result()
 	var valesList []T
 	for i := range vales {
+		if vales[i] == nil {
+			continue
+		}
 		valesList = append(valesList, client.UnMarshal(vales[i].(string)))
 	}
 	if err != nil {

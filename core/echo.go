@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"sort"
 	"strings"
 	"time"
 )
@@ -71,6 +72,9 @@ func NewServer(routerGroup []*RouterGroup, option ServerRunOption) {
 	}
 	ResolveRoutes(e)
 	fmt.Println(fmt.Sprintf(`%s==> Server Started !%s`, logger.Green, logger.Reset))
+	if config.Server.Dev {
+		fmt.Println(fmt.Sprintf(`%s==> Swagger Path: %s %s`, logger.Green, fmt.Sprintf("http://127.0.0.1:%d/swagger/index.html", config.Server.HttpPort), logger.Reset))
+	}
 	err := e.Start(fmt.Sprintf(":%d", config.Server.HttpPort))
 	if err != nil {
 		panic(err)
@@ -210,13 +214,18 @@ func ResolveRoutes(e *echo.Echo) {
 	// 设置表格标题
 	t.SetTitle("All Routers")
 	// 添加表头
-	t.AppendHeader(table.Row{"METHOD", "PATH", "FUN"})
+	t.AppendHeader(table.Row{"PATH", "FUN", "METHOD"})
+	var _routers []table.Row
 	for _, route := range routes {
 		PathFuncStrMap[route.Path] = route.Name
-		t.AppendRows([]table.Row{
-			{route.Method, route.Path, route.Name},
-		})
+		_routers = append(_routers, []table.Row{
+			{route.Path, route.Method, route.Name},
+		}...)
 	}
+	sort.Slice(_routers, func(i, j int) bool {
+		return _routers[i][0].(string) < _routers[j][0].(string)
+	})
+	t.AppendRows(_routers)
 	// 打印表格
 	t.SetOutputMirror(os.Stdout) // 设置输出为标准输出
 	t.Render()

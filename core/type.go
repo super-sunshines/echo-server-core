@@ -109,3 +109,14 @@ type PageResultList[T any] struct {
 type QueryIds struct {
 	Ids []int64 `json:"ids" query:"ids" form:"ids"  zh_comment:"UID" en_comment:"ids" validate:"required"`
 }
+
+type BaseModel struct {
+	ID           int64          `gorm:"column:id;type:int(255);primaryKey;autoIncrement:true;comment:主键" json:"id"`     // 主键
+	EnableStatus int64          `gorm:"column:enable_status;type:int(1);comment:启用状态" json:"enableStatus"`              // 启用状态
+	CreateDept   string         `gorm:"column:create_dept;type:varchar(255);comment:创建部门" json:"createDept"`            // 创建部门
+	CreateBy     int64          `gorm:"column:create_by;type:int(11);comment:创建者" json:"createBy"`                      // 创建者
+	CreateTime   Time           `gorm:"column:create_time;autoCreateTime;type:datetime;comment:创建时间" json:"createTime"` // 创建时间
+	UpdateBy     int64          `gorm:"column:update_by;type:int(11);comment:更新者" json:"updateBy"`                      // 更新者
+	UpdateTime   Time           `gorm:"column:update_time;autoUpdateTime;type:datetime;comment:更新时间" json:"updateTime"` // 更新时间
+	DeleteTime   gorm.DeletedAt `gorm:"column:delete_time;type:datetime;comment:删除时间" json:"deleteTime"`                // 删除时间
+}

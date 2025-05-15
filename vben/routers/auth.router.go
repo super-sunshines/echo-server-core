@@ -17,6 +17,7 @@ var AuthRouterGroup = core.NewRouterGroup("", NewAuthRouter, func(rg *echo.Group
 	return group.Reg(func(m *AuthRouter) {
 		rg.POST("/auth/login", m.login, core.IgnorePermission())
 		rg.GET("/auth/check", m.checkToken, core.IgnorePermission())
+		rg.POST("/auth/refresh", m.refreshToken, core.IgnorePermission())
 		rg.GET("/auth/logout", m.logout, core.IgnorePermission())
 		rg.GET("/menu/all", m.menu, core.IgnorePermission())
 		rg.GET("/user/info", m.loginUserInfo, core.IgnorePermission())
@@ -90,6 +91,16 @@ func (r AuthRouter) login(ec echo.Context) (err error) {
 // @Success	200	{object}	core.ResponseSuccess{data=bool}
 // @Router		/auth/check [get]
 func (r AuthRouter) checkToken(ec echo.Context) (err error) {
+	context := core.GetContext[bo.LoginBo](ec)
+	uid, err := context.GetLoginUserUid()
+	return context.Success(core.GetTokenManager().ValidToken(uid, context.GetAppPlatformCode(), context.GetUserToken()))
+}
+
+// @Summary	检测token
+// @Tags		[系统]授权模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/auth/check [get]
+func (r AuthRouter) refreshToken(ec echo.Context) (err error) {
 	context := core.GetContext[bo.LoginBo](ec)
 	uid, err := context.GetLoginUserUid()
 	return context.Success(core.GetTokenManager().ValidToken(uid, context.GetAppPlatformCode(), context.GetUserToken()))
