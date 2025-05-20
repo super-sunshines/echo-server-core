@@ -49,6 +49,7 @@ var specialModelTagGenConfig = map[string][]gen.ModelOpt{
 
 	"sys_user": {
 		gen.FieldType("role_code_list", "core.Array[string]"),
+		gen.FieldType("need_change_password", "core.IntBool"),
 	},
 }
 

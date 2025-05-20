@@ -55,6 +55,7 @@ type TencentConfig struct {
 }
 
 type WechatApp struct {
+	Review          bool
 	AppId           string
 	AppSecret       string
 	DefaultNickName string

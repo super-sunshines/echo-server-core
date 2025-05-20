@@ -11,12 +11,16 @@ import (
 	"github.com/super-sunshines/echo-server-core/vben/services"
 	"github.com/super-sunshines/echo-server-core/vben/vo"
 	"gorm.io/gorm"
+	"time"
 )
 
 var AuthRouterGroup = core.NewRouterGroup("", NewAuthRouter, func(rg *echo.Group, group *core.RouterGroup) error {
 	return group.Reg(func(m *AuthRouter) {
 		rg.POST("/auth/login", m.login, core.IgnorePermission())
+		rg.GET("/auth/codes", m.codes)
 		rg.GET("/auth/check", m.checkToken, core.IgnorePermission())
+		rg.GET("/auth/password/reset/check/:code", m.passWordResetCheck, core.IgnorePermission())
+		rg.POST("/auth/password/reset", m.passWordReset, core.IgnorePermission())
 		rg.POST("/auth/refresh", m.refreshToken, core.IgnorePermission())
 		rg.GET("/auth/logout", m.logout, core.IgnorePermission())
 		rg.GET("/menu/all", m.menu, core.IgnorePermission())
@@ -27,17 +31,19 @@ var AuthRouterGroup = core.NewRouterGroup("", NewAuthRouter, func(rg *echo.Group
 
 type AuthRouter struct {
 	services.SysUserService
-	menuService     core.PreGorm[model.SysMenu, any]
-	userService     core.PreGorm[model.SysUser, any]
-	loginLogService services.SysLoginInfoService
+	menuService         core.PreGorm[model.SysMenu, any]
+	userService         core.PreGorm[model.SysUser, any]
+	loginLogService     services.SysLoginInfoService
+	changePasswordCache *core.RedisCache[int64]
 }
 
 func NewAuthRouter() *AuthRouter {
 	return &AuthRouter{
-		SysUserService:  services.NewSysUserService(),
-		userService:     core.NewService[model.SysUser, any](),
-		menuService:     core.NewService[model.SysMenu, any](),
-		loginLogService: services.NewSysLoginInfoService(),
+		SysUserService:      services.NewSysUserService(),
+		userService:         core.NewService[model.SysUser, any](),
+		menuService:         core.NewService[model.SysMenu, any](),
+		loginLogService:     services.NewSysLoginInfoService(),
+		changePasswordCache: core.GetRedisCache[int64]("user:change:password"),
 	}
 }
 
@@ -71,7 +77,16 @@ func (r AuthRouter) login(ec echo.Context) (err error) {
 			"last_online":      core.GetNowTimeUnixMilli(),
 		})
 		r.loginLogService.AddLog(ec, loginInfo.Username, _const.LoginTypePassword, 1, "登录成功")
-		return context.Success(vo.LoginVo{AccessToken: helper.GenJwtByUserInfo(context.GetAppPlatformCode(), a)})
+		loginVo := vo.LoginVo{
+			AccessToken:        helper.GenJwtByUserInfo(context.GetAppPlatformCode(), a),
+			NeedChangePassword: bool(a.NeedChangePassword),
+		}
+		if a.NeedChangePassword {
+			str := core.GetRandomStr(12)
+			loginVo.ChangePasswordCode = str
+			r.changePasswordCache.Set(context, "sys:user:change:password:"+str, a.ID, 5*time.Minute)
+		}
+		return context.Success(loginVo)
 	} else {
 		r.userService.WithContext(ec).SkipGlobalHook().Where("id = ?", a.ID).UpdateColumns(map[string]any{
 			"login_fail_count": gorm.Expr("login_fail_count + 1"),
@@ -190,4 +205,73 @@ func (r AuthRouter) updateInfo(ec echo.Context) (err error) {
 		})
 	r.RemoveCacheById(uid)
 	return context.Success(true)
+}
+
+// @Summary	检测修改密码的code正确性
+// @Tags		[系统]授权模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/auth/password/reset/check/:code [get]
+// @Param		code	path	string	true	"修改参数"
+func (r AuthRouter) passWordResetCheck(c echo.Context) error {
+	context := core.GetContext[any](c)
+	code := context.GetPathParam("code")
+	if code == "" {
+		return context.Fail(core.NewFrontShowErrMsg("参数错误"))
+	}
+	exists := r.changePasswordCache.Exists(context, "sys:user:change:password:"+code)
+	result, err := exists.Result()
+	if err != nil {
+		return err
+	}
+	return context.Success(result >= 1)
+}
+
+// @Summary	新用户密码修改
+// @Tags		[系统]授权模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/auth/password/reset [post]
+// @Param		bo	body	bo.ChangePasswordBo	true	"修改参数"
+func (r AuthRouter) passWordReset(c echo.Context) error {
+	context := core.GetContext[bo.ChangePasswordBo](c)
+	body, err := context.GetBodyAndValid()
+	if err != nil {
+		return err
+	}
+	var redisKey = "sys:user:change:password:" + body.Code
+	exists := r.changePasswordCache.Exists(context, redisKey)
+	result, err := exists.Result()
+	if err != nil {
+		return err
+	}
+	if result == 0 {
+		return context.Fail(core.NewFrontShowErrMsg("校验码失效"))
+	}
+
+	get := r.changePasswordCache.Get(context, redisKey)
+	uid, err := get.Int64()
+	if err != nil {
+		return err
+	}
+
+	err, user := r.userService.WithContext(context).FindOneByPrimaryKey(uid)
+	if err != nil {
+		return err
+	}
+
+	if !core.ComparePasswords(user.Password, body.OldPassword) {
+		return context.Fail(core.NewFrontShowErrMsg("旧密码错误"))
+	}
+
+	tx := r.userService.WithContext(context).Where("id = ?", uid).Updates(map[string]any{
+		"password":             core.HashPassword(body.NewPassword),
+		"need_change_password": core.IntBoolFalse,
+	})
+
+	r.changePasswordCache.Del(context, redisKey)
+	return context.Success(tx.RowsAffected > 0)
+}
+
+func (r AuthRouter) codes(c echo.Context) error {
+	context := core.GetContext[any](c)
+	return context.Success([]string{""})
 }

@@ -31,7 +31,7 @@ func NewLogRouter() *LogRouter {
 
 // @Summary	操作日志列表
 // @Tags		[系统]日志模块
-// @Success	200	{object}	core.ResponseSuccess{data=core.PageResultList[model.SysOperateLog]}
+// @Success	200	{object}	core.ResponseSuccess{data=core.PageResultList[model.SysLogOperate]}
 // @Router		/system/log/list [GET]
 // @Param		bo	query	bo.SysLogOperatePageBo	true	"请求参数"
 func (r LogRouter) operateLog(ec echo.Context) (err error) {
@@ -52,7 +52,7 @@ func (r LogRouter) operateLog(ec echo.Context) (err error) {
 
 // @Summary	登录日志列表
 // @Tags		[系统]日志模块
-// @Success	200	{object}	core.ResponseSuccess{data=core.PageResultList[model.SysLoginInfo]}
+// @Success	200	{object}	core.ResponseSuccess{data=core.PageResultList[model.SysLogLogin]}
 // @Router		/system/log/login/list [GET]
 // @Param		bo	query	bo.SysLogLoginPageBo	true	"请求参数"
 func (r LogRouter) loginLog(ec echo.Context) (err error) {

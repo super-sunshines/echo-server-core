@@ -1,7 +1,9 @@
 package vo
 
 type LoginVo struct {
-	AccessToken string `json:"accessToken"` //token
+	AccessToken        string `json:"accessToken"` //token
+	NeedChangePassword bool   `json:"needChangePassword"`
+	ChangePasswordCode string `json:"changePasswordCode"`
 }
 
 type LoginUserInfoVo struct {

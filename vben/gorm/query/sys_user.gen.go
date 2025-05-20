@@ -40,6 +40,7 @@ func newSysUser(db *gorm.DB, opts ...gen.DOOption) sysUser {
 	_sysUser.EnableStatus = field.NewInt64(tableName, "enable_status")
 	_sysUser.LastOnline = field.NewInt64(tableName, "last_online")
 	_sysUser.DepartmentID = field.NewInt64(tableName, "department_id")
+	_sysUser.NeedChangePassword = field.NewField(tableName, "need_change_password")
 	_sysUser.CreateDept = field.NewInt64(tableName, "create_dept")
 	_sysUser.CreateBy = field.NewInt64(tableName, "create_by")
 	_sysUser.CreateTime = field.NewField(tableName, "create_time")
@@ -55,26 +56,27 @@ func newSysUser(db *gorm.DB, opts ...gen.DOOption) sysUser {
 type sysUser struct {
 	sysUserDo
 
-	ALL            field.Asterisk
-	ID             field.Int64  // 主键
-	Username       field.String // 用户名
-	Password       field.String // 密码
-	NickName       field.String // 昵称
-	RealName       field.String // 真实姓名
-	RoleCodeList   field.Field  // 角色CODE列表
-	Email          field.String // 邮箱地址
-	Avatar         field.String // 头像
-	LoginFailCount field.Int64  // 登录失败次数
-	Phone          field.String // 手机号
-	EnableStatus   field.Int64  // 状态
-	LastOnline     field.Int64  // 上次在线时间
-	DepartmentID   field.Int64  // 部门ID
-	CreateDept     field.Int64  // 创建部门
-	CreateBy       field.Int64  // 创建者
-	CreateTime     field.Field  // 创建时间
-	UpdateBy       field.Int64  // 更新者
-	UpdateTime     field.Field  // 更新时间
-	DeleteTime     field.Field  // 删除时间
+	ALL                field.Asterisk
+	ID                 field.Int64  // 主键
+	Username           field.String // 用户名
+	Password           field.String // 密码
+	NickName           field.String // 昵称
+	RealName           field.String // 真实姓名
+	RoleCodeList       field.Field  // 角色CODE列表
+	Email              field.String // 邮箱地址
+	Avatar             field.String // 头像
+	LoginFailCount     field.Int64  // 登录失败次数
+	Phone              field.String // 手机号
+	EnableStatus       field.Int64  // 状态
+	LastOnline         field.Int64  // 上次在线时间
+	DepartmentID       field.Int64  // 部门ID
+	NeedChangePassword field.Field  // 需要修改密码
+	CreateDept         field.Int64  // 创建部门
+	CreateBy           field.Int64  // 创建者
+	CreateTime         field.Field  // 创建时间
+	UpdateBy           field.Int64  // 更新者
+	UpdateTime         field.Field  // 更新时间
+	DeleteTime         field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
 }
@@ -104,6 +106,7 @@ func (s *sysUser) updateTableName(table string) *sysUser {
 	s.EnableStatus = field.NewInt64(table, "enable_status")
 	s.LastOnline = field.NewInt64(table, "last_online")
 	s.DepartmentID = field.NewInt64(table, "department_id")
+	s.NeedChangePassword = field.NewField(table, "need_change_password")
 	s.CreateDept = field.NewInt64(table, "create_dept")
 	s.CreateBy = field.NewInt64(table, "create_by")
 	s.CreateTime = field.NewField(table, "create_time")
@@ -126,7 +129,7 @@ func (s *sysUser) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *sysUser) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 19)
+	s.fieldMap = make(map[string]field.Expr, 20)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["username"] = s.Username
 	s.fieldMap["password"] = s.Password
@@ -140,6 +143,7 @@ func (s *sysUser) fillFieldMap() {
 	s.fieldMap["enable_status"] = s.EnableStatus
 	s.fieldMap["last_online"] = s.LastOnline
 	s.fieldMap["department_id"] = s.DepartmentID
+	s.fieldMap["need_change_password"] = s.NeedChangePassword
 	s.fieldMap["create_dept"] = s.CreateDept
 	s.fieldMap["create_by"] = s.CreateBy
 	s.fieldMap["create_time"] = s.CreateTime

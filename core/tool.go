@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -15,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 )
 
 func BooleanTo[T interface{}](p bool, trueValue T, falseValue T) T {
@@ -476,6 +478,14 @@ func GetNowDateTimeNoSymbolStr() string {
 	return format
 }
 
+func GetNowDateNoSymbolStr() string {
+	format := time.Now().In(getLocation()).Format(time.DateOnly)
+	format = strings.ReplaceAll(format, "-", "")
+	format = strings.ReplaceAll(format, " ", "")
+	format = strings.ReplaceAll(format, ":", "")
+	return format
+}
+
 func GetNowDateTimeStr() string {
 	return time.Now().In(getLocation()).Format(time.DateTime)
 }
@@ -518,15 +528,57 @@ func GetRandom[T any](arr []T, count int) []T {
 	return selected
 }
 
+func AdditionFirst[T any](params []T, defaultValue T) T {
+	if len(params) == 0 {
+		return defaultValue
+	} else {
+		return params[0]
+	}
+}
+
 // GetRandomStr 生成指定长度的随机字符串
 // 参数：len - 需要生成的字符串长度
+// 参数：types - 1 大写加数字 2 小写加数字 3 大写加小写
 // 返回：随机字符串
-func GetRandomStr(length int) string {
+func GetRandomStr(length int, types ...int64) string {
+	paramType := AdditionFirst(types, 0)
 	var seededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	charsetNum := "0123456789"
+	charsetLow := "abcdefghijklmnopqrstuvwxyz"
+	charsetUpper := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	charset := charsetNum + charsetLow + charsetUpper
+	switch paramType {
+	case 1:
+		charset = charsetNum + charsetUpper
+	case 2:
+		charset = charsetNum + charsetLow
+	case 3:
+		charset = charsetUpper + charsetLow
+	}
 	b := make([]byte, length)
 	for i := range b {
 		b[i] = charset[seededRand.Intn(len(charset))]
 	}
 	return string(b)
+}
+
+// GetUUID 生成一个随机 UUID
+// 返回：UUID 字符串
+func GetUUID() string {
+	newUUID, err := uuid.NewUUID()
+	if err != nil {
+		zap.L().Error("core GetUUID:", zap.Error(err))
+		return ""
+	}
+	return newUUID.String()
+}
+
+// IsNumeric 判断字符串是否全部由数字组成
+func IsNumeric(s string) bool {
+	for _, r := range s {
+		if !unicode.IsDigit(r) {
+			return false
+		}
+	}
+	return true
 }

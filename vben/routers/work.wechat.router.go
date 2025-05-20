@@ -43,7 +43,7 @@ func NewQywxAuthRouter() *QywxAuthRouter {
 // @Summary	企业微信oauth2登录
 // @Tags		[系统]三方授权
 // @Success	200	{object}	core.ResponseSuccess{data=vo.OauthLoginVo}
-// @Router		/work/wx/login [get]
+// @Router		/work-wechat/login [get]
 // @Param		code	query	string	true	"用户code"
 func (r QywxAuthRouter) login(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
@@ -98,7 +98,7 @@ func (r QywxAuthRouter) login(ec echo.Context) (err error) {
 // @Summary	企业微信绑定
 // @Tags		[系统]三方授权
 // @Success	200	{object}	core.ResponseSuccess{data=string}
-// @Router		/work/wx/bind [post]
+// @Router		/work-wechat/bind [post]
 func (r QywxAuthRouter) bind(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
 	return context.Fail(core.NewFrontShowErrMsg("暂未实现！"))
@@ -107,7 +107,7 @@ func (r QywxAuthRouter) bind(ec echo.Context) (err error) {
 // @Summary	获取授权链接
 // @Tags		[系统]三方授权
 // @Success	200	{object}	core.ResponseSuccess{data=string}
-// @Router		/work/wx/auth-url [get]
+// @Router		/work-wechat/auth-url [get]
 // @Param		code	query	string	true	"用户code"
 func (r QywxAuthRouter) authUrl(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
@@ -115,6 +115,11 @@ func (r QywxAuthRouter) authUrl(ec echo.Context) (err error) {
 	return context.Success(path)
 }
 
+// @Summary	获取Signature
+// @Tags		[系统]三方授权
+// @Success	200	{object}	core.ResponseSuccess{data=string}
+// @Router		/work-wechat/signature [get]
+// @Param		code	query	string	true	"用户code"
 func (r QywxAuthRouter) getConfigSignature(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
 	param := context.QueryParam("url")

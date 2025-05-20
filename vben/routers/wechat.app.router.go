@@ -21,6 +21,7 @@ var (
 		services.NewTencentWorkWeChatService()
 		return group.Reg(func(m *WechatAppAuthRouter) {
 			rg.GET("/login", m.login, core.IgnorePermission(), core.Log("微信小程序授权登录"))
+			rg.GET("/review", m.review, core.IgnorePermission())
 		})
 	})
 )
@@ -43,10 +44,10 @@ func NewWechatAppAuthRouter() *WechatAppAuthRouter {
 	}
 }
 
-// @Summary	企业微信oauth2登录
+// @Summary	微信小程序登录
 // @Tags		[系统]三方授权
 // @Success	200	{object}	core.ResponseSuccess{data=vo.OauthLoginVo}
-// @Router		/work/wx/login [get]
+// @Router		/wechat-app/login [get]
 // @Param		code	query	string	true	"用户code"
 func (r WechatAppAuthRouter) login(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
@@ -102,4 +103,14 @@ func (r WechatAppAuthRouter) login(ec echo.Context) (err error) {
 	return context.Success(vo.OauthLoginVo{
 		AccessToken: helper.GenJwtByUserInfo(context.GetAppPlatformCode(), useInfo),
 	})
+}
+
+// @Summary	微信小程序是否审核中
+// @Tags		[系统]三方授权
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/wechat-app/review [get]
+func (r WechatAppAuthRouter) review(c echo.Context) error {
+	context := core.GetContext[any](c)
+	config := core.GetConfig().Tencent.WechatApp
+	return context.Success(config.Review)
 }

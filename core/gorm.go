@@ -522,13 +522,18 @@ func (a Array[T]) Value() (driver.Value, error) {
 
 type IntBool bool
 
+const (
+	IntBoolTrue  = int64(1)
+	IntBoolFalse = int64(2)
+)
+
 // Value implements the driver.Valuer interface,
 // and turns the IntBool into an integer for MySQL storage.
 func (i IntBool) Value() (driver.Value, error) {
 	if i {
-		return int64(1), nil // true -> 1
+		return IntBoolTrue, nil // true -> 1
 	}
-	return int64(2), nil // false -> 2
+	return IntBoolFalse, nil // false -> 2
 }
 
 // Scan implements the sql.Scanner interface,
@@ -538,7 +543,7 @@ func (i *IntBool) Scan(src interface{}) error {
 	if !ok {
 		return errors.New("bad int type assertion")
 	}
-	*i = v == int64(1) // 1 -> true, otherwise false
+	*i = v == IntBoolTrue // 1 -> true, otherwise false
 	return nil
 }
 

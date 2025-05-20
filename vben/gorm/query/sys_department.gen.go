@@ -32,7 +32,7 @@ func newSysDepartment(db *gorm.DB, opts ...gen.DOOption) sysDepartment {
 	_sysDepartment.Name = field.NewString(tableName, "name")
 	_sysDepartment.OrderNum = field.NewInt64(tableName, "order_num")
 	_sysDepartment.Description = field.NewString(tableName, "description")
-	_sysDepartment.Status = field.NewInt64(tableName, "status")
+	_sysDepartment.EnableStatus = field.NewInt64(tableName, "enable_status")
 	_sysDepartment.CreateDept = field.NewInt64(tableName, "create_dept")
 	_sysDepartment.CreateBy = field.NewInt64(tableName, "create_by")
 	_sysDepartment.CreateTime = field.NewField(tableName, "create_time")
@@ -48,19 +48,19 @@ func newSysDepartment(db *gorm.DB, opts ...gen.DOOption) sysDepartment {
 type sysDepartment struct {
 	sysDepartmentDo
 
-	ALL         field.Asterisk
-	ID          field.Int64  // 主键
-	Pid         field.Int64  // 父ID
-	Name        field.String // 部门名称
-	OrderNum    field.Int64  // 排序
-	Description field.String // 权限描述
-	Status      field.Int64  // 部门状态
-	CreateDept  field.Int64  // 创建部门
-	CreateBy    field.Int64  // 创建者
-	CreateTime  field.Field  // 创建时间
-	UpdateBy    field.Int64  // 更新者
-	UpdateTime  field.Field  // 更新时间
-	DeleteTime  field.Field  // 删除时间
+	ALL          field.Asterisk
+	ID           field.Int64  // 主键
+	Pid          field.Int64  // 父ID
+	Name         field.String // 部门名称
+	OrderNum     field.Int64  // 排序
+	Description  field.String // 权限描述
+	EnableStatus field.Int64  // 部门状态
+	CreateDept   field.Int64  // 创建部门
+	CreateBy     field.Int64  // 创建者
+	CreateTime   field.Field  // 创建时间
+	UpdateBy     field.Int64  // 更新者
+	UpdateTime   field.Field  // 更新时间
+	DeleteTime   field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
 }
@@ -82,7 +82,7 @@ func (s *sysDepartment) updateTableName(table string) *sysDepartment {
 	s.Name = field.NewString(table, "name")
 	s.OrderNum = field.NewInt64(table, "order_num")
 	s.Description = field.NewString(table, "description")
-	s.Status = field.NewInt64(table, "status")
+	s.EnableStatus = field.NewInt64(table, "enable_status")
 	s.CreateDept = field.NewInt64(table, "create_dept")
 	s.CreateBy = field.NewInt64(table, "create_by")
 	s.CreateTime = field.NewField(table, "create_time")
@@ -111,7 +111,7 @@ func (s *sysDepartment) fillFieldMap() {
 	s.fieldMap["name"] = s.Name
 	s.fieldMap["order_num"] = s.OrderNum
 	s.fieldMap["description"] = s.Description
-	s.fieldMap["status"] = s.Status
+	s.fieldMap["enable_status"] = s.EnableStatus
 	s.fieldMap["create_dept"] = s.CreateDept
 	s.fieldMap["create_by"] = s.CreateBy
 	s.fieldMap["create_time"] = s.CreateTime

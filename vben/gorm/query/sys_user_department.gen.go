@@ -31,10 +31,10 @@ func newSysUserDepartment(db *gorm.DB, opts ...gen.DOOption) sysUserDepartment {
 	_sysUserDepartment.UserID = field.NewInt64(tableName, "user_id")
 	_sysUserDepartment.DepartmentID = field.NewString(tableName, "department_id")
 	_sysUserDepartment.Role = field.NewString(tableName, "role")
-	_sysUserDepartment.CreateDept = field.NewInt64(tableName, "create_dept")
-	_sysUserDepartment.CreateBy = field.NewInt64(tableName, "create_by")
+	_sysUserDepartment.CreateDept = field.NewString(tableName, "create_dept")
+	_sysUserDepartment.CreateBy = field.NewString(tableName, "create_by")
 	_sysUserDepartment.CreateTime = field.NewField(tableName, "create_time")
-	_sysUserDepartment.UpdateBy = field.NewInt64(tableName, "update_by")
+	_sysUserDepartment.UpdateBy = field.NewString(tableName, "update_by")
 	_sysUserDepartment.UpdateTime = field.NewField(tableName, "update_time")
 	_sysUserDepartment.DeleteTime = field.NewField(tableName, "delete_time")
 
@@ -52,10 +52,10 @@ type sysUserDepartment struct {
 	UserID       field.Int64  // 用户ID
 	DepartmentID field.String // 部门ID
 	Role         field.String // 部门中角色(未使用)
-	CreateDept   field.Int64  // 创建部门
-	CreateBy     field.Int64  // 创建者
+	CreateDept   field.String // 创建部门
+	CreateBy     field.String // 创建者
 	CreateTime   field.Field  // 创建时间
-	UpdateBy     field.Int64  // 更新者
+	UpdateBy     field.String // 更新者
 	UpdateTime   field.Field  // 更新时间
 	DeleteTime   field.Field  // 删除时间
 
@@ -78,10 +78,10 @@ func (s *sysUserDepartment) updateTableName(table string) *sysUserDepartment {
 	s.UserID = field.NewInt64(table, "user_id")
 	s.DepartmentID = field.NewString(table, "department_id")
 	s.Role = field.NewString(table, "role")
-	s.CreateDept = field.NewInt64(table, "create_dept")
-	s.CreateBy = field.NewInt64(table, "create_by")
+	s.CreateDept = field.NewString(table, "create_dept")
+	s.CreateBy = field.NewString(table, "create_by")
 	s.CreateTime = field.NewField(table, "create_time")
-	s.UpdateBy = field.NewInt64(table, "update_by")
+	s.UpdateBy = field.NewString(table, "update_by")
 	s.UpdateTime = field.NewField(table, "update_time")
 	s.DeleteTime = field.NewField(table, "delete_time")
 

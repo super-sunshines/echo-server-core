@@ -79,6 +79,45 @@ func (client *RedisCache[T]) XSetEX(value T, ex time.Duration) bool {
 	return result == "OK"
 }
 
+// XSetCodeEX 设置 指定Code值的值并指定过期时间
+func (client *RedisCache[T]) XSetCodeEX(appendCode string, value T, ex time.Duration) bool {
+	result, err := client.Set(ctx, client.key+appendCode, client.Marshal(value), ex).Result()
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return result == "OK"
+}
+
+// XCodeExists 查询附加的Code是否存在
+func (client *RedisCache[T]) XCodeExists(appendCode string) bool {
+	result, err := client.Exists(ctx, client.key+appendCode).Result()
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return result == 1
+}
+
+// XCodeGet 附加code获取
+func (client *RedisCache[T]) XCodeGet(appendCode string) (have bool, value T) {
+	result, err := client.Get(ctx, client.key+appendCode).Result()
+	if err != nil {
+		fmt.Println(err)
+		return false, client.UnMarshal(result)
+	}
+	return true, client.UnMarshal(result)
+}
+
+// XCodeDel 附加code获取
+func (client *RedisCache[T]) XCodeDel(appendCode string) (have bool) {
+	affectRows, err := client.Del(ctx, client.key+appendCode).Result()
+	if err != nil {
+		return false
+	}
+	return affectRows > 0
+}
+
 // XGet 获取 key的值
 func (client *RedisCache[T]) XGet() (have bool, value T) {
 	result, err := client.Get(ctx, client.key).Result()
