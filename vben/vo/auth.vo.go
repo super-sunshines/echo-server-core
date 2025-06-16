@@ -7,13 +7,14 @@ type LoginVo struct {
 }
 
 type LoginUserInfoVo struct {
-	UserId   int64    `json:"userId"`
-	RealName string   `json:"realName"`
-	Roles    []string `json:"roles"`
-	Username string   `json:"username"`
-	HomePath string   `json:"homePath"`
-	NickName string   `json:"nickName"`
-	Avatar   string   `json:"avatar"`
+	UserId     int64    `json:"userId"`
+	RealName   string   `json:"realName"`
+	Roles      []string `json:"roles"`
+	Username   string   `json:"username"`
+	HomePath   string   `json:"homePath"`
+	NickName   string   `json:"nickName"`
+	Avatar     string   `json:"avatar"`
+	Department string   `json:"department"`
 }
 
 type OauthLoginVo struct {

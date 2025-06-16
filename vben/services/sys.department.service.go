@@ -22,6 +22,9 @@ func NewDepartmentService() SysDepartmentService {
 	}
 }
 
+func (r SysDepartmentService) ClearCache() {
+	r.departmentCache.XDel()
+}
 func (r SysDepartmentService) GetAllDepartment(c echo.Context) []model.SysDepartment {
 	departments := make([]model.SysDepartment, 0)
 	if have, value := r.departmentCache.XGet(); have {
@@ -51,7 +54,7 @@ func (r SysDepartmentService) GetUserDepartment(c echo.Context) model.SysDepartm
 			Name: "无法获取部门",
 		}
 	}
-	claimsAdditions, err := context.GetLoginUserErr()
+	claimsAdditions, err := context.GetLoginUser()
 	if err != nil {
 		return model.SysDepartment{
 			Name: "无法获取部门",

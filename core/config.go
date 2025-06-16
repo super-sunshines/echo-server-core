@@ -43,6 +43,9 @@ func NewConfig(newConfigParam NewConfigParam) Config {
 	for _, key := range keys {
 		fmt.Println(fmt.Sprintf(`%s==> %s`, logger.Cyan, logger.Reset), key)
 	}
+	if _config.Server.Dev {
+		fmt.Println(fmt.Sprintf(`%s==> %#v  %s`, logger.Cyan, _config, logger.Reset))
+	}
 	return _config
 }
 

@@ -5,6 +5,7 @@ import (
 	"github.com/super-sunshines/echo-server-core/core"
 	"github.com/super-sunshines/echo-server-core/vben/bo"
 	"github.com/super-sunshines/echo-server-core/vben/gorm/model"
+	"github.com/super-sunshines/echo-server-core/vben/services"
 	"github.com/super-sunshines/echo-server-core/vben/vo"
 	"gorm.io/gorm"
 )
@@ -22,11 +23,13 @@ var SysDepartmentRouterGroup = core.NewRouterGroup("/system/department", NewSysD
 
 type SysDepartmentRouter struct {
 	SysDepartmentService core.PreGorm[model.SysDepartment, vo.SysDepartmentVo]
+	clearCache           func()
 }
 
 func NewSysDepartmentRouter() *SysDepartmentRouter {
 	return &SysDepartmentRouter{
 		SysDepartmentService: core.NewService[model.SysDepartment, vo.SysDepartmentVo](),
+		clearCache:           services.NewDepartmentService().ClearCache,
 	}
 }
 
@@ -91,6 +94,7 @@ func (receiver SysDepartmentRouter) SysDepartmentUpdate(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+	receiver.clearCache()
 	return context.Success(x)
 }
 
@@ -104,6 +108,7 @@ func (receiver SysDepartmentRouter) SysDepartmentUpdate(c echo.Context) error {
 func (receiver SysDepartmentRouter) SysDepartmentAdd(c echo.Context) error {
 	context := core.GetContext[bo.SysDepartmentBo](c)
 	addBo, err := context.GetBodyAndValid()
+
 	if err != nil {
 		return err
 	}
@@ -114,6 +119,7 @@ func (receiver SysDepartmentRouter) SysDepartmentAdd(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+	receiver.clearCache()
 	return context.Success(core.CopyFrom[vo.SysDepartmentVo](meta))
 }
 
@@ -135,6 +141,7 @@ func (receiver SysDepartmentRouter) SysDepartmentDelete(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+	receiver.clearCache()
 	return context.Success(row)
 }
 

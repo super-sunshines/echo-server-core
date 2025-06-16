@@ -8,7 +8,8 @@ type UserInfoBo struct {
 }
 
 type SysUserPageBo struct {
-	DepartmentId int64 `query:"departmentId"`
+	DepartmentId int64  `query:"departmentId"`
+	SearchKey    string `query:"searchKey"`
 	core.PageParam
 }
 

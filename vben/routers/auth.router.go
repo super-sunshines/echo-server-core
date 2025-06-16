@@ -19,6 +19,7 @@ var AuthRouterGroup = core.NewRouterGroup("", NewAuthRouter, func(rg *echo.Group
 		rg.POST("/auth/login", m.login, core.IgnorePermission())
 		rg.GET("/auth/codes", m.codes)
 		rg.GET("/auth/check", m.checkToken, core.IgnorePermission())
+		rg.POST("/password/change", m.passwordReset, core.Log("用户重置密码"), core.IgnorePermission())
 		rg.GET("/auth/password/reset/check/:code", m.passWordResetCheck, core.IgnorePermission())
 		rg.POST("/auth/password/reset", m.passWordReset, core.IgnorePermission())
 		rg.POST("/auth/refresh", m.refreshToken, core.IgnorePermission())
@@ -33,6 +34,7 @@ type AuthRouter struct {
 	services.SysUserService
 	menuService         core.PreGorm[model.SysMenu, any]
 	userService         core.PreGorm[model.SysUser, any]
+	departmentService   services.SysDepartmentService
 	loginLogService     services.SysLoginInfoService
 	changePasswordCache *core.RedisCache[int64]
 }
@@ -44,6 +46,7 @@ func NewAuthRouter() *AuthRouter {
 		menuService:         core.NewService[model.SysMenu, any](),
 		loginLogService:     services.NewSysLoginInfoService(),
 		changePasswordCache: core.GetRedisCache[int64]("user:change:password"),
+		departmentService:   services.NewDepartmentService(),
 	}
 }
 
@@ -54,11 +57,13 @@ func NewAuthRouter() *AuthRouter {
 // @Param		loginBo	body	bo.LoginBo	true	"登录参数"
 func (r AuthRouter) login(ec echo.Context) (err error) {
 	context := core.GetContext[bo.LoginBo](ec)
+	platform := context.GetAppPlatformCode()
 	maxLoginFailCount := core.GetConfig().Jwt.MaxLoginFailCount
 	loginInfo, err := context.GetBodyAndValid()
 	if err != nil {
 		return context.Fail(err)
 	}
+
 	err, a := r.userService.WithContext(context).SkipGlobalHook().FindOne(func(db *gorm.DB) *gorm.DB {
 		return db.Where("username = ?", loginInfo.Username)
 	})
@@ -77,8 +82,13 @@ func (r AuthRouter) login(ec echo.Context) (err error) {
 			"last_online":      core.GetNowTimeUnixMilli(),
 		})
 		r.loginLogService.AddLog(ec, loginInfo.Username, _const.LoginTypePassword, 1, "登录成功")
+
+		token, err := helper.GenJwtByUserInfo(platform, a)
+		if err != nil {
+			return err
+		}
 		loginVo := vo.LoginVo{
-			AccessToken:        helper.GenJwtByUserInfo(context.GetAppPlatformCode(), a),
+			AccessToken:        token,
 			NeedChangePassword: bool(a.NeedChangePassword),
 		}
 		if a.NeedChangePassword {
@@ -97,7 +107,7 @@ func (r AuthRouter) login(ec echo.Context) (err error) {
 			})
 		}
 		r.loginLogService.AddLog(ec, loginInfo.Username, _const.LoginTypePassword, 2, "用户名或者密码错误！"+fmt.Sprintf("尝试第%d次", a.LoginFailCount+1))
-		return context.Fail(core.NewFrontShowErrMsg("用户名或者密码错误！"))
+		return context.Fail(core.NewFrontShowErrMsg("用户名或者密码错误！" + fmt.Sprintf("第%d次", a.LoginFailCount+1) + fmt.Sprintf("共%d次", maxLoginFailCount)))
 	}
 }
 
@@ -125,16 +135,13 @@ func (r AuthRouter) refreshToken(ec echo.Context) (err error) {
 // @Tags		[系统]授权模块
 // @Success	200	{object}	core.ResponseSuccess{data=bool}
 // @Router		/auth/logout [get]
+// @Param		accessToken	query	string	true	"token"
 func (r AuthRouter) logout(ec echo.Context) (err error) {
 	context := core.GetContext[any](ec)
 	param := context.QueryParam("accessToken")
-	if param == "" {
-		return context.Success(true)
-	} else {
-		jwt, _ := core.GetTokenManager().ParseJwt(param)
-		core.GetTokenManager().RemoveToken(jwt.UID, context.GetAppPlatformCode())
-		return context.Success(true)
-	}
+	jwt, _ := core.GetTokenManager().ParseJwt(param)
+	core.GetTokenManager().RemoveToken(jwt.UID, context.GetAppPlatformCode())
+	return context.Success(true)
 }
 
 // @Summary	获取目录列表
@@ -175,14 +182,16 @@ func (r AuthRouter) loginUserInfo(ec echo.Context) (err error) {
 	if len(user.RoleCodes) > 0 {
 		HomePath = core.PermissionMange.GetRoleHomePath(user.RoleCodes[0])
 	}
+	department := r.departmentService.GetUserDepartment(context)
 	return context.Success(vo.LoginUserInfoVo{
-		UserId:   loginUserInfo.ID,
-		RealName: loginUserInfo.RealName,
-		Roles:    user.RoleCodes,
-		Username: loginUserInfo.Username,
-		NickName: loginUserInfo.NickName,
-		Avatar:   loginUserInfo.Avatar,
-		HomePath: HomePath,
+		UserId:     loginUserInfo.ID,
+		RealName:   loginUserInfo.RealName,
+		Roles:      user.RoleCodes,
+		Username:   loginUserInfo.Username,
+		NickName:   loginUserInfo.NickName,
+		Avatar:     loginUserInfo.Avatar,
+		HomePath:   HomePath,
+		Department: department.Name,
 	})
 }
 
@@ -207,7 +216,7 @@ func (r AuthRouter) updateInfo(ec echo.Context) (err error) {
 	return context.Success(true)
 }
 
-// @Summary	检测修改密码的code正确性
+// @Summary	检测改密码code
 // @Tags		[系统]授权模块
 // @Success	200	{object}	core.ResponseSuccess{data=bool}
 // @Router		/auth/password/reset/check/:code [get]
@@ -230,9 +239,9 @@ func (r AuthRouter) passWordResetCheck(c echo.Context) error {
 // @Tags		[系统]授权模块
 // @Success	200	{object}	core.ResponseSuccess{data=bool}
 // @Router		/auth/password/reset [post]
-// @Param		bo	body	bo.ChangePasswordBo	true	"修改参数"
+// @Param		bo	body	bo.ChangePasswordByCodeBo	true	"修改参数"
 func (r AuthRouter) passWordReset(c echo.Context) error {
-	context := core.GetContext[bo.ChangePasswordBo](c)
+	context := core.GetContext[bo.ChangePasswordByCodeBo](c)
 	body, err := context.GetBodyAndValid()
 	if err != nil {
 		return err
@@ -274,4 +283,33 @@ func (r AuthRouter) passWordReset(c echo.Context) error {
 func (r AuthRouter) codes(c echo.Context) error {
 	context := core.GetContext[any](c)
 	return context.Success([]string{""})
+}
+
+// @Summary	用户主动修改密码
+// @Tags		[系统]授权模块
+// @Success	200	{object}	core.ResponseSuccess{data=bool}
+// @Router		/password/change [post]
+// @Param		bo	body	bo.ChangePasswordBo	true	"修改参数"
+func (r AuthRouter) passwordReset(c echo.Context) error {
+	context := core.GetContext[bo.ChangePasswordBo](c)
+	body, err := context.GetBodyAndValid()
+	if err != nil {
+		return err
+	}
+	user, err := context.GetLoginUser()
+	if err != nil {
+		return err
+	}
+	err, sysUser := r.userService.WithContext(c).FindOneByPrimaryKey(user.UID)
+	if err != nil {
+		return err
+	}
+	if core.ComparePasswords(sysUser.Password, body.OldPassword) {
+		tx := r.userService.WithContext(c).Where("id = ?", user.UID).Updates(map[string]any{
+			"password": core.HashPassword(body.NewPassword),
+		})
+		return context.Success(tx.RowsAffected > 0)
+	} else {
+		return core.NewFrontShowErrMsg("旧密码错误！")
+	}
 }

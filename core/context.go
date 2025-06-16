@@ -28,6 +28,12 @@ func GetContext[T any](c echo.Context) *XContext[T] {
 		c, GetGormDB(), GetValidator(),
 	}
 	return &cc
+} // GetContext  第一个泛型是入参的类型
+func GetAnyContext(c echo.Context) *XContext[any] {
+	cc := XContext[any]{
+		c, GetGormDB(), GetValidator(),
+	}
+	return &cc
 }
 
 // GetHeardParam 获取请求头参数
@@ -42,16 +48,7 @@ func (c *XContext[V]) GetAppPlatformCode() string {
 
 // GetLoginUser  获取请求头参数
 func (c *XContext[V]) GetLoginUser() (ClaimsAdditions, error) {
-	claims, err := GetTokenManager().ParseJwt(c.GetUserToken())
-	if err != nil {
-		return claims.ClaimsAdditions, NewErrCodeMsg(TOKEN_EXPIRE_ERROR, "登录身份过期，请重新登录！")
-	}
-	return claims.ClaimsAdditions, nil
-}
-
-// GetLoginUserErr 不自动返回错误
-func (c *XContext[V]) GetLoginUserErr() (ClaimsAdditions, error) {
-	claims, err := GetTokenManager().ParseJwt(c.GetUserToken())
+	claims, err := GetTokenManager().ParseJwt(c.GetUserToken(), c.GetAppPlatformCode())
 	if err != nil {
 		return claims.ClaimsAdditions, NewErrCodeMsg(TOKEN_EXPIRE_ERROR, "登录身份过期，请重新登录！")
 	}

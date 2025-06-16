@@ -80,6 +80,7 @@ RUN apk update && \
 
 # 创建应用目录
 RUN mkdir -p /app/server
+RUN mkdir -p /app/static
 
 # 拷贝可执行文件和配置文件
 ADD ./dist/server_linux_amd64_v1/server /app/server/app

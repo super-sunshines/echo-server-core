@@ -43,19 +43,30 @@ func NewSysUserRouter() *SysUserRouter {
 // @Success	200	{object}	core.ResponseSuccess{data=[]vo.UserOptionsVo}
 // @Router		/system/user/options [get]
 func (receiver SysUserRouter) optionsList(ec echo.Context) (err error) {
+
+	// 从echo上下文中获取自定义的上下文对象
 	context := core.GetContext[any](ec)
+
+	// 调用用户服务获取用户列表
+	// WithContext(ec): 将echo上下文传递给服务层
+	// SkipGlobalHook(): 跳过全局钩子
+	// FindList(): 执行查询获取用户列表
 	err, userList := receiver.SysUserService.WithContext(ec).SkipGlobalHook().
 		FindList()
 	if err != nil {
 		return err
 	}
+
+	// 将用户模型列表映射为用户选项值对象列表
+	// 使用slice.Map函数转换每个用户对象
 	vos := slice.Map(userList, func(index int, item model.SysUser) vo.UserOptionsVo {
 		return vo.UserOptionsVo{
-			Uid:      item.ID,
-			RealName: item.RealName,
+			Uid:      item.ID,       // 用户ID
+			RealName: item.RealName, // 用户真实姓名
 		}
 	})
 
+	// 返回成功的响应，包含用户选项列表
 	return context.Success(vos)
 }
 
@@ -81,6 +92,9 @@ func (receiver SysUserRouter) SysUserList(c echo.Context) error {
 					return
 				}
 				db.Where("department_id in (?)", children)
+			})
+			core.BooleanFun(pageBo.SearchKey != "", func() {
+				db.Where("real_name like ?", "%"+pageBo.SearchKey+"%").Or("nick_name like ?", "%"+pageBo.SearchKey+"%")
 			})
 			return db
 		})
@@ -152,6 +166,7 @@ func (receiver SysUserRouter) SysUserAdd(c echo.Context) error {
 	}
 	from := core.CopyFrom[model.SysUser](addBo)
 	from.Password = core.HashPassword(from.Username + "123!")
+	from.NeedChangePassword = true
 	err, meta := receiver.SysUserService.WithContext(c).SkipGlobalHook().
 		InsertOne(from)
 	if err != nil {

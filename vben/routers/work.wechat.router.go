@@ -85,13 +85,18 @@ func (r QywxAuthRouter) login(ec echo.Context) (err error) {
 
 	uid, _ = r.thirdBindService.ThirdPlatformUidToUid(_const.ThirdPlatformWorkWeChat, workWechatUserInfo.UserID)
 	err, useInfo := r.userService.WithContext(context).SkipGlobalHook().FindOne(func(db *gorm.DB) *gorm.DB {
-		return db.Where("id = ?", uid).Where("")
+		return db.Where("id = ?", uid)
 	})
+	if err != nil {
+		zap.L().Error("获取")
+		return err
+	}
+	token, err := helper.GenJwtByUserInfo(context.GetAppPlatformCode(), useInfo)
 	if err != nil {
 		return err
 	}
 	return context.Success(vo.OauthLoginVo{
-		AccessToken: helper.GenJwtByUserInfo(context.GetAppPlatformCode(), useInfo),
+		AccessToken: token,
 	})
 }
 

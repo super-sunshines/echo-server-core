@@ -15,6 +15,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -138,6 +139,17 @@ func (receiver PreGorm[M, V]) WithContext(c echo.Context) *Gorm[M, V] {
 func (receiver PreGorm[M, V]) SetDB(db *gorm.DB) *Gorm[M, V] {
 	g := Gorm[M, V]{
 		DB:     db,
+		config: receiver.config,
+	}
+	g.DB = g.GetModelDb()
+	return &g
+}
+
+// WithNoContext 因为没有 echo.Context 所以只能手动设置
+// 增加一定的维护性
+func (receiver PreGorm[M, V]) WithNoContext() *Gorm[M, V] {
+	g := Gorm[M, V]{
+		DB:     GetGormDB(),
 		config: receiver.config,
 	}
 	g.DB = g.GetModelDb()
@@ -520,6 +532,99 @@ func (a Array[T]) Value() (driver.Value, error) {
 	return convertor.ToString(a), nil
 }
 
+// FileURL 自定义文件URL类型
+type FileURL string
+
+// NewFileURL 创建FileURL实例
+func NewFileURL(url string) FileURL {
+	return FileURL(url)
+}
+
+// MarshalJSON 实现JSON序列化
+func (f FileURL) MarshalJSON() ([]byte, error) {
+	url := processURL(string(f))
+	return json.Marshal(string(url)) // 使用标准库确保正确格式
+}
+
+// UnmarshalJSON 实现JSON反序列化
+func (f *FileURL) UnmarshalJSON(data []byte) error {
+	*f = FileURL(reverseProcessURL(string(data)))
+	return nil
+}
+
+// Value 实现driver.Valuer接口，用于数据库存储
+func (f FileURL) Value() (driver.Value, error) {
+	return string(f), nil
+}
+
+// Scan 实现sql.Scanner接口，用于数据库读取
+func (f *FileURL) Scan(value interface{}) error {
+	if value == nil {
+		*f = ""
+		return nil
+	}
+	switch v := value.(type) {
+	case string:
+		*f = FileURL(v)
+	case []byte:
+		*f = FileURL(v)
+	default:
+		return fmt.Errorf("不支持的数据库类型: %T", value)
+	}
+	return nil
+}
+
+func reverseProcessURL(processedURL string) string {
+	processedURL = strings.TrimSpace(processedURL)
+	processedURL = strings.Trim(processedURL, `"`)
+	if processedURL == "" {
+		return ""
+	}
+	// isProcessedURL 检查是否是已处理的URL（包含 ServerDomain + /api/static 前缀）
+	isProcessedURL := func(url string) bool {
+
+		serverConfig := GetConfig().Server
+		// 移除 ServerDomain 中的协议头（如果存在）
+		domain := strings.TrimPrefix(serverConfig.ServerDomain, "http://")
+		domain = strings.TrimPrefix(domain, "https://")
+
+		// 构造正则表达式，允许 URL 有或没有协议
+		pattern := fmt.Sprintf(`^(?:https?:\/\/)?%s\/api\/static`, regexp.QuoteMeta(domain))
+		matched, _ := regexp.MatchString(pattern, url)
+		return matched
+	}
+	// 检查是否是已处理的URL（使用正则）
+	if isProcessedURL(processedURL) {
+		serverConfig := GetConfig().Server
+		prefix := fmt.Sprintf("%s/api/static", serverConfig.ServerDomain)
+		return strings.TrimPrefix(processedURL, prefix)
+	}
+	// 如果不是，直接返回原URL
+	return processedURL
+}
+
+// processURL 处理URL转换逻辑
+func processURL(rawURL string) FileURL {
+	rawURL = strings.TrimSpace(rawURL)
+	rawURL = strings.Trim(rawURL, `"`)
+	if rawURL == "" {
+		return ""
+	}
+	// 如果已经是完整URL则直接返回
+	if strings.HasPrefix(rawURL, "http://") ||
+		strings.HasPrefix(rawURL, "https://") {
+		return FileURL(rawURL)
+	}
+	// 否则添加静态资源前缀
+	serverConfig := GetConfig().Server
+	return FileURL(fmt.Sprintf("%s/api/static%s", serverConfig.ServerDomain, rawURL))
+}
+
+// String 实现Stringer接口
+func (f FileURL) String() string {
+	return string(f)
+}
+
 type IntBool bool
 
 const (
@@ -541,7 +646,7 @@ func (i IntBool) Value() (driver.Value, error) {
 func (i *IntBool) Scan(src interface{}) error {
 	v, ok := src.(int64)
 	if !ok {
-		return errors.New("bad int type assertion")
+		return NewFrontShowErrMsg("FilePath 类型转换失败")
 	}
 	*i = v == IntBoolTrue // 1 -> true, otherwise false
 	return nil

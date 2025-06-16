@@ -5,6 +5,7 @@ import (
 	"github.com/super-sunshines/echo-server-core/core"
 	"github.com/super-sunshines/echo-server-core/vben/gorm/model"
 	"github.com/super-sunshines/echo-server-core/vben/services"
+	"go.uber.org/zap"
 
 	"gorm.io/gorm"
 )
@@ -79,15 +80,19 @@ func GlobalGormHook(globalDb *gorm.DB) {
 		}
 		user, err := context.GetLoginUser()
 		if err != nil {
+			zap.L().Error("Gorm Global Update Hook Error:", zap.Error(err))
+			_ = context.Fail(err)
 			return
 		}
 		updateStrategy(roleService.GetRoleConfigByCodes(context, user.RoleCodes...), _db, context, departService)
-		_db.Statement.SetColumn("update_by", user.UID)
+		// 使用 Assign 方法确保多列都能设置
+		_db.Statement.Assign(map[string]interface{}{
+			"update_by": user.UID,
+		})
 	})
 
 	_ = globalDb.Callback().Create().Before("gorm:create").Register("custom:BeforeCreate", func(_db *gorm.DB) {
 		ctx := _db.Statement.Context
-
 		if bgContext, ok := ctx.(context2.Context); ok {
 			if bgContext.Value(core.GormGlobalSkipHookKey) != nil && bgContext.Value(core.GormGlobalSkipHookKey).(bool) {
 				return
@@ -107,8 +112,11 @@ func GlobalGormHook(globalDb *gorm.DB) {
 			if err != nil {
 				return
 			}
-			_db.Statement.SetColumn("create_by", user.UID)
-			_db.Statement.SetColumn("create_dept", user.DepartmentId)
+			// 使用 Assign 方法确保多列都能设置
+			_db.Statement.Assign(map[string]interface{}{
+				"create_by":   user.UID,
+				"create_dept": user.DepartmentId,
+			})
 		}
 	})
 
@@ -136,7 +144,9 @@ func GlobalGormHook(globalDb *gorm.DB) {
 		// 最后进入策略
 		user, err := context.GetLoginUser()
 		if err != nil {
+			zap.L().Error("Gorm Global Query Hook Error", zap.Error(err))
 			_ = context.Fail(err)
+			return
 		}
 		codes := roleService.GetRoleConfigByCodes(context, user.RoleCodes...)
 		queryStrategy(codes, _db, context, departService)

@@ -19,6 +19,13 @@ type JwtConfig struct {
 	JwtKey            string
 	Expire            int64
 	MaxLoginFailCount int64
+	Strict            bool
+	SpecifiedConfig   []SpecifiedPlatform
+}
+type SpecifiedPlatform struct {
+	Platform string
+	Expire   int64
+	Strict   bool
 }
 type LogConfig struct {
 	Level         string // Level 最低日志等级，DEBUG<INFO<WARN<ERROR<FATAL 例如：info-->收集info等级以上的日志
@@ -30,12 +37,13 @@ type LogConfig struct {
 	MaxBackups    int    // MaxBackups 是要保留的旧日志文件的最大数量。默认是保留所有旧的日志文件（尽管 MaxAge 可能仍会导致它们被删除。）
 }
 type ServerConfig struct {
-	Dev           bool
-	HttpPort      int
-	WebSocketPath string
-	GlobalPrefix  string
-	SeverDomain   string
-	FrontDomain   string
+	Dev              bool
+	HttpPort         int
+	WebSocketPath    string
+	GlobalPrefix     string
+	ServerDomain     string
+	FrontDomain      string
+	BaseStaticFolder string
 }
 
 type RedisConfig struct {
@@ -105,6 +113,12 @@ type PageResult struct {
 type PageResultList[T any] struct {
 	PageResult
 	Items []T `json:"items"`
+}
+
+func NewPageResultList[T any](item ...T) PageResultList[T] {
+	return PageResultList[T]{
+		Items: item,
+	}
 }
 
 type QueryIds struct {

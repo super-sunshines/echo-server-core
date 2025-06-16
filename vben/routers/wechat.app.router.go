@@ -100,8 +100,12 @@ func (r WechatAppAuthRouter) login(ec echo.Context) (err error) {
 	if err != nil {
 		return err
 	}
+	token, err := helper.GenJwtByUserInfo(context.GetAppPlatformCode(), useInfo)
+	if err != nil {
+		return err
+	}
 	return context.Success(vo.OauthLoginVo{
-		AccessToken: helper.GenJwtByUserInfo(context.GetAppPlatformCode(), useInfo),
+		AccessToken: token,
 	})
 }
 

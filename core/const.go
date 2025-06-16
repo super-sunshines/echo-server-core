@@ -2,7 +2,7 @@ package core
 
 const (
 	// AppPlatformHeaderKey 请求头中平台参数
-	AppPlatformHeaderKey = "app-platform-key"
+	AppPlatformHeaderKey = "AppPlatformKey"
 
 	// Authorization Token
 	Authorization = "Authorization"

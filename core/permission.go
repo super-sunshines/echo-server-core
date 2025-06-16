@@ -62,7 +62,6 @@ func HavePermission(role string) echo.MiddlewareFunc {
 			context := GetContext[any](c)
 			user, err := context.GetLoginUser()
 			if err != nil || !PermissionMange.CheckRoleHaveCodePermission(user.RoleCodes, []string{role}, false) {
-				context.Error(NewFrontShowErrMsg(fmt.Sprintf("Dont Have Permission Check Error: %#v", role)))
 				return NewFrontShowErrMsg(fmt.Sprintf("Dont Have Permission Check Error: %#v", role))
 			}
 			return next(c)

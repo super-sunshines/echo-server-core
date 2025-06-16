@@ -13,6 +13,7 @@ var BaseRouters = []*core.RouterGroup{
 	routers.SysUserRouterGroup,
 	routers.SysRoleRouterGroup,
 	routers.SysDepartmentRouterGroup,
+	routers.SysFileRouterGroup,
 }
 
 var TencentRouters = []*core.RouterGroup{

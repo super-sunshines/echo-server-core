@@ -2,6 +2,7 @@ package core
 
 import (
 	"crypto/sha1"
+	"dario.cat/mergo"
 	"encoding/hex"
 	"fmt"
 	"github.com/google/uuid"
@@ -13,6 +14,7 @@ import (
 	"math/rand"
 	"reflect"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -538,7 +540,7 @@ func AdditionFirst[T any](params []T, defaultValue T) T {
 
 // GetRandomStr 生成指定长度的随机字符串
 // 参数：len - 需要生成的字符串长度
-// 参数：types - 1 大写加数字 2 小写加数字 3 大写加小写
+// 参数：types - 1 大写加数字 2 小写加数字 3 大写加小写 4 纯数字
 // 返回：随机字符串
 func GetRandomStr(length int, types ...int64) string {
 	paramType := AdditionFirst(types, 0)
@@ -554,6 +556,8 @@ func GetRandomStr(length int, types ...int64) string {
 		charset = charsetNum + charsetLow
 	case 3:
 		charset = charsetUpper + charsetLow
+	case 4:
+		charset = charsetNum
 	}
 	b := make([]byte, length)
 	for i := range b {
@@ -565,12 +569,7 @@ func GetRandomStr(length int, types ...int64) string {
 // GetUUID 生成一个随机 UUID
 // 返回：UUID 字符串
 func GetUUID() string {
-	newUUID, err := uuid.NewUUID()
-	if err != nil {
-		zap.L().Error("core GetUUID:", zap.Error(err))
-		return ""
-	}
-	return newUUID.String()
+	return uuid.New().String() // 最新版本的github.com/google/uuid会自动选择最佳版本
 }
 
 // IsNumeric 判断字符串是否全部由数字组成
@@ -581,4 +580,67 @@ func IsNumeric(s string) bool {
 		}
 	}
 	return true
+}
+
+type Platform struct {
+	OS        string // 操作系统
+	Arch      string // 架构
+	OSName    string // 操作系统友好名称
+	IsWindows bool
+	IsMac     bool
+	IsLinux   bool
+	IsArm     bool
+	Is64Bit   bool
+}
+
+func GetPlatform() Platform {
+	os := runtime.GOOS
+	arch := runtime.GOARCH
+	p := Platform{
+		OS:   os,
+		Arch: arch,
+	}
+
+	switch os {
+	case "windows":
+		p.OSName = "Windows"
+		p.IsWindows = true
+	case "darwin":
+		p.OSName = "macOS"
+		p.IsMac = true
+	case "linux":
+		p.OSName = "Linux"
+		p.IsLinux = true
+	default:
+		p.OSName = os
+	}
+
+	switch {
+	case strings.Contains(arch, "arm"):
+		p.IsArm = true
+	case arch == "amd64" || arch == "arm64":
+		p.Is64Bit = true
+	}
+
+	return p
+}
+
+func Merge(dst interface{}, src interface{}, config ...func(*mergo.Config)) error {
+	return mergo.Merge(dst, src, config...)
+}
+
+// GetRelativeURL 处理URL转换逻辑
+func GetRelativeURL(rawURL string) string {
+	rawURL = strings.TrimSpace(rawURL)
+	if rawURL == "" {
+		return ""
+	}
+	// 如果已经是完整URL则直接返回
+	if strings.HasPrefix(rawURL, "http://") ||
+		strings.HasPrefix(rawURL, "https://") {
+		return rawURL
+	}
+	// 否则添加静态资源前缀
+	serverConfig := GetConfig().Server
+	return fmt.Sprintf("%s/api/static%s", serverConfig.ServerDomain, rawURL)
 }

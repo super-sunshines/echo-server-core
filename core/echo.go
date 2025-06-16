@@ -73,7 +73,7 @@ func NewServer(routerGroup []*RouterGroup, option ServerRunOption) {
 	ResolveRoutes(e)
 	fmt.Println(fmt.Sprintf(`%s==> Server Started !%s`, logger.Green, logger.Reset))
 	if config.Server.Dev {
-		fmt.Println(fmt.Sprintf(`%s==> Swagger Path: %s %s`, logger.Green, fmt.Sprintf("http://127.0.0.1:%d/swagger/index.html", config.Server.HttpPort), logger.Reset))
+		fmt.Println(fmt.Sprintf(`%s==> Swagger FilePath: %s %s`, logger.Green, fmt.Sprintf("http://127.0.0.1:%d/swagger/index.html", config.Server.HttpPort), logger.Reset))
 	}
 	err := e.Start(fmt.Sprintf(":%d", config.Server.HttpPort))
 	if err != nil {
@@ -86,7 +86,7 @@ func EchoError() func(err error, c echo.Context) {
 	return func(err error, c echo.Context) {
 		if err != nil && !c.Response().Committed {
 			codeErr := TransformErr(err)
-			zap.L().Error("Get Server Error :", zap.Error(codeErr))
+			zap.L().Error("HandleEchoError: Get Server Error :", zap.Error(codeErr))
 			c.Response().Header().Set("Content-Type", "application/json")
 			_ = GetContext[any](c).Fail(codeErr)
 			return
@@ -159,21 +159,21 @@ func RequestLoggerMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			originalWriter := c.Response().Writer
 			customWriter := &CustomResponseWriter{ResponseWriter: originalWriter}
 			c.Response().Writer = customWriter
-
 			// 执行下一步处理
 			err := next(c)
+			path := c.Request().URL.Path
 
 			// 计算响应时间
 			duration := time.Since(start)
-
 			// 获取请求信息
 			method := c.Request().Method
-			path := c.Request().URL.Path
+
 			queryParams := c.QueryParams()
-
+			responseBody := ""
 			// 获取响应体
-			responseBody := string(customWriter.body)
-
+			if !strings.Contains(path, "/static") {
+				responseBody = string(customWriter.body)
+			}
 			// 打印请求和响应信息
 			zap.L().Info(fmt.Sprintf("%s请求: %s, 参数: %v, 响应体: %s, 耗时: %v",
 				method, path, queryParams, responseBody, duration))

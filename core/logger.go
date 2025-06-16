@@ -315,8 +315,6 @@ func Log(title string, operateType ...BusinessType) echo.MiddlewareFunc {
 			if resultMap["code"] != 200 {
 				if s, ok := resultMap["msg"].(string); ok {
 					errMsg = s
-				} else {
-					err = NewFrontShowErrMsg(fmt.Sprintf("%#v", resultMap["msg"]))
 				}
 			}
 			if loggerOptions != nil && loggerOptions.LoggerSaver != nil {
